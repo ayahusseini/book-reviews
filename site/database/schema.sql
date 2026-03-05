@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS books (
     author_id INTEGER REFERENCES authors(author_id)
 );
 
-CREATE TABLE IF NOT EXISTSnotes (
+CREATE TABLE IF NOT EXISTS notes (
     note_id INTEGER PRIMARY KEY,
     book_id INTEGER REFERENCES books(book_id),
     note_markdown TEXT,
