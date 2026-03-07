@@ -43,3 +43,14 @@ These enforce:
 - Formatting via Ruff
 - Lockfile validation via uv
 - Shell + workflow checks
+
+
+# Explanations
+
+## DuckDB 
+
+This repo uses duckdb as a database. DuckDB is distinct to PostgreSQL in that it is embedded (literally a file in the repo). The Flask app can just open it and run queries, similar to a local SQLite file. This does come with limited concurrency (only one 'write' operation can happen at a time) - not much of a bottleneck in this use case. I'm the only writer so a single-writer limitation isn't too much of a problem. Its' also columnar - I'm not planning to start with any heavy analytics but it is something I'd eventually like to do.
+
+## Flask
+
+Flask is a framework for building web applications. When developing locally, Flask runs as a server process locally: a tiny web server gets started on `http://127.0.0.1:5000/`. So your browser communicates with (sends requests to) the flask server via HTTP. 

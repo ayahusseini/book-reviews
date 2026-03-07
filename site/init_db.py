@@ -10,7 +10,16 @@ SCHEMA_PATH = "database/schema.sql"
 
 
 def get_connection():
-    return duckdb.connect(database="site.db")
+    return duckdb.connect(database="database/site.db")
+
+
+def create_tables(conn):
+    """
+    Create the tables in the database
+    """
+    with open(SCHEMA_PATH, "r") as f:
+        conn.execute(f.read())
+    conn.commit()
 
 
 if __name__ == "__main__":
