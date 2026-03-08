@@ -70,17 +70,19 @@ Flask earns its place here because:
 
 ```sh
 book_reviews/
-  run.py # entry point - which calls create_app() and runs the server
-  config.py # config classes
-  site/ 
-    __init__.py # contains create_app()
-    extensions.py 
-    models.py 
-    ...
+  site/ # holds all code for the site
+    run.py # entry point - which calls create_app() and runs the server
+    config.py # config classes
+    app/ 
+      __init__.py # contains create_app()
+      extensions.py 
+      models.py 
+      blueprints/ 
+      ...
 ```
 
 - Conventionally, `__init__.py` holds `create_app()` logic
-  - We want it to be at the top-level (whenever anything is imported from `site/`, the first  thing that is executed is `__init__.py`
+  - We want it to be at the top-level (whenever anything is imported from `app/`, the first  thing that is executed is `__init__.py`
 - E.G. for `run.py`, the main entry point that actually starts the server, we'd just need
 
 ```python
@@ -92,6 +94,62 @@ if __name__ == "__main__":
   app = create_app()
   app.run()
 ```
+
+### Configuring the application
+
+In Flask, we have dictionary-like object called `app.config` which holds things like
+
+- database path
+- secret key
+- mode (debug mode?)
+
+The cleanest way of managing this is creating a single config class per environment in `config.py` 
+
+```python
+# config.py
+class Config:
+    """Base config — shared across all environments."""
+    SECRET_KEY = "change-me-in-production"
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+class DevelopmentConfig(Config):
+    DEBUG = True
+    SQLALCHEMY_DATABASE_URI = "sqlite:///instance/site.db"
+
+class TestingConfig(Config):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"  # in-memory db, wiped after each test
+
+class ProductionConfig(Config):
+    DEBUG = False
+    SQLALCHEMY_DATABASE_URI = "sqlite:///instance/site.db"
+    SECRET_KEY = "read-this-from-an-env-var-not-here"
+```
+
+then, `create_app()` should load the right `Config` object:
+
+```python
+# app/__init__.py
+def create_app(config: Config):
+  app = Flask(__name__)
+  app.config.from_object(config)
+```
+
+#### Testing vs Development configuration
+
+- The `TESTING = True` flag means that Flask will propagate exceptions rather than producing error pages. In development, we want to see a debugger page in-browser. In unit tests, we want the raw exception to bubble up so it can be reported properly. 
+- Unit tests shouldn't run against the actual database because:
+  - tests that write data will pollute the real database
+  - tests that delete or modify data could destroy the things we care about. 
+  - test results would depend on whatever state the database actually happens to be in, rather than considering all possible edge-cases. This also makes test results non-deterministic.
+- So tests need their own isolated database. The URI `sqlite:///:memory:` means 'don't use a file at all, keep the entire database in-memory'. It is created instantly and automatically destroyed when the connection closes. 
+  - The test seup will need to run `db.create_all()` to build the schema fresh at the start.
+
+#### The Secret Key
+
+- The secret key is just a long random string. It's used by flask as the input to a **cryptographic signing algorithm** - each session cookie has a signature produced 
+- E.G. if we have the same SECRET KEY across all dev sessions, then the environment is consistent and reproducible. 
+- For production, we should have a secret key in the `.env` file - this is loaded into our process at startup
 
 ## Flask extensions
 
@@ -135,7 +193,44 @@ def create_app():
 
 ### Flask extensions - Database integration
 
-### Flask extensions - Database integration
+- Talking to SQLite means opening a **connection** - some channel between the python process and the database file. Through this connection, we can run queries and get results back. 
+- In one-off scripts, we might use `sqlite3` for creating connections
+
+```python
+import sqlite3
+
+with sqlite3.connect("site.db") as conn:
+  cursor = conn.cursor()
+  cursor.execute("SELECT * from book WHERE book_id = 1")
+  row = cursor.fetchone()
+
+```
+
+- In web applications:
+  - Its not clear when to open the connection (at startup, per request)
+  - Its not clear when to *close* the connection 
+  - If something goes wrong mid-request, we'd need to roll-back any partial writes
+  - If more than one connection request happens simultaneously, they need seperate connections so they don't interfere 
+  - ...
+
+These are the complexities that `SQLAlchemy` solves:
+
+- SQLAlchemy sits between the python code and the raw database connection.
+  - It has the responsibility of managing a 'pool' of connections and lending them out as needed. When a request is made, it borrows a connection from the pool. 
+  - SQLAlchemy also introduces the concept of a `db.session` - this tracks everything read and written during a single operation. Only when we run `db.session.commit()` are all of these updates made. If anything goes wrong, `db.session.rollback()` undoes everything since the last commit. 
+  - On top of sessions, we can define Python classes that map to tables in the data model (rather than writing hard-to-maintain SQL strings). 
+  - Dialect abstraction - we write the same Python code independent of SQL dialect.
+
+SQLAlchemy is framework agnostic. In order to work, it needs to know about Flask's request lifecycle. This is why we use the `Flask-SQLAlchemy` extension. 
+
+- At the start of each HTTP request, a SQLAlchemy session is automatically created
+- It automatically commits, rolls back, and exits at the end 
+  - We never have to think about the session lifecycle since it *matches the request lifecycle*
+
+#### Using Flask-SQLAlchemy
+
+- Our flask config needs to set the `SQLALCHEMY_DATABASE_URI` 
+- Then we import `db` and it is set up according to the app configuration. Everthing is accessible from the `db` object
 
 ### Where and how do we access the app in other files?
 
@@ -190,4 +285,13 @@ def create_app():
     app.register_blueprint(books_bp)
     return app
 ```
+
+## Flask CLI commands
+
+- The Flaask CLI comes built into flask. When we run `flask run`, the Flask CLI starts our development server. 
+- We can register our own custom flask commands. 
+- In this case, we'll want CLI commands for ingesting draft posts and adding books 
+- We define these using `@app.cli.command()` 
+  - this registers a function to be caclled when we type a command in the terminal. It is triggered locally at the command line. 
+  - contrast this to `@app.route` which registers a function to be called when a HTTP request arrives at a particular URL
 
