@@ -21,10 +21,9 @@ Design decisions worth noting:
 An overview of everything used and a justification for why, how this will scale, and future improvements/alternatives
 
 1. [Flask](/docs/flask.md)
+2. [SQLAlchemy](/docs/sqlalchemy.md)
 
-## SQLAlchemy
 
-TODO
 
 ### Creating ORM classes in SQLALchemy
 
@@ -33,7 +32,3 @@ TODO
 ### Junction tables in SQLAlchemy
 
 TODO
-
-## SQLite
-
-This repo uses SQLite as a database. SQLite is distinct to PostgreSQL in that it is embedded (literally a file in the repo). The Flask app can just open it and run queries. This does come with limited concurrency (only one 'write' operation can happen at a time) - not much of a bottleneck in this use case. I'm the only writer so a single-writer limitation isn't too much of a problem. Its' also row-based rather than columnar (c.f. DuckDB), so optimised for transactions rather than analytics. 
