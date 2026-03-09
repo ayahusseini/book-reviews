@@ -51,6 +51,12 @@ These enforce:
 - Lockfile validation via uv
 - Shell + workflow checks
 
+3. Run the development server 
+
+```
+uv run flask --app site/app run
+```
+
 ### Adding reviews
 
 To add a review, write a markdown file with simple frontmatter in your editor:
