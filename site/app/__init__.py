@@ -3,14 +3,38 @@
 import os
 from flask import Flask
 from app.models import db
-from app.config import DevelopmentConfig, Config
+from app.config import (
+    DevelopmentConfig,
+    ProductionConfig,
+    TestingConfig,
+    Config,
+)
 
 
-def create_app(config: Config = DevelopmentConfig):
+def get_config_obj(config_str: str) -> Config:
+    """Return a Config subclass given a string"""
+    configs = {
+        "development": DevelopmentConfig,
+        "production": ProductionConfig,
+        "testing": TestingConfig,
+    }
+
+    if config_str not in configs.keys():
+        raise ValueError(
+            "The config string must be one of"
+            + f"{','.join(list(configs.keys()))}"
+        )
+
+    return configs[config_str]
+
+
+def create_app():
     """Create and configure the Flask application."""
 
+    config = os.getenv("FLASK_ENV", "development").lower()
+
     app = Flask(__name__, instance_relative_config=True)
-    app.config.from_object(config)
+    app.config.from_object(get_config_obj(config))
 
     os.makedirs(app.instance_path, exist_ok=True)
 

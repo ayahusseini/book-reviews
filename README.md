@@ -51,10 +51,40 @@ These enforce:
 - Lockfile validation via uv
 - Shell + workflow checks
 
-3. Run the development server 
+3. Run the development server. The Flask CLI knows how to find and call `create_app()` automatically when you point `--app` at the `site/app` package. 
 
 ```
 uv run flask --app site/app run
+```
+
+This defaults to running with the `DevelopmentConfig`. You can switch configs at the command line:
+
+```
+# development (default)
+uv run flask --app site/app run --debug
+
+# testing
+FLASK_ENV=testing uv run flask --app site/app run
+
+# production
+FLASK_ENV=production uv run flask --app site/app run
+```
+
+### Using the Flask Shell
+
+The Flask Shell is a Python REPL that runs inside the application context. `db`, models, and anything else that is configured are already available. The 
+Flask Shell is useful for querying the database and playing with app config:
+
+```
+uv run flask --app site/app shell
+```
+
+Within the REPL, you can run commands like:
+
+```python
+from app.models import Book, Author 
+Book.query.all()
+db.session.execute(...)
 ```
 
 ### Adding reviews
