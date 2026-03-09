@@ -7,9 +7,7 @@ Schema (from ERD):
 """
 
 from datetime import datetime, timezone
-from flask_sqlalchemy import SQLAlchemy
-
-db = SQLAlchemy()
+from app.extensions import db
 
 
 class BookAuthorMapping(db.Model):
