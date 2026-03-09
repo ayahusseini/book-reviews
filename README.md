@@ -44,6 +44,16 @@ These enforce:
 - Lockfile validation via uv
 - Shell + workflow checks
 
+## Production setup 
+
+Generate a secret key using:
+```
+chmod +x scripts/generate_secret_key.sh
+./scripts/generate_secret_key.sh
+```
+
+When a user interacts with a Flask application, a session cookie is used to store the session data.
+The cookie is 'signed' using the secret key. This prevents session data from being accessed or tampered with. 
 
 # Explanations
 - See more notes/explanations on the design [here](/docs/design.md)
