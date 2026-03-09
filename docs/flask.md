@@ -255,6 +255,7 @@ from flask import current_app
 /books            → books blueprint
 /books/<id>/posts → posts blueprint  
 /tags             → tags blueprint
+/api              → used to actually create reviews
 ```
 
 We can define blueprints in a `blueprints/` folder:

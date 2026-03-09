@@ -53,11 +53,34 @@ These enforce:
 
 ### Adding reviews
 
-To add a review, run 
+To add a review, write a markdown file with simple frontmatter in your editor:
 
-```python3
-uv run python3 site/scripts/post
 ```
+---
+book_title: REQUIRED
+book_isbn: REQUIRED
+book_rating: OPTIONAL (OUT OF 5)
+---
+
+Review content
+```
+
+Fields like `book_publication_year`, `book_description`, `book_cover_url` , `book_page_count` can also be manually set. Otherwise, they get inferred from the ISBN.
+
+After creating the markdown file, use it as an input to `post_review.py`. First, run it with `--env dev`
+
+```sh
+uv run python3 site/scripts/post_review.py site/reviews/<example_book>.md 
+```
+
+When run, the `POST` request is made to the development app in `localhost:5000`. Check it looks right in the browser. If you're satisfied, the dev SQLite3 is now the source of truth. 
+
+
+```sh
+uv run python3 site/scripts/sync_db.py
+```
+
+copies the development SQLite file up to the prod server.
 
 ## Production setup 
 

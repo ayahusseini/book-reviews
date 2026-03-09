@@ -1,19 +1,38 @@
 """Different configuration classes for the application."""
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 class Config:
     """Base config — shared across all environments."""
 
     SECRET_KEY = "change-me-in-production"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    BASE_DIR = os.path.abspath(os.path.dirname(__file__)) + "/site/"
 
 
 class DevelopmentConfig(Config):
     """Development config."""
 
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = "sqlite:///instance/site.db"
+    SECRET_KEY = "dev"
+    SQLALCHEMY_DATABASE_URI = (
+        f"sqlite:///{os.path.join(Config.BASE_DIR, 'instance', 'site.db')}"
+    )
 
 
 class TestingConfig(Config):
-    pass
+    DEBUG = False
+    SECRET_KEY = "test"
+    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
+
+
+class ProductionConfig(Config):
+    DEBUG = False
+    SECRET_KEY = os.getenv("SECRET_KEY")
+    SQLALCHEMY_DATABASE_URI = (
+        f"sqlite:///{os.path.join(Config.BASE_DIR, 'instance', 'site.db')}"
+    )
