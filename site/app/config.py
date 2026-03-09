@@ -11,7 +11,7 @@ class Config:
 
     SECRET_KEY = "change-me-in-production"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    BASE_DIR = os.path.abspath(os.path.dirname(__file__)) + "/site/"
+    BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
 
 class DevelopmentConfig(Config):
