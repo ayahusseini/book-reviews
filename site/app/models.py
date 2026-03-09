@@ -11,6 +11,8 @@ from app.extensions import db
 
 
 class BookAuthorMapping(db.Model):
+    """Junction table containing book-author mappings"""
+
     __tablename__ = "book_author_mapping"
 
     book_author_mapping_id = db.Column(
@@ -30,6 +32,8 @@ class BookAuthorMapping(db.Model):
 
 
 class BookToTagMap(db.Model):
+    """Junction table containing book-tag mappings"""
+
     __tablename__ = "book_to_tag_map"
 
     book_to_tag_map_id = db.Column(
@@ -47,6 +51,8 @@ class BookToTagMap(db.Model):
 
 
 class Author(db.Model):
+    """Model containing author details"""
+
     __tablename__ = "author"
 
     author_id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
@@ -62,8 +68,16 @@ class Author(db.Model):
     def __repr__(self):
         return f"<Author id={self.author_id} name={self.author_name!r}>"
 
+    def to_dict(self) -> dict:
+        return {
+            "author_id": self.author_id,
+            "author_name": self.author_name,
+        }
+
 
 class Book(db.Model):
+    """Model containing book details"""
+
     __tablename__ = "book"
 
     book_id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
@@ -99,8 +113,22 @@ class Book(db.Model):
     def __repr__(self):
         return f"<Book id={self.book_id} title={self.book_title!r}>"
 
+    def to_dict(self) -> dict:
+        return {
+            "book_id": self.book_id,
+            "book_isbn": self.book_isbn,
+            "book_title": self.book_title,
+            "book_description": self.book_description,
+            "book_publication_year": self.book_publication_year,
+            "book_rating": self.book_rating,
+            "book_cover_url": self.book_cover_url,
+            "book_page_count": self.book_page_count,
+        }
+
 
 class Tag(db.Model):
+    """Model contianing tag details"""
+
     __tablename__ = "tag"
 
     tag_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -117,8 +145,17 @@ class Tag(db.Model):
     def __repr__(self):
         return f"<Tag id={self.tag_id} name={self.tag_name!r}>"
 
+    def to_dict(self) -> dict:
+        return {
+            "tag_id": self.tag_id,
+            "tag_name": self.tag_name,
+            "tag_description": self.tag_description,
+        }
+
 
 class Post(db.Model):
+    """Model containing Post details"""
+
     __tablename__ = "post"
 
     post_id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
@@ -152,3 +189,15 @@ class Post(db.Model):
             + f" title={self.post_title!r}"
             + f" type={self.post_type!r}"
         )
+
+    def to_dict(self) -> dict:
+        return {
+            "post_id": self.post_id,
+            "book_id": self.book_id,
+            "post_title": self.post_title,
+            "post_author": self.post_author,
+            "post_type": self.post_type,
+            "post_body_markdown": self.post_body_markdown,
+            "post_created_at": self.post_created_at.isoformat(),
+            "post_updated_at": self.post_updated_at.isoformat(),
+        }

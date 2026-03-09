@@ -44,3 +44,24 @@ SQLAlchemy is framework agnostic. In order to work, it needs to know about Flask
 
 - Our flask config needs to set the `SQLALCHEMY_DATABASE_URI` - this is set by the `Config` objects
 - Then we import `db` and it is set up according to the app configuration. Everthing is accessible from the `db` object
+
+## Serialisation 
+
+In order to send/parse JSON responses we should have a `.to_dict()` method for each model.
+
+```python
+class Book(db.Model):
+    ...
+
+    def to_dict(self) -> dict:
+        return {
+            "book_id": self.book_id,
+            "book_isbn": self.book_isbn,
+            "book_title": self.book_title,
+            "book_description": self.book_description,
+            "book_publication_year": self.book_publication_year,
+            "book_rating": self.book_rating,
+            "book_cover_url": self.book_cover_url,
+            "book_page_count": self.book_page_count,
+        }
+```

@@ -16,6 +16,14 @@ Design decisions worth noting:
 - **Book metadata can be populated via Open Library.** When adding a book by ISBN, the CLI can fetch the book's title, description, publication year, cover URL, page count automatically. Only tags and the ratings can be set manually.
 - **Posts don't need a `book_id`**. If the `book_id` is set to `NULL`, then posts are treated as standalone. 
 
+
+## The API 
+
+The Flask blueprint `site/app/blueprints.api.py` handles the api endpoints:
+- `POST /api/books` adds a book and returns the `book_id`. ISBN is required, and this errors if there is a duplicate
+- `PATCH /api/books/<isbn>` updates book fields and errors if the ISBN doesn't exist
+- `POST /api/posts` adds a post/review. Requires either `book_id` or `isbn` (or `None` for either of these to have a stand-alone post)
+
 ## Tech stack
 
 An overview of everything used and a justification for why, how this will scale, and future improvements/alternatives
