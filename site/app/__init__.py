@@ -1,6 +1,7 @@
 """Instantiate the Flask application."""
 
 from flask import Flask
+from app.models import db
 
 
 def create_app(config=None):
@@ -8,10 +9,7 @@ def create_app(config=None):
 
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(config)
-
-    @app.route("/")
-    def index():
-        return "Hello, World!"
+    db.init_app(app)
 
     return app
 
