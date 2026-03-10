@@ -27,3 +27,7 @@ extend-select = ["E501"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"site/testing/*.py" = ["ALL"]
+"test_*.py" = ["ALL"]
