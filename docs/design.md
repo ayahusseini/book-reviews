@@ -20,9 +20,11 @@ Design decisions worth noting:
 ## The API 
 
 The Flask blueprint `site/app/blueprints.api.py` handles the api endpoints:
-- `POST /api/books` adds a book and returns the `book_id`. ISBN is required, and this errors if there is a duplicate
-- `PATCH /api/books/<isbn>` updates book fields and errors if the ISBN doesn't exist
-- `POST /api/posts` adds a post/review. Requires either `book_id` or `isbn` (or `None` for either of these to have a stand-alone post)
+- `POST /api/books` adds a book and returns the `book_id`. An OpenLibrary 'works key' is required, and this errors if there is a duplicate or the key doesn't exist. 
+- `PATCH /api/books/<book_id>` updates book fields and errors if the book_id doesn't exist
+- `POST /api/posts` adds a post/review. Mapped to `book_id` or `isbn` (or `None` for either of these to have a stand-alone post)
+
+These endpoints serve JSON rather than a HTML page. 
 
 ## Tech stack
 
@@ -30,13 +32,3 @@ An overview of everything used and a justification for why, how this will scale,
 
 1. [Flask](/docs/flask.md)
 2. [SQLAlchemy](/docs/sqlalchemy.md)
-
-
-
-### Creating ORM classes in SQLALchemy
-
-TODO
-
-### Junction tables in SQLAlchemy
-
-TODO
