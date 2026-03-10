@@ -17,7 +17,7 @@ DEFAULT_TIMEOUT = 10  # seconds
 @dataclass
 class AuthorData:
     author_name: str
-    author_openlibrary_id: str  # e.g. "OL123A"
+    author_openlibrary_id: str
 
 
 @dataclass
@@ -29,8 +29,6 @@ class BookData:
     book_cover_url: Optional[str]
     book_page_count: Optional[int]
     authors: list[AuthorData] = field(default_factory=list)
-    # book_rating is not available from the Open Library data endpoints;
-    # leave as None — callers can populate from a separate source.
     book_rating: Optional[int] = None
 
 
