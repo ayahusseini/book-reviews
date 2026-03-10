@@ -118,6 +118,14 @@ uv run python3 site/scripts/sync_db.py
 
 copies the development SQLite file up to the prod server.
 
+### Runnign tests
+
+Run 
+
+```
+uv run pytest -v
+```
+
 ## Production setup 
 
 Generate a secret key using:
