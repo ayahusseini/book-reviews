@@ -57,6 +57,7 @@ class Author(db.Model):
 
     author_id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
     author_name = db.Column(db.String, nullable=False)
+    author_openlibrary_id = db.Column(db.String, nullable=True, unique=True)
 
     books = db.relationship(
         "Book",
@@ -72,6 +73,7 @@ class Author(db.Model):
         return {
             "author_id": self.author_id,
             "author_name": self.author_name,
+            "author_openlibrary_id": self.author_openlibrary_id,
         }
 
 
@@ -87,7 +89,7 @@ class Book(db.Model):
     book_rating = db.Column(db.Integer, nullable=True)
     book_cover_url = db.Column(db.Text, nullable=True)
     book_page_count = db.Column(db.Integer, nullable=True)
-    book_isbn = db.Column(db.Text, nullable=True)
+    book_isbn = db.Column(db.Text, nullable=False, unique=True)
 
     authors = db.relationship(
         "Author",
@@ -123,6 +125,8 @@ class Book(db.Model):
             "book_rating": self.book_rating,
             "book_cover_url": self.book_cover_url,
             "book_page_count": self.book_page_count,
+            "authors": [a.to_dict() for a in self.authors],
+            "tags": [t.to_dict() for t in self.tags],
         }
 
 
