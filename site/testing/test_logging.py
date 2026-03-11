@@ -1,0 +1,1 @@
+"""Tests the logging setup"""

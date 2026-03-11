@@ -10,3 +10,5 @@ wheels/
 # Virtual environments
 .venv
 .ruff_cache
+
+*.log

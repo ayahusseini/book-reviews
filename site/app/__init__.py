@@ -11,6 +11,7 @@ from app.config import (
     TestingConfig,
     Config,
 )
+from app.setup_logging import setup_logging
 
 
 def read_config_setting(default: str = "development") -> str:
@@ -18,12 +19,14 @@ def read_config_setting(default: str = "development") -> str:
     Defaults to default"""
     load_dotenv()
     if not isinstance(default, str):
-        return TypeError(
+        raise TypeError(
             "The default must be a string"
             + "Instead, got"
             + f"default={default} ({type(default)})"
         )
-    return os.getenv("FLASK_ENV", default).lower()
+
+    config = os.getenv("FLASK_ENV", default).lower()
+    return config
 
 
 def get_config_obj(config_str: str) -> Config:
@@ -49,20 +52,22 @@ def create_app():
     """Create and configure the Flask application."""
 
     config = read_config_setting()
-
     app = Flask(__name__, instance_relative_config=True)
+    setup_logging()
+
     app.config.from_object(get_config_obj(config))
+    app.logger.info(f"Starting app with config: {config}")  # use app.logger
 
     os.makedirs(app.instance_path, exist_ok=True)
 
-    db.init_app(app)
-
     with app.app_context():
+        db.init_app(app)
         db.create_all()
-
-    from app.blueprints.api import api_bp
-
-    app.register_blueprint(api_bp)
+        app.logger.info(
+            "Database initialised with model(s):"
+            + "\n"
+            + ",\n".join(models.get_registered_models())
+        )
 
     return app
 
