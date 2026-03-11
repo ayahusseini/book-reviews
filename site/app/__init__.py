@@ -1,5 +1,6 @@
 """Instantiate the Flask application."""
 
+from dotenv import load_dotenv
 import os
 from flask import Flask
 from app.extensions import db
@@ -12,8 +13,23 @@ from app.config import (
 )
 
 
+def read_config_setting(default: str = "development") -> str:
+    """Reads the config setting from the environment
+    Defaults to default"""
+    load_dotenv()
+    if not isinstance(default, str):
+        return TypeError(
+            "The default must be a string"
+            + "Instead, got"
+            + f"default={default} ({type(default)})"
+        )
+    return os.getenv("FLASK_ENV", default).lower()
+
+
 def get_config_obj(config_str: str) -> Config:
     """Return a Config subclass given a string"""
+    config_str = config_str.strip().lower()
+
     configs = {
         "development": DevelopmentConfig,
         "production": ProductionConfig,
@@ -32,7 +48,7 @@ def get_config_obj(config_str: str) -> Config:
 def create_app():
     """Create and configure the Flask application."""
 
-    config = os.getenv("FLASK_ENV", "development").lower()
+    config = read_config_setting()
 
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(get_config_obj(config))
