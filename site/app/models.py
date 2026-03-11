@@ -10,6 +10,11 @@ from datetime import datetime, timezone
 from app.extensions import db
 
 
+def get_registered_models() -> list[str]:
+    """Return a list of model names registered with SQLAlchemy."""
+    return [mapper.class_.__name__ for mapper in db.Model.registry.mappers]
+
+
 class BookAuthorMapping(db.Model):
     """Junction table containing book-author mappings"""
 
