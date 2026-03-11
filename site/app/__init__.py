@@ -18,6 +18,7 @@ def read_config_setting(default: str = "development") -> str:
     """Reads the config setting from the environment
     Defaults to default"""
     load_dotenv()
+
     if not isinstance(default, str):
         raise TypeError(
             "The default must be a string"
@@ -25,7 +26,7 @@ def read_config_setting(default: str = "development") -> str:
             + f"default={default} ({type(default)})"
         )
 
-    config = os.getenv("FLASK_ENV", default).lower()
+    config = os.getenv("FLASK_ENV", default)
     return config
 
 

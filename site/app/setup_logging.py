@@ -11,7 +11,7 @@ def setup_logging(
 ) -> None:
     """Attach file and console handlers to Flask's logger."""
 
-    formatter = logging.Formatter()
+    formatter = logging.Formatter(format)
 
     file_handler = logging.FileHandler(log_file)
     file_handler.setLevel(logging.DEBUG)
