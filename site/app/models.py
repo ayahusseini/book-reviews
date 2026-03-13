@@ -36,7 +36,7 @@ class BookAuthorMapping(db.Model):
         )
 
 
-class BookToTagMap(db.Model):
+class BookToTagMaping(db.Model):
     """Junction table containing book-tag mappings"""
 
     __tablename__ = "book_to_tag_map"
