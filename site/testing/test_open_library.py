@@ -11,7 +11,8 @@ import pytest
 import requests
 
 from app.database.open_library import (
-    AuthorData,
+    Author,
+    Book,
     build_author_url,
     build_editions_url,
     build_works_url,
@@ -320,6 +321,6 @@ class TestExtractAuthorName:
 class TestParseAuthor:
     def test_returns_author_data(self, author_payload):
         result = parse_author("/authors/OL34184A", author_payload)
-        assert isinstance(result, AuthorData)
+        assert isinstance(result, Author)
         assert result.author_name == "Roald Dahl"
         assert result.author_openlibrary_id == "OL34184A"
