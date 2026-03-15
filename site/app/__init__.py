@@ -61,8 +61,16 @@ def create_app():
 
     os.makedirs(app.instance_path, exist_ok=True)
 
+    from .blueprints.books import books_bp
+    from .blueprints.main import main_bp
+
+    app.register_blueprint(main_bp)
+    app.register_blueprint(books_bp, url_prefix="/books")
+
+    db.init_app(app)
+
     with app.app_context():
-        db.init_app(app)
+        # Creating tables needs the context of the current DB
         db.create_all()
 
         app.logger.info(

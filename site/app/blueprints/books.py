@@ -5,8 +5,8 @@ from flask import Blueprint
 books_bp = Blueprint("books", __name__)
 
 
-@books_bp.route("/books", methods=["GET"])
-def mainbooks():
+@books_bp.route("/", methods=["GET"])
+def book_list():
     return "hello world"
 
 
