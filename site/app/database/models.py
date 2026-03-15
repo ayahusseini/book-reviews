@@ -6,8 +6,29 @@ Schema (from ERD):
     book            ──→ post
 """
 
+from dataclasses import dataclass, field
+from typing import Optional
+
 from datetime import datetime, timezone
 from app.extensions import db
+
+
+@dataclass
+class AuthorData:
+    author_name: str
+    author_openlibrary_id: str
+
+
+@dataclass
+class BookData:
+    book_title: str
+    book_isbn: str
+    book_description: Optional[str]
+    book_publication_year: Optional[int]
+    book_cover_url: Optional[str]
+    book_page_count: Optional[int]
+    authors: list[AuthorData] = field(default_factory=list)
+    book_rating: Optional[int] = None
 
 
 def get_registered_models() -> list[str]:

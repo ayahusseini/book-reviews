@@ -302,11 +302,6 @@ class TestExtractAuthorId:
         assert extract_author_id("OL123A") == "OL123A"
 
 
-# ---------------------------------------------------------------------------
-# extract_author_name
-# ---------------------------------------------------------------------------
-
-
 class TestExtractAuthorName:
     def test_name_field(self, author_payload):
         assert extract_author_name(author_payload) == "Roald Dahl"
@@ -320,11 +315,6 @@ class TestExtractAuthorName:
     def test_neither_raises(self):
         with pytest.raises(KeyError):
             extract_author_name({})
-
-
-# ---------------------------------------------------------------------------
-# parse_author
-# ---------------------------------------------------------------------------
 
 
 class TestParseAuthor:

@@ -4,7 +4,7 @@ from unittest.mock import patch
 from _pytest import config
 import pytest
 import os
-from app import create_app, get_config_obj, read_config_setting
+from app import get_config_obj, read_config_setting
 from app.config import (
     DevelopmentConfig,
     ProductionConfig,

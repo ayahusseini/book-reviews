@@ -1,7 +1,9 @@
 import pytest
+from unittest.mock import patch
 from flask import Flask
 import logging
 from app.config import TestingConfig
+from app import create_app, read_config_setting
 
 
 @pytest.fixture
@@ -13,11 +15,10 @@ def app(scope="session"):
     The app has a scope of session, which means that
     it is only created once per pytest run.
     """
-    app = Flask(__name__)
-    app.config.from_object(TestingConfig)
+    with patch("app.read_config_setting", return_value="testing"):
+        app = create_app()
     app.logger.handlers.clear()
-
-    return app
+    yield app
 
 
 @pytest.fixture(autouse=True)

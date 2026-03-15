@@ -2,34 +2,16 @@
 
 import logging
 import requests
-from dataclasses import dataclass, field
 import re
 
 from typing import Optional
+from app.database.models import AuthorData, BookData
 
 logger = logging.getLogger(__name__)
 
 BASE_URL = "https://openlibrary.org"
 COVER_URL = "https://covers.openlibrary.org/b/id/{cover_id}-L.jpg"
 DEFAULT_TIMEOUT = 10  # seconds
-
-
-@dataclass
-class AuthorData:
-    author_name: str
-    author_openlibrary_id: str
-
-
-@dataclass
-class BookData:
-    book_title: str
-    book_isbn: str
-    book_description: Optional[str]
-    book_publication_year: Optional[int]
-    book_cover_url: Optional[str]
-    book_page_count: Optional[int]
-    authors: list[AuthorData] = field(default_factory=list)
-    book_rating: Optional[int] = None
 
 
 class OpenLibraryError(requests.HTTPError):
