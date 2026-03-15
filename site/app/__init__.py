@@ -70,14 +70,13 @@ def create_app():
     db.init_app(app)
 
     with app.app_context():
-        # Creating tables needs the context of the current DB
         db.create_all()
 
-        app.logger.info(
-            "Database initialised with model(s):"
-            + "\n"
-            + ",\n".join(models.get_registered_models())
-        )
+    app.logger.info(
+        "Database initialised with model(s):"
+        + "\n"
+        + ",\n".join(models.get_registered_models())
+    )
 
     return app
 
