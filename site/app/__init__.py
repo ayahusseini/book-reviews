@@ -52,7 +52,7 @@ def get_config_obj(config_str: str) -> Config:
 def create_app():
     """Create and configure the Flask application."""
 
-    config = read_config_setting()
+    config = read_config_setting(default="development")
     app = Flask(__name__, instance_relative_config=True)
     setup_logging()
 
