@@ -53,13 +53,13 @@ These enforce:
 
 3. Run the development server. The Flask CLI knows how to find and call `create_app()` automatically when you point `--app` at the `site/app` package. 
 
-```
+```sh
 uv run flask --app site/app run
 ```
 
 This defaults to running with the `DevelopmentConfig`. You can switch configs at the command line:
 
-```
+```sh
 # development (default)
 uv run flask --app site/app run --debug
 
@@ -75,7 +75,7 @@ FLASK_ENV=production uv run flask --app site/app run
 The Flask Shell is a Python REPL that runs inside the application context. `db`, models, and anything else that is configured are already available. The 
 Flask Shell is useful for querying the database and playing with app config:
 
-```
+```sh
 uv run flask --app site/app shell
 ```
 
@@ -85,6 +85,14 @@ Within the REPL, you can run commands like:
 from app.models import Book, Author 
 Book.query.all()
 db.session.execute(...)
+```
+
+### Querying the local DB
+
+The development DB is a local SQLite3 file, you can query it like so:
+
+```sh
+sqlite3 app/instance/site.db "SELECT * from books"
 ```
 
 ### Adding reviews

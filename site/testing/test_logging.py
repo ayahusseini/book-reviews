@@ -35,7 +35,7 @@ def test_setup_logging_adds_streamhandler(app):
         h for h in app.logger.handlers if isinstance(h, logging.StreamHandler)
     ]
     assert len(stream_handlers) >= 1
-    assert stream_handlers[-1].level == logging.WARNING
+    assert stream_handlers[-1].level == logging.INFO
 
 
 def test_setup_logging_format_is_applied():

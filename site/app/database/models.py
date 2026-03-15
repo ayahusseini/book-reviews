@@ -92,6 +92,7 @@ class Book(db.Model):
     book_description = db.Column(db.Text, nullable=True)
     book_publication_year = db.Column(db.Integer, nullable=True)
     book_rating = db.Column(db.Integer, nullable=True)
+    book_rating_goodreads = db.Column(db.Integer, nullable=True)
     book_cover_url = db.Column(db.Text, nullable=True)
     book_page_count = db.Column(db.Integer, nullable=True)
     book_isbn = db.Column(db.Text, nullable=False, unique=True)
