@@ -4,6 +4,7 @@ from flask import Flask
 import logging
 from app.config import TestingConfig
 from app import create_app, read_config_setting
+from app.extensions import db as _db
 
 
 @pytest.fixture
@@ -19,6 +20,18 @@ def app(scope="session"):
         app = create_app()
     app.logger.handlers.clear()
     yield app
+
+
+@pytest.fixture
+def db(app, scope="function"):
+    """
+    Create a empty DB with the expected schema
+    """
+    with app.app_context():
+        _db.create_all()
+        yield _db
+        _db.session.remove()
+        _db.drop_all()
 
 
 @pytest.fixture(autouse=True)
