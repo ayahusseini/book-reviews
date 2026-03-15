@@ -44,13 +44,13 @@ class BookAuthorMapping(db.Model):
     __tablename__ = "book_author_mapping"
 
     book_author_mapping_id = db.Column(
-        db.BigInteger, primary_key=True, autoincrement=True
+        db.Integer(), primary_key=True, autoincrement=True
     )
     author_id = db.Column(
-        db.BigInteger, db.ForeignKey("author.author_id"), nullable=False
+        db.Integer(), db.ForeignKey("author.author_id"), nullable=False
     )
     book_id = db.Column(
-        db.BigInteger, db.ForeignKey("book.book_id"), nullable=False
+        db.Integer(), db.ForeignKey("book.book_id"), nullable=False
     )
 
     def __repr__(self):
@@ -65,13 +65,13 @@ class BookToTagMaping(db.Model):
     __tablename__ = "book_to_tag_map"
 
     book_to_tag_map_id = db.Column(
-        db.BigInteger, primary_key=True, autoincrement=True
+        db.Integer(), primary_key=True, autoincrement=True
     )
     book_id = db.Column(
-        db.BigInteger, db.ForeignKey("book.book_id"), nullable=False
+        db.Integer(), db.ForeignKey("book.book_id"), nullable=False
     )
     tag_id = db.Column(
-        db.BigInteger, db.ForeignKey("tag.tag_id"), nullable=False
+        db.Integer(), db.ForeignKey("tag.tag_id"), nullable=False
     )
 
     def __repr__(self):
@@ -83,9 +83,11 @@ class Author(db.Model):
 
     __tablename__ = "author"
 
-    author_id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
-    author_name = db.Column(db.String, nullable=False)
-    author_openlibrary_id = db.Column(db.String, nullable=True, unique=True)
+    author_id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    author_name = db.Column(db.String(750), nullable=False)
+    author_openlibrary_id = db.Column(
+        db.String(250), nullable=True, unique=True
+    )
 
     books = db.relationship(
         "Book",
@@ -110,7 +112,7 @@ class Book(db.Model):
 
     __tablename__ = "book"
 
-    book_id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
+    book_id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     book_title = db.Column(db.String, nullable=False)
     book_description = db.Column(db.Text, nullable=True)
     book_publication_year = db.Column(db.Integer, nullable=True)
@@ -191,7 +193,7 @@ class Post(db.Model):
 
     __tablename__ = "post"
 
-    post_id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
+    post_id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     book_id = db.Column(
         db.Integer, db.ForeignKey("book.book_id"), nullable=True
     )
