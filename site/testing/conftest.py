@@ -5,15 +5,18 @@ from app.config import TestingConfig
 
 
 @pytest.fixture
-def app():
+def app(scope="session"):
     """
     Create a minimal Flask app for testing.
-    This uses an in-memory SQLite database
+    This uses an in-memory SQLite database.
+
+    The app has a scope of session, which means that
+    it is only created once per pytest run.
     """
     app = Flask(__name__)
     app.config.from_object(TestingConfig)
     app.logger.handlers.clear()
-    return app
+
     return app
 
 
