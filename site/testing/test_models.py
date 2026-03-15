@@ -26,3 +26,16 @@ def test_author_in_db(app, db):
         db.session.commit()
 
     assert is_author_in_db("EXISTING_ID")
+
+
+def test_author_not_in_db(app, db):
+    with app.app_context():
+        author = Author(author_name="a", author_openlibrary_id="EXISTING_ID")
+        from sqlalchemy import inspect
+
+        inpsector = inspect(db.engine)
+        print(inpsector.get_columns("author"))
+        db.session.add(author)
+        db.session.commit()
+
+    assert not is_author_in_db("NOT_EXISTING_ID")
