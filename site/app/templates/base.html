@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>HusseiniReads</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="site-wrapper">
+        <nav>
+            <h1>📖 HusseiniReads</h1>
+            <a href="{{ url_for('books.book_list') }}">Books</a> | <a href="{{ url_for('homepage.about') }}">About</a>
+        </nav>
+        <section class="content">
+            <header>
+                {% block header %}{% endblock %}
+            </header>
+            <main>
+                {% block main_content %}{% endblock %}
+            </main>
+        </section>
+    </div>
+</body>
+</html>

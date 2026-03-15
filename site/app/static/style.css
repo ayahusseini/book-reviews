@@ -1,0 +1,445 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Source+Code+Pro:wght@400;600&display=swap');
+
+/* ── CSS Variables ── */
+:root {
+  --bg:           #290d68;
+  --bg-alt:       #342fc7;
+  --border:       #2980c7;
+  --text:         #dee7e8;
+  --text-muted:   #3a818f;
+  --link:         #83669b;
+  --link-hover:   #dfcfe7;
+  --accent:       #8b1379;
+  --code-bg:      #1e3d54;
+  --heading-font: 'Lora', Georgia, serif;
+  --body-font:    'Lora', Georgia, serif;
+  --mono-font:    'Source Code Pro', 'Courier New', monospace;
+  --max-width:    720px;
+  --gap:          1.5rem;
+}
+
+/* ── Reset & Base ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 17px;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--body-font);
+  line-height: 1.75;
+  min-height: 100vh;
+
+}
+
+/* ── Skip Link ── */
+.skip-link {
+  position: absolute;
+  top: -999px;
+  left: 1rem;
+  background: var(--accent);
+  color: #fff;
+  padding: 0.4em 0.8em;
+  font-family: var(--mono-font);
+  font-size: 0.8rem;
+  text-decoration: none;
+  z-index: 999;
+}
+.skip-link:focus { top: 1rem; }
+
+/* ── Layout ── */
+.site-wrapper {
+  max-width: var(--max-width);
+  margin: 1rem auto;
+  padding: 1.25rem;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.05); /* subtle background for contrast */
+}
+
+/* ── Header ── */
+.site-header {
+  border-bottom: 2px solid var(--border);
+  padding: 1.5rem 0 1rem;
+  margin-bottom: var(--gap);
+}
+
+.site-title {
+  font-family: var(--heading-font);
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.site-title:hover { color: var(--link-hover); }
+
+.site-tagline {
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--text-muted);
+  margin-top: 0.1rem;
+}
+
+/* ── Navigation ── */
+.site-nav {
+  margin-top: 0.75rem;
+  font-family: var(--mono-font);
+  font-size: 0.78rem;
+}
+
+.site-nav ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0;
+}
+
+.site-nav li::after {
+  content: ' · ';
+  color: var(--border);
+  margin: 0 0.3rem;
+}
+
+.site-nav li:last-child::after { content: ''; }
+
+.site-nav a {
+  color: var(--link);
+  text-decoration: none;
+}
+
+.site-nav a:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
+
+.site-nav a[aria-current="page"] {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+/* ── Main Content ── */
+main {
+  padding-bottom: 3rem;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--heading-font);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text);
+  margin-top: calc(var(--gap) * 1.5);
+  margin-bottom: 0.5rem;
+}
+
+h1 { font-size: 1.9rem; margin-top: var(--gap); }
+h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: 0.25rem; }
+h3 { font-size: 1.1rem; }
+h4 { font-size: 1rem; font-style: italic; }
+
+p {
+  margin-bottom: 1rem;
+}
+
+em { font-style: italic; }
+strong { font-weight: 600; }
+
+small, .small {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ── Links ── */
+a {
+  color: var(--link);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  color: var(--link-hover);
+}
+
+a:visited {
+  color: #7a5230;
+}
+
+/* ── Lists ── */
+ul, ol {
+  padding-left: 1.4rem;
+  margin-bottom: 1rem;
+}
+
+li {
+  margin-bottom: 0.25rem;
+}
+
+ul li::marker {
+  color: var(--text-muted);
+}
+
+/* ── Blockquote ── */
+blockquote {
+  border-left: 3px solid var(--border);
+  margin: 1.25rem 0;
+  padding: 0.5rem 1rem;
+  color: var(--text-muted);
+  font-style: italic;
+  background: var(--bg-alt);
+}
+
+blockquote cite {
+  display: block;
+  font-size: 0.82rem;
+  margin-top: 0.4rem;
+  font-style: normal;
+}
+
+/* ── Code ── */
+code, kbd, samp {
+  font-family: var(--mono-font);
+  font-size: 0.85em;
+  background: var(--code-bg);
+  padding: 0.1em 0.35em;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+}
+
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 1rem;
+  overflow-x: auto;
+  margin-bottom: 1rem;
+  font-family: var(--mono-font);
+  font-size: 0.83rem;
+  line-height: 1.6;
+}
+
+pre code {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+/* ── Horizontal Rule ── */
+hr {
+  border: none;
+  border-top: 1px dashed var(--border);
+  margin: var(--gap) 0;
+}
+
+/* ── Cards / Boxes ── */
+.box {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 1rem 1.25rem;
+  margin-bottom: var(--gap);
+}
+
+.box--notice {
+  border-left: 4px solid var(--accent);
+}
+
+/* ── Tables ── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  margin-bottom: var(--gap);
+}
+
+th {
+  font-family: var(--mono-font);
+  font-size: 0.78rem;
+  text-align: left;
+  border-bottom: 2px solid var(--border);
+  padding: 0.4rem 0.6rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+td {
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid var(--bg-alt);
+}
+
+tr:hover td {
+  background: var(--bg-alt);
+}
+
+/* ── Forms ── */
+label {
+  display: block;
+  font-family: var(--mono-font);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="search"],
+input[type="password"],
+input[type="url"],
+textarea,
+select {
+  display: block;
+  width: 100%;
+  padding: 0.45rem 0.65rem;
+  font-family: var(--body-font);
+  font-size: 0.95rem;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  outline: none;
+  margin-bottom: 0.9rem;
+  transition: border-color 0.15s;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(139,69,19,0.12);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* ── Buttons ── */
+.btn, button, input[type="submit"] {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  font-family: var(--mono-font);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--bg);
+  background: var(--accent);
+  border: 2px solid var(--accent);
+  border-radius: 2px;
+  cursor: pointer;
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn:hover, button:hover, input[type="submit"]:hover {
+  background: var(--link-hover);
+  border-color: var(--link-hover);
+  color: #fff;
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--accent);
+}
+
+.btn--ghost:hover {
+  background: var(--bg-alt);
+  color: var(--link-hover);
+  border-color: var(--link-hover);
+}
+
+/* ── Flash Messages ── */
+.flash-messages {
+  margin-bottom: var(--gap);
+}
+
+.flash {
+  padding: 0.6rem 1rem;
+  border-radius: 2px;
+  font-size: 0.88rem;
+  font-family: var(--mono-font);
+  margin-bottom: 0.5rem;
+  border-left: 4px solid;
+}
+
+.flash--success {
+  background: #edf5e8;
+  border-color: #5a8a3c;
+  color: #2d4a1e;
+}
+
+.flash--error {
+  background: #f9ebe8;
+  border-color: #b03a2e;
+  color: #6b1e17;
+}
+
+.flash--info {
+  background: var(--bg-alt);
+  border-color: var(--border);
+  color: var(--text-muted);
+}
+
+/* ── Footer ── */
+.site-footer {
+  border-top: 1px dashed var(--border);
+  padding: 1.5rem 0;
+  margin-top: var(--gap);
+  font-family: var(--mono-font);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-align: left;
+  line-height: 1.9;
+}
+
+.site-footer a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
+
+/* ── Webring / Badge Area ── */
+.webring {
+  font-family: var(--mono-font);
+  font-size: 0.75rem;
+  text-align: left;
+  color: var(--text-muted);
+  margin: 1rem 0;
+}
+
+.webring a { color: var(--link); }
+
+/* ── Utility ── */
+.text-center { text-align: center; }
+.text-muted   { color: var(--text-muted); }
+.mono         { font-family: var(--mono-font); }
+.mt           { margin-top: var(--gap); }
+.mb           { margin-bottom: var(--gap); }
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  html { font-size: 16px; }
+  h1   { font-size: 1.55rem; }
+  .site-nav ul { gap: 0; }
+}

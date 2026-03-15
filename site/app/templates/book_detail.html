@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block header %}
+<h2>{{ book.book_title }}</h2>
+{% endblock %}
+
+{% block main_content %}
+<p><strong>Author(s):</strong> {% for author in book.authors %}{{ author.author_name }}{% if not loop.last %}, {% endif %}{% endfor %}</p>
+<p><strong>Description:</strong> {{ book.book_description or 'No description available.' }}</p>
+<p><strong>Rating:</strong> {{ book.book_rating }}/5</p>
+<p><strong>Publication Year:</strong> {{ book.book_publication_year or 'Unknown' }}</p>
+<p><strong>Page Count:</strong> {{ book.book_page_count or 'Unknown' }}</p>
+{% if book.book_cover_url %}
+<img src="{{ book.book_cover_url }}" alt="Cover of {{ book.book_title }}" style="max-width: 200px;">
+{% endif %}
+<a href="{{ url_for('books.book_list') }}">Back to Book List</a>
+{% endblock %}
