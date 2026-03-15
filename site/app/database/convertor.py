@@ -33,9 +33,7 @@ def add_by_ol_id(db: SQLAlchemy, ol_ids: list[str]):
     books = []
     for olid in ol_ids:
         if not is_book_in_db(olid):
-            print(1)
             books.append(fetch_book_data(olid))
-            print(2)
     db.session.bulk_save_objects(books)
     db.session.commit()
 
