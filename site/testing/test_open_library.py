@@ -10,7 +10,7 @@ from __future__ import annotations
 import pytest
 import requests
 
-from app.open_library import (
+from app.database.open_library import (
     AuthorData,
     build_author_url,
     build_editions_url,
