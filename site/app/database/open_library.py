@@ -5,7 +5,7 @@ import requests
 import re
 
 from typing import Optional
-from app.database.models import AuthorData, BookData
+from app.database.models import Author, Book
 
 logger = logging.getLogger(__name__)
 
@@ -230,24 +230,24 @@ def extract_author_name(author_data: dict) -> str:
     return author_data["personal_name"]
 
 
-def parse_author(author_key: str, author_data: dict) -> AuthorData:
+def parse_author(author_key: str, author_data: dict) -> Author:
     """
-    Build an :class:`AuthorData` from a raw key and author payload.
+    Build an :class:`Author` from a raw key and author payload.
     """
-    return AuthorData(
+    return Author(
         author_name=extract_author_name(author_data),
         author_openlibrary_id=extract_author_id(author_key),
     )
 
 
-def fetch_all_authors(author_keys: list[str]) -> list[AuthorData]:
+def fetch_all_authors(author_keys: list[str]) -> list[Author]:
     """
     Fetch and parse every author in *author_keys*.
 
     Authors whose network request or parsing fails are skipped with a
     printed warning so one bad author doesn't abort the whole import.
     """
-    authors: list[AuthorData] = []
+    authors: list[Author] = []
     for key in author_keys:
         try:
             data = fetch_author_data(key)
@@ -257,7 +257,7 @@ def fetch_all_authors(author_keys: list[str]) -> list[AuthorData]:
     return authors
 
 
-def fetch_book_data(ol_works_key: str) -> BookData:
+def fetch_book_data(ol_works_key: str) -> Book:
     """
     Main entry point.
 
@@ -265,16 +265,17 @@ def fetch_book_data(ol_works_key: str) -> BookData:
     ``"/works/OL45804W"``), fetch all data required to populate
     :class:`Book`, :class:`Author`, and :class:`BookAuthorMapping`.
 
-    Returns a fully populated :class:`BookData` instance.
+    Returns a fully populated :class:`Book` instance.
     """
     works = fetch_works_data(ol_works_key)
     editions = fetch_editions_data(ol_works_key)
     author_keys = extract_author_keys(works)
     authors = fetch_all_authors(author_keys)
 
-    return BookData(
+    return Book(
         book_title=extract_title(works),
         book_isbn=extract_isbn(editions),
+        book_ol_key=ol_works_key,
         book_description=extract_description(works),
         book_publication_year=extract_publication_year(editions),
         book_cover_url=extract_cover_url(works),
@@ -284,4 +285,4 @@ def fetch_book_data(ol_works_key: str) -> BookData:
 
 
 if __name__ == "__main__":
-    print(fetch_book_data("OL2743111W"))
+    print(fetch_book_data("OL42549900W"))

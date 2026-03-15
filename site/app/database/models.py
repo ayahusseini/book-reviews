@@ -6,29 +6,8 @@ Schema (from ERD):
     book            ──→ post
 """
 
-from dataclasses import dataclass, field
-from typing import Optional
-
 from datetime import datetime, timezone
 from app.extensions import db
-
-
-@dataclass
-class AuthorData:
-    author_name: str
-    author_openlibrary_id: str
-
-
-@dataclass
-class BookData:
-    book_title: str
-    book_isbn: str
-    book_description: Optional[str]
-    book_publication_year: Optional[int]
-    book_cover_url: Optional[str]
-    book_page_count: Optional[int]
-    authors: list[AuthorData] = field(default_factory=list)
-    book_rating: Optional[int] = None
 
 
 def get_registered_models(database=db) -> list[str]:
@@ -113,14 +92,15 @@ class Book(db.Model):
     __tablename__ = "book"
 
     book_id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
-    book_title = db.Column(db.String, nullable=False)
+    book_ol_key = db.Column(db.String(250), nullable=False, unique=True)
+    book_title = db.Column(db.String(250), nullable=False)
     book_description = db.Column(db.Text, nullable=True)
-    book_publication_year = db.Column(db.Integer, nullable=True)
-    book_rating = db.Column(db.Integer, nullable=True)
-    book_rating_goodreads = db.Column(db.Integer, nullable=True)
-    book_cover_url = db.Column(db.Text, nullable=True)
-    book_page_count = db.Column(db.Integer, nullable=True)
-    book_isbn = db.Column(db.Text, nullable=False, unique=True)
+    book_publication_year = db.Column(db.Integer(), nullable=True)
+    book_rating = db.Column(db.Integer(), nullable=True)
+    book_rating_goodreads = db.Column(db.Integer(), nullable=True)
+    book_cover_url = db.Column(db.Text(), nullable=True)
+    book_page_count = db.Column(db.Integer(), nullable=True)
+    book_isbn = db.Column(db.Text(), nullable=True)
 
     authors = db.relationship(
         "Author",

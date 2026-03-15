@@ -92,41 +92,10 @@ db.session.execute(...)
 The development DB is a local SQLite3 file, you can query it like so:
 
 ```sh
-sqlite3 app/instance/site.db "SELECT * from books"
+sqlite3 site/instance/site.db "SELECT * from book"
 ```
 
-### Adding reviews
-
-To add a review, write a markdown file with simple frontmatter in your editor:
-
-```
----
-book_title: REQUIRED
-book_isbn: REQUIRED
-book_rating: OPTIONAL (OUT OF 5)
----
-
-Review content
-```
-
-Fields like `book_publication_year`, `book_description`, `book_cover_url` , `book_page_count` can also be manually set. Otherwise, they get inferred from the ISBN.
-
-After creating the markdown file, use it as an input to `post_review.py`. First, run it with `--env dev`
-
-```sh
-uv run python3 site/scripts/post_review.py site/reviews/<example_book>.md 
-```
-
-When run, the `POST` request is made to the development app in `localhost:5000`. Check it looks right in the browser. If you're satisfied, the dev SQLite3 is now the source of truth. 
-
-
-```sh
-uv run python3 site/scripts/sync_db.py
-```
-
-copies the development SQLite file up to the prod server.
-
-### Runnign tests
+### Running tests
 
 Run 
 
@@ -134,10 +103,35 @@ Run
 uv run pytest -v
 ```
 
+## Running helper modules (must be run from `site/`)
+
+Some internal helpers live under `site/app`. Running them from the repository root normally fails with:
+
+> ModuleNotFoundError: No module named 'app'
+
+To avoid that, either:
+
+- run from inside `site/`, or
+- set `PYTHONPATH=site` when invoking Python.
+
+For example, to run the Open Library helper:
+
+```sh
+cd site
+uv run python -m app.database.open_library OL2743111W
+```
+
+Or (from the repo root):
+
+```sh
+PYTHONPATH=site uv run python -m app.database.open_library OL2743111W
+```
+
 ## Production setup 
 
 Generate a secret key using:
-```
+
+```sh
 chmod +x scripts/generate_secret_key.sh
 ./scripts/generate_secret_key.sh
 ```
