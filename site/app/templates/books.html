@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block header %}
+<h2>Book List</h2>
+{% endblock %}
+
+{% block main_content %}
+<p>Here are the books I've read this year:</p>
+<ul>
+    {% for book in books %}
+    <li><a href="{{ url_for('books.book_detail', book_id=book.book_id) }}">{{ book.book_title }}</a> by {{ book.authors[0].author_name if book.authors else 'Unknown' }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

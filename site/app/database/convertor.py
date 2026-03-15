@@ -43,9 +43,16 @@ def add_by_ol_id(db: SQLAlchemy, seed_data: list[dict]):
                 book.book_rating = item["rating"]
             if "description" in item:
                 book.book_description = item["description"]
+            # Merge authors to handle existing ones and avoid duplicates
+            merged_authors = []
+            for author in book.authors:
+                merged_authors.append(db.session.merge(author))
+            book.authors = merged_authors
             books.append(book)
-    db.session.bulk_save_objects(books)
-    db.session.commit()
+    if books:
+        db.session.add_all(books)
+        db.session.commit()
+        print(f"Added {len(books)} new books")
 
 
 if __name__ == "__main__":

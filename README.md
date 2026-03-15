@@ -70,6 +70,13 @@ FLASK_ENV=testing uv run flask --app site/app run
 FLASK_ENV=production uv run flask --app site/app run
 ```
 
+### Seeding 
+
+```sh
+cd site
+uv run python -m app.database.convertor
+```
+
 ### Using the Flask Shell
 
 The Flask Shell is a Python REPL that runs inside the application context. `db`, models, and anything else that is configured are already available. The 
@@ -118,7 +125,7 @@ For example, to run the Open Library helper:
 
 ```sh
 cd site
-uv run python -m app.database.open_library OL2743111W
+uv run python -m app.database.open_library
 ```
 
 Or (from the repo root):
