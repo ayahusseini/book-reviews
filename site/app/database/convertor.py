@@ -1,15 +1,17 @@
-"""Script which contains helper functions for converting
+"""
+Script which contains helper functions for converting
 different formats
 into entries within the SQLAlchemy database
 """
 
+import json
 from flask_sqlalchemy import SQLAlchemy
 from app.extensions import db
 from app import create_app
 from app.database.open_library import fetch_book_data
 from app.database.models import Author, Book
 
-SEED = "app/database/book_olid_seed.txt"
+SEED = "app/database/book_seed.json"
 
 
 def is_author_in_db(ol_id: str):
@@ -25,25 +27,30 @@ def is_book_in_db(ol_id: str):
     return bool(book)
 
 
-def add_by_ol_id(db: SQLAlchemy, ol_ids: list[str]):
+def add_by_ol_id(db: SQLAlchemy, seed_data: list[dict]):
     """
     Batch adds a list of books to the session and commits.
-    Books are defined by ol_id
+    Books are defined by seed data dicts with 'olid' and optional fields.
     """
     books = []
-    for olid in ol_ids:
+    for item in seed_data:
+        olid = item["olid"]
         if not is_book_in_db(olid):
-            books.append(fetch_book_data(olid))
+            print(f"Fetching data for {olid}")
+            book = fetch_book_data(olid)
+            # Override with seed data if provided
+            if "rating" in item:
+                book.book_rating = item["rating"]
+            if "description" in item:
+                book.book_description = item["description"]
+            books.append(book)
     db.session.bulk_save_objects(books)
     db.session.commit()
 
 
 if __name__ == "__main__":
-    seeds = []
     with open(SEED, "r") as f:
-        for line in f.readlines():
-            if line.strip():
-                seeds.append(line.strip())
+        seeds = json.load(f)
 
     a = create_app()
     with a.app_context():
