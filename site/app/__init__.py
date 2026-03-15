@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import os
 from flask import Flask
 from app.extensions import db
-from app import models as models
+from app.database import models as models
 from app.config import (
     DevelopmentConfig,
     ProductionConfig,
