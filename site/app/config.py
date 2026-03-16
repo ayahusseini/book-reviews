@@ -27,6 +27,7 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     DEBUG = False
     SECRET_KEY = "test"
+    TESTING = True
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
 
 

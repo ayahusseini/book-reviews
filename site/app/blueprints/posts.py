@@ -1,0 +1,25 @@
+"""Blueprint for Markdown-backed posts."""
+
+from __future__ import annotations
+
+from flask import Blueprint, abort, render_template
+
+from app.content.markdown_posts import render_markdown_to_safe_html
+from app.database.models import Post
+
+posts_bp = Blueprint("posts", __name__)
+
+
+@posts_bp.route("/", methods=["GET"])
+def post_list():
+    posts = Post.query.order_by(Post.post_created_at.desc()).all()
+    return render_template("posts.html", posts=posts)
+
+
+@posts_bp.route("/<string:slug>", methods=["GET"])
+def post_detail(slug: str):
+    post = Post.query.filter_by(post_slug=slug).first()
+    if not post:
+        abort(404)
+    post_html = render_markdown_to_safe_html(post.post_body_markdown)
+    return render_template("post_detail.html", post=post, post_html=post_html)

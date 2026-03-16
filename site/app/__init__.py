@@ -3,7 +3,7 @@
 from dotenv import load_dotenv
 import os
 from flask import Flask
-from app.extensions import db
+from app.extensions import db, migrate
 from app.database import models as models
 from app.config import (
     DevelopmentConfig,
@@ -64,14 +64,24 @@ def create_app():
 
     from .blueprints.books import books_bp
     from .blueprints.main import main_bp
+    from .blueprints.posts import posts_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(books_bp, url_prefix="/books")
+    app.register_blueprint(posts_bp, url_prefix="/posts")
 
     db.init_app(app)
+    migrate.init_app(app, db)
 
-    with app.app_context():
-        db.create_all()
+    from . import cli as cli_module
+
+    cli_module.init_app(app)
+
+    if app.config.get("TESTING", False):
+        # Only auto-create tables for tests
+        # Otherwise, rely on migrations
+        with app.app_context():
+            db.create_all()
 
     app.logger.info(
         "Database initialised with model(s):"
