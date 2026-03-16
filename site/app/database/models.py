@@ -174,6 +174,8 @@ class Post(db.Model):
     __tablename__ = "post"
 
     post_id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    post_slug = db.Column(db.String(250), nullable=False, unique=True)
+    post_source_path = db.Column(db.Text, nullable=False, unique=True)
     book_id = db.Column(
         db.Integer, db.ForeignKey("book.book_id"), nullable=True
     )
@@ -208,6 +210,8 @@ class Post(db.Model):
     def to_dict(self) -> dict:
         return {
             "post_id": self.post_id,
+            "post_slug": self.post_slug,
+            "post_source_path": self.post_source_path,
             "book_id": self.book_id,
             "post_title": self.post_title,
             "post_author": self.post_author,

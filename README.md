@@ -77,6 +77,60 @@ cd site
 uv run python -m app.database.convertor
 ```
 
+## Writing posts as Markdown (content workflow)
+
+Posts live as Markdown files under `site/app/content/posts/` and get imported into the database.
+
+### Markdown format (YAML frontmatter)
+
+Example:
+
+```md
+---
+title: "My review"
+author: "Aya"
+type: "review"
+book_ol_key: "OL42549900W"
+tags:
+  - "non-fiction"
+  - "favourites"
+---
+
+## Heading
+
+Your post body in Markdown...
+```
+
+- **`book_ol_key`**: must reference a book that already exists in the DB (seed books first).
+- **`tags`**: any tags that don’t exist yet will be created and attached to the referenced book.
+- **Idempotency**: a post is updated on re-import based on its relative source path, with a fallback to its slug (defaults to filename).
+
+### Import Markdown posts into the DB
+
+From `site/`:
+
+```sh
+uv run flask --app app import-posts
+```
+
+To import from a custom directory:
+
+```sh
+uv run flask --app app import-posts --path /path/to/posts
+```
+
+## Database migrations
+
+This repo uses Flask-Migrate (Alembic). When you change `site/app/database/models.py`, generate and apply a migration:
+
+```sh
+cd site
+uv run flask --app app db migrate -m "describe schema change"
+uv run flask --app app db upgrade
+```
+
+In production, run `db upgrade` as part of deployment.
+
 ### Using the Flask Shell
 
 The Flask Shell is a Python REPL that runs inside the application context. `db`, models, and anything else that is configured are already available. The 
@@ -110,6 +164,37 @@ Run
 uv run pytest -v
 ```
 
+### Running migrations 
+
+```sh
+cd site
+uv run flask --app app db init          # creates migrations/ directory
+
+# after any schema change in models.py
+uv run flask --app app db migrate -m "add posts table"    # generates revision
+uv run flask --app app db upgrade                         # apply to dev DB
+```
+
+### Adding new books 
+
+Edit `site/app/database/book_seed.json` to add new entries
+```json
+[
+  {
+    "olid": "OL2743111W",
+    "rating": 5,
+    "description": "A favourite book..."
+  }
+]
+```
+- The OLID is the OpenLibrary Works ID
+- The rating must be out of 5
+
+```sh
+cd site
+uv run python -m app.database.convertor
+```
+
 ## Running helper modules (must be run from `site/`)
 
 Some internal helpers live under `site/app`. Running them from the repository root normally fails with:
@@ -133,6 +218,7 @@ Or (from the repo root):
 ```sh
 PYTHONPATH=site uv run python -m app.database.open_library OL2743111W
 ```
+
 
 ## Production setup 
 

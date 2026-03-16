@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block header %}
+<h2>Posts</h2>
+{% endblock %}
+
+{% block main_content %}
+{% if posts %}
+<ul>
+  {% for post in posts %}
+    <li>
+      <a href="{{ url_for('posts.post_detail', slug=post.post_slug) }}">{{ post.post_title }}</a>
+      <small>by {{ post.post_author }}{% if post.post_type %} ({{ post.post_type }}){% endif %}</small>
+    </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>No posts yet. Add Markdown files under <code>site/app/content/posts</code> and run the importer.</p>
+{% endif %}
+{% endblock %}
+
