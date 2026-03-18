@@ -10,7 +10,7 @@ from __future__ import annotations
 import pytest
 import requests
 
-from app.database.open_library import (
+from seed_database.open_library import (
     Author,
     Book,
     build_author_url,
