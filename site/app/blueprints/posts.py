@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from flask import Blueprint, abort, render_template
 
-from app.content.markdown_posts import render_markdown_to_safe_html
+from content.markdown_posts import render_markdown_to_safe_html
 from app.database.models import Post
 
 posts_bp = Blueprint("posts", __name__)

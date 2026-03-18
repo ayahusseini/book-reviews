@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from app.content.markdown_posts import (
+from content.markdown_posts import (
     extract_tags,
     parse_markdown_with_frontmatter,
     render_markdown_to_safe_html,
