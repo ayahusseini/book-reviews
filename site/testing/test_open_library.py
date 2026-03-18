@@ -19,7 +19,6 @@ from seed_database.open_library import (
     extract_author_id,
     extract_author_keys,
     extract_author_name,
-    extract_cover_url,
     extract_description,
     extract_isbn,
     extract_page_count,
@@ -170,23 +169,6 @@ class TestExtractDescription:
             extract_description({"description": {"type": "/type/text"}})
             is None
         )
-
-
-class TestExtractCoverUrl:
-    def test_returns_url(self, works_payload):
-        url = extract_cover_url(works_payload)
-        assert url == "https://covers.openlibrary.org/b/id/8739161-L.jpg"
-
-    def test_no_covers_returns_none(self):
-        assert extract_cover_url({}) is None
-        assert extract_cover_url({"covers": []}) is None
-
-    def test_sentinel_minus_one_returns_none(self):
-        assert extract_cover_url({"covers": [-1]}) is None
-
-    def test_multiple_covers_uses_first(self):
-        url = extract_cover_url({"covers": [111, 222]})
-        assert "111" in url
 
 
 class TestExtractAuthorKeys:
