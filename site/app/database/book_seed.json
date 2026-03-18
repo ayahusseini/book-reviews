@@ -2,21 +2,25 @@
   {
     "olid": "OL42549900W", 
     "comment": "Flesh",
-    "rating": 4.5
+    "rating": 4.5,
+    "tags": ["2026"]
   },
   {
     "olid": "OL21177W", 
     "comment": "Wuthering Heights",
-    "rating": 5
+    "rating": 5,
+    "tags": ["2026"]
   },
   {
     "olid": "OL34032834W", 
     "comment": "A Day in the Life of Abed Salama",
-    "rating": 4
+    "rating": 4,
+    "tags": ["2026"]
   },
   {
     "olid": "OL66562W", 
     "comment": "Sense and Sensibility",
-    "rating": 3
+    "rating": 3,
+    "tags": ["2026"]
   }
 ]
