@@ -13,14 +13,32 @@
             <a href="{{ url_for('posts.post_list') }}">Posts</a> |
             <a href="{{ url_for('homepage.about') }}">About</a>
         </nav>
-        <section class="content">
-            <header>
-                {% block header %}{% endblock %}
-            </header>
-            <main>
-                {% block main_content %}{% endblock %}
-            </main>
-        </section>
+        <div class="page-layout">
+            <section class="content">
+                <header>
+                    {% block header %}{% endblock %}
+                </header>
+                <main>
+                    {% block main_content %}{% endblock %}
+                </main>
+            </section>
+            <aside class="sidebar">
+                {% if random_quote %}
+                <div class="sidebar-widget">
+                    <h4 class="sidebar-heading">Quote</h4>
+                    <blockquote class="sidebar-quote">
+                        {{ random_quote.post_body_markdown }}
+                    </blockquote>
+                    {% if random_quote.book %}
+                    <p class="sidebar-quote-source">
+                        — <a href="{{ url_for('books.book_detail', book_id=random_quote.book.book_id) }}">{{ random_quote.book.book_title }}</a>
+                    </p>
+                    {% endif %}
+                </div>
+                {% endif %}
+                {% block sidebar %}{% endblock %}
+            </aside>
+        </div>
     </div>
 </body>
 </html>

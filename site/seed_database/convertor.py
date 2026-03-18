@@ -99,6 +99,11 @@ def add_by_ol_id(db: SQLAlchemy, seed_data: list[dict]) -> None:
         if "description" in item:
             book.book_description = item["description"]
 
+        if "book_cover_url" in item:
+            book.book_cover_url = item["book_cover_url"]
+        elif is_new:
+            book.book_cover_url = None
+
         attach_tags(db, book, extract_tags(item))
 
     db.session.commit()
