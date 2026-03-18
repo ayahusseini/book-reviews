@@ -81,20 +81,6 @@ def extract_description(works_data: dict) -> Optional[str]:
     return str(raw)
 
 
-def extract_cover_url(works_data: dict) -> Optional[str]:
-    """
-    Return a large-size cover URL derived from the first cover ID in
-    *works_data*, or ``None`` if no covers are listed.
-    """
-    covers = works_data.get("covers", [])
-    if not covers:
-        return None
-    cover_id = covers[0]
-    if cover_id == -1:
-        return None
-    return COVER_URL.format(cover_id=cover_id)
-
-
 def extract_author_keys(works_data: dict) -> list[str]:
     """
     Return a list of raw author keys (e.g. ``["/authors/OL123A"]``)
@@ -278,7 +264,6 @@ def fetch_book_data(ol_works_key: str) -> Book:
         book_ol_key=ol_works_key,
         book_description=extract_description(works),
         book_publication_year=extract_publication_year(editions),
-        book_cover_url=extract_cover_url(works),
         book_page_count=extract_page_count(editions),
         authors=authors,
     )
