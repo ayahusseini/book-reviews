@@ -1,4 +1,4 @@
-"""Markdown-post importer and renderer utilities."""
+"""Markdown post parser and HTML renderer."""
 
 from __future__ import annotations
 
@@ -13,26 +13,36 @@ import yaml
 
 @dataclass(frozen=True)
 class MarkdownPost:
+    """A parsed markdown post with frontmatter metadata and body text."""
+
     source_path: Path
     metadata: dict[str, Any]
     body_markdown: str
 
     @property
     def slug(self) -> str:
+        """Return frontmatter slug if set, otherwise the filename stem."""
         slug = self.metadata.get("slug")
         if isinstance(slug, str) and slug.strip():
             return slug.strip()
         return self.source_path.stem
 
 
+def normalize_tag(tag: str) -> str:
+    """Lowercase and collapse internal whitespace in a tag string."""
+    return " ".join(tag.strip().split()).lower()
+
+
 def parse_markdown_with_frontmatter(path: Path) -> MarkdownPost:
+    """Parse a markdown file and return its frontmatter metadata
+    and body."""
     text = path.read_text(encoding="utf-8")
 
     metadata: dict[str, Any] = {}
     body = text
+
     if text.startswith("---"):
         lines = text.splitlines()
-        # Find closing '---'
         end_idx = None
         for i in range(1, len(lines)):
             if lines[i].strip() == "---":
@@ -51,43 +61,35 @@ def parse_markdown_with_frontmatter(path: Path) -> MarkdownPost:
     )
 
 
-def _normalize_tag(tag: str) -> str:
-    return " ".join(tag.strip().split()).lower()
-
-
 def extract_tags(metadata: dict[str, Any]) -> list[str]:
+    """Return a normalised, deduplicated,
+    order-preserving list of tags."""
     tags_val = metadata.get("tags", [])
-    tags: list[str] = []
 
     if isinstance(tags_val, str):
         tags_val = [tags_val]
 
-    if isinstance(tags_val, list):
-        for item in tags_val:
-            if isinstance(item, str):
-                norm = _normalize_tag(item)
-                if norm:
-                    tags.append(norm)
+    if not isinstance(tags_val, list):
+        return []
 
-    # preserve order, de-dupe
     seen: set[str] = set()
     out: list[str] = []
-    for t in tags:
-        if t not in seen:
-            seen.add(t)
-            out.append(t)
+    for item in tags_val:
+        if not isinstance(item, str):
+            continue
+        norm = normalize_tag(item)
+        if norm and norm not in seen:
+            seen.add(norm)
+            out.append(norm)
     return out
 
 
 def render_markdown_to_safe_html(text: str) -> str:
+    """Render markdown to sanitised HTML,
+    stripping unsafe tags and attributes."""
     html = markdown.markdown(
         text,
-        extensions=[
-            "fenced_code",
-            "tables",
-            "toc",
-            "smarty",
-        ],
+        extensions=["fenced_code", "tables", "toc", "smarty"],
         output_format="html5",
     )
 

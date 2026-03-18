@@ -1,201 +1,151 @@
 # Book Review Website
 
+A Flask application for displaying book reviews and personal writing, backed by SQLite and Open Library.
 
-# Setup 
+## Setup
 
-Reccomended setup is through [uv](https://docs.astral.sh/uv/getting-started/installation/). 
-
-## Quick Start (using notebooks)
-
-If you just want to use `notebooks/` to explore problems
+Recommended setup is through [uv](https://docs.astral.sh/uv/getting-started/installation/).
 
 ```sh
 uv sync
 ```
 
-You do not need the dev setup if you aren't intending to change `src/` code 
-
-Alternatively, you can set up using `pip`:
-
-```sh
-python -m venv venv
-source venv/bin/activate  # or `venv\Scripts\activate` on Windows
-pip install -e .
-```
-
-## Different Configs
-
-The Flask application accepts different configs:
-- **Development** is the local environment used when actively building. It has debug mode on - Flask auto-reloads on code changes, shows detailed error pages and verbose logs. 
-- **Testing** is an isolated environment used when running the test suite. The key difference is that it uses a seperate, throwaway database.
-- **Production** is the live, deployed app. Debug is strictly off. It uses the same database as development but this is accessed as a stable path within Docker. Errors are logged quietly. 
-
-## Development setup 
-
-If you plan to modify code, run tests, or commit changes:
-
-1. Install dependencies 
-
-```sh
-uv sync
-```
-
-2. Install [pre-commit hooks](https://pre-commit.com/)
+Install [pre-commit hooks](https://pre-commit.com/) if you plan to commit changes:
 
 ```sh
 uv run pre-commit install
 ```
 
-These enforce:
-- Formatting via Ruff
-- Lockfile validation via uv
-- Shell + workflow checks
+## Development workflow
 
-3. Run the development server. The Flask CLI knows how to find and call `create_app()` automatically when you point `--app` at the `site/app` package. 
+All common tasks are available from the repo root via `make`:
 
 ```sh
-uv run flask --app site/app run
+make dev      # start the development server
+make seed     # seed books from seed_database/book_seed.json
+make posts    # import markdown posts from content/posts/
+make sync     # seed books then import posts (seed + posts)
+make test     # run the test suite
+make migrate  # apply pending database migrations
+make shell    # open a Flask shell with DB access
 ```
 
-This defaults to running with the `DevelopmentConfig`. You can switch configs at the command line:
+## Project structure
 
-```sh
-# development (default)
-uv run flask --app site/app run --debug
-
-# testing
-FLASK_ENV=testing uv run flask --app site/app run
-
-# production
-FLASK_ENV=production uv run flask --app site/app run
+```
+book_reviews/
+├── Makefile
+├── content/
+│   └── posts/          ← markdown post files live here
+├── docs/
+└── site/
+    ├── app/
+    │   ├── blueprints/ ← books, posts, main route handlers
+    │   ├── content/
+    │   │   └── markdown_posts.py  ← parser and HTML renderer
+    │   ├── database/
+    │   │   ├── models.py          ← SQLAlchemy models
+    │   │   └── open_library.py    ← Open Library API client
+    │   ├── templates/
+    │   ├── static/
+    │   ├── cli.py      ← import-posts command
+    │   └── config.py
+    ├── migrations/
+    ├── seed_database/
+    │   ├── convertor.py    ← seeds books from book_seed.json
+    │   └── book_seed.json
+    └── testing/
 ```
 
-### Seeding 
+## Adding posts
 
-```sh
-cd site
-uv run python -m app.database.convertor
-```
+Posts are markdown files with YAML frontmatter. Add them to `content/posts/` and run `make posts` to import into the database.
 
-## Adding posts (Markdown content workflow)
+### Frontmatter reference
 
-Posts live as Markdown files under `site/content/posts/` and get imported into the database (so you can write content as files, but still query posts/tags/books via SQLAlchemy).
-
-### Markdown format (YAML frontmatter)
-
-Example:
-
-```md
+```yaml
 ---
-title: "My review"
-author: "Aya"
-type: "review"
-book_ol_key: "OL42549900W"
+title: "My Review"           # required
+author: "Aya"                # required
+type: "review"               # required: review | essay | standalone | note | quotes
+book_ol_key: "OL42549900W"   # required for review and essay posts
+rating: 4.5                  # only used when type is review, must be 0–5
+slug: "my-review"            # optional, defaults to the filename stem
 tags:
   - "non-fiction"
-  - "favourites"
+  - "2026"
 ---
 
-## Heading
-
-Your post body in Markdown...
+Post body in Markdown...
 ```
 
-- **Required fields**: `title`, `author`.
-- **`book_ol_key`**: optional, but if present must reference a book that already exists in the DB (seed books first). If the book doesn’t exist, the importer will skip that post.
-- **`tags`**: optional list (or a single string). Tags are normalized to lowercase (e.g. `"Non Fiction"` → `"non fiction"`). Any missing tags are created and attached to the referenced book.
-- **Slug / URL**: optional `slug`; if absent it defaults to the markdown filename (without `.md`). Posts are served at `/posts/<slug>`.
-- **Re-import behavior**: re-running the importer updates existing posts by their relative source path (with a fallback lookup by slug).
+- `review` and `essay` posts must reference a book via `book_ol_key`. If the book is not already in the database it will be fetched automatically from Open Library.
+- `standalone` and `note` posts have no book link — omit `book_ol_key`.
+- `rating` is only meaningful on `review` posts and is ignored on all other types.
+- Tags are normalised to lowercase and attached to the referenced book. New tags are created automatically.
+- Re-running `make posts` is safe — existing posts are updated by source path.
 
-### Import Markdown posts into the DB
+### Book ratings
 
+A book's rating is computed as the average `rating` across all of its `review`-type posts. There is no manually set rating on books. To rate a book, write a review post with a `rating` field.
 
-#TODO
+## Adding books manually
+
+Books are seeded from `site/seed_database/book_seed.json`:
+
+```json
+[
+  {
+    "olid": "OL42549900W",
+    "comment": "Flesh",
+    "tags": ["2026"]
+  }
+]
+```
+
+Run `make seed` to fetch metadata from Open Library and write to the database. Re-running is safe — existing books are updated.
+
+## Configs
+
+| Environment | Behaviour |
+|---|---|
+| `development` (default) | Debug on, auto-reload, verbose logs |
+| `testing` | In-memory SQLite, isolated per test |
+| `production` | Debug off, reads `SECRET_KEY` from `.env` |
+
+Switch config by setting `FLASK_ENV` before running:
+
+```sh
+FLASK_ENV=production make dev
+```
 
 ## Database migrations
 
-This repo uses Flask-Migrate (Alembic). When you change `site/app/database/models.py`, generate and apply a migration:
+When you change `site/app/database/models.py`, generate and apply a migration:
 
 ```sh
 cd site
-uv run flask --app app db migrate -m "describe schema change"
-uv run flask --app app db upgrade
+uv run flask --app app db migrate -m "describe change"
+make migrate
 ```
 
-In production, run `db upgrade` as part of deployment.
-
-### Using the Flask Shell
-
-The Flask Shell is a Python REPL that runs inside the application context. `db`, models, and anything else that is configured are already available. The 
-Flask Shell is useful for querying the database and playing with app config:
+## Generating a production secret key
 
 ```sh
-uv run flask --app site/app shell
+chmod +x site/scripts/generate_secret_key.sh
+./site/scripts/generate_secret_key.sh
 ```
 
-Within the REPL, you can run commands like:
+This appends `SECRET_KEY=...` to `.env`.
 
-```python
-from app.database.models import Book, Author
-Book.query.all()
-db.session.execute(...)
-```
-
-### Querying the local DB
-
-The development DB is a local SQLite3 file, you can query it like so:
+## Running tests
 
 ```sh
-sqlite3 site/instance/site.db "SELECT * from book"
+make test
 ```
 
-### Running tests
+## Further reading
 
-Run 
-
-```
-uv run pytest -v
-```
-
-### Adding new books 
-
-
-## Running helper modules (must be run from `site/`)
-
-Some internal helpers live under `site/app`. Running them from the repository root normally fails with:
-
-> ModuleNotFoundError: No module named 'app'
-
-To avoid that, either:
-
-- run from inside `site/`, or
-- set `PYTHONPATH=site` when invoking Python.
-
-For example, to run the Open Library helper:
-
-```sh
-cd site
-uv run python -m app.database.open_library
-```
-
-Or (from the repo root):
-
-```sh
-PYTHONPATH=site uv run python -m app.database.open_library OL2743111W
-```
-
-
-## Production setup 
-
-Generate a secret key using:
-
-```sh
-chmod +x scripts/generate_secret_key.sh
-./scripts/generate_secret_key.sh
-```
-
-When a user interacts with a Flask application, a session cookie is used to store the session data.
-The cookie is 'signed' using the secret key. This prevents session data from being accessed or tampered with. 
-
-# Explanations
-- See more notes/explanations on the design [here](/docs/design.md)
+- [Design notes](/docs/design.md)
+- [Flask notes](/docs/flask.md)
+- [SQLAlchemy notes](/docs/sqlalchemy.md)
