@@ -1,47 +1,38 @@
-"""Script for handling OpenLibrary API calls"""
+"""Open Library API client for fetching book and author metadata."""
 
 import logging
-import requests
 import re
-
 from typing import Optional
+
+import requests
+
 from app.database.models import Author, Book
 
 logger = logging.getLogger(__name__)
 
 BASE_URL = "https://openlibrary.org"
 COVER_URL = "https://covers.openlibrary.org/b/id/{cover_id}-L.jpg"
-DEFAULT_TIMEOUT = 10  # seconds
+DEFAULT_TIMEOUT = 10
 
 
 class OpenLibraryError(requests.HTTPError):
-    """
-    Raised when Open Library is unreachable
-    or returns an unexpected response.
-    """
+    """Raised when Open Library is unreachable or
+    returns an unexpected response."""
 
 
 def validate_response(response: requests.Response) -> None:
-    """
-    Raises an OpenLibrary error if the response object raises an error
-    """
+    """Raise OpenLibraryError if the response status indicates failure."""
     try:
         response.raise_for_status()
     except requests.RequestException as err:
         raise OpenLibraryError(
-            "Open Library returned"
-            + f"{response.status_code}"
-            + f"for parameters {response.json}: {err}"
+            f"Open Library returned {response.status_code} "
+            f"for parameters {response.json}: {err}"
         )
 
 
 def build_works_url(ol_works_key: str) -> str:
-    """
-    Return the full Open Library works JSON URL for *ol_works_key*.
-
-    Accepts both bare keys ("OL12345W") and path-prefixed keys
-    ("/works/OL12345W").
-    """
+    """Return the full Open Library works JSON URL for ol_works_key."""
     key = ol_works_key.lstrip("/")
     if not key.startswith("works/"):
         key = f"works/{key}"
@@ -51,7 +42,7 @@ def build_works_url(ol_works_key: str) -> str:
 def fetch_works_data(
     ol_works_key: str, timeout: int = DEFAULT_TIMEOUT
 ) -> dict:
-    """Return the raw works JSON for *ol_works_key*."""
+    """Return the raw works JSON for ol_works_key."""
     url = build_works_url(ol_works_key)
     response = requests.get(url, timeout=timeout)
     validate_response(response)
@@ -59,20 +50,13 @@ def fetch_works_data(
 
 
 def extract_title(works_data: dict) -> str:
-    """
-    Extract the book title from a works payload.
-    """
+    """Extract the book title from a works payload."""
     return works_data["title"]
 
 
 def extract_description(works_data: dict) -> Optional[str]:
-    """
-    Extract a plain-text description from a works payload.
-
-    Open Library stores descriptions either as a bare string or as
-    ``{"type": "/type/text", "value": "..."}``.  Returns ``None`` when
-    the field is absent.
-    """
+    """Extract a plain-text description from a works payload,
+    or None if absent."""
     raw = works_data.get("description")
     if raw is None:
         return None
@@ -82,16 +66,10 @@ def extract_description(works_data: dict) -> Optional[str]:
 
 
 def extract_author_keys(works_data: dict) -> list[str]:
-    """
-    Return a list of raw author keys (e.g. ``["/authors/OL123A"]``)
-    from a works payload.
-    """
+    """Return a list of raw author keys from a works payload."""
     entries = works_data.get("authors", [])
     keys: list[str] = []
     for entry in entries:
-        # Two possible shapes:
-        #   {"author": {"key": "/authors/OL123A"}, "type": {...}}
-        #   {"key": "/authors/OL123A"}
         author_ref = entry.get("author") or entry
         key = author_ref.get("key")
         if key:
@@ -100,20 +78,17 @@ def extract_author_keys(works_data: dict) -> list[str]:
 
 
 def build_editions_url(ol_works_key: str) -> str:
-    """
-    Return the editions JSON URL for *ol_works_key*.
-
-    >>> build_editions_url("OL12345W")
-    'https://openlibrary.org/works/OL12345W/editions.json'
-    """
+    """Return the editions JSON URL for ol_works_key."""
     key = ol_works_key.lstrip("/")
     if not key.startswith("works/"):
         key = f"works/{key}"
     return f"{BASE_URL}/{key}/editions.json"
 
 
-def fetch_editions_data(ol_works_key: str, timeout=DEFAULT_TIMEOUT) -> dict:
-    """Return the raw editions JSON for *ol_works_key*."""
+def fetch_editions_data(
+    ol_works_key: str, timeout: int = DEFAULT_TIMEOUT
+) -> dict:
+    """Return the raw editions JSON for ol_works_key."""
     url = build_editions_url(ol_works_key)
     response = requests.get(url, timeout=timeout)
     validate_response(response)
@@ -121,12 +96,10 @@ def fetch_editions_data(ol_works_key: str, timeout=DEFAULT_TIMEOUT) -> dict:
 
 
 def extract_isbn(editions_data: dict) -> str:
-    """
-    Return the first available ISBN (preferring ISBN-13) found across
-    all editions in *editions_data*.
+    """Return the first available ISBN (preferring ISBN-13)
+    across all editions.
 
-    Raises:
-        ValueError – no ISBN found in any edition
+    Raises ValueError if no ISBN is found.
     """
     for edition in editions_data.get("entries", []):
         for isbn in edition.get("isbn_13", []):
@@ -139,10 +112,7 @@ def extract_isbn(editions_data: dict) -> str:
 
 
 def extract_publication_year(editions_data: dict) -> Optional[int]:
-    """
-    Return the earliest publication year found across all editions, or
-    ``None`` if no parsable year is present.
-    """
+    """Return the earliest publication year across all editions, or None."""
     years: list[int] = []
     for edition in editions_data.get("entries", []):
         raw = edition.get("publish_date", "")
@@ -153,10 +123,7 @@ def extract_publication_year(editions_data: dict) -> Optional[int]:
 
 
 def extract_page_count(editions_data: dict) -> Optional[int]:
-    """
-    Return the first non-zero page count found across all editions, or
-    ``None`` if unavailable.
-    """
+    """Return the first non-zero page count across all editions, or None."""
     for edition in editions_data.get("entries", []):
         pages = edition.get("number_of_pages")
         if pages and int(pages) > 0:
@@ -164,28 +131,16 @@ def extract_page_count(editions_data: dict) -> Optional[int]:
     return None
 
 
-# ---------------------------------------------------------------------------
-# Author endpoint helpers
-# ---------------------------------------------------------------------------
-
-
 def build_author_url(author_key: str) -> str:
-    """
-    Return the full author JSON URL for *author_key*.
-
-    Accepts both ``"/authors/OL123A"`` and bare ``"OL123A"``.
-
-    >>> build_author_url("/authors/OL123A")
-    'https://openlibrary.org/authors/OL123A.json'
-    """
+    """Return the full author JSON URL for author_key."""
     key = author_key.lstrip("/")
     if not key.startswith("authors/"):
         key = f"authors/{key}"
     return f"{BASE_URL}/{key}.json"
 
 
-def fetch_author_data(author_key: str, timeout=DEFAULT_TIMEOUT) -> dict:
-    """Return the raw author JSON for *author_key*."""
+def fetch_author_data(author_key: str, timeout: int = DEFAULT_TIMEOUT) -> dict:
+    """Return the raw author JSON for author_key."""
     url = build_author_url(author_key)
     response = requests.get(url, timeout=timeout)
     validate_response(response)
@@ -193,23 +148,14 @@ def fetch_author_data(author_key: str, timeout=DEFAULT_TIMEOUT) -> dict:
 
 
 def extract_author_id(author_key: str) -> str:
-    """
-    Parse and return the bare Open Library author ID from *author_key*.
-
-    >>> extract_author_id("/authors/OL123A")
-    'OL123A'
-    >>> extract_author_id("OL123A")
-    'OL123A'
-    """
+    """Parse and return the bare Open Library author ID from author_key."""
     return author_key.rstrip("/").split("/")[-1]
 
 
 def extract_author_name(author_data: dict) -> str:
-    """
-    Extract the author name from an author payload.
+    """Extract the author name from an author payload.
 
-    Raises:
-        KeyError – neither 'name' nor 'personal_name' is present
+    Raises KeyError if neither 'name' nor 'personal_name' is present.
     """
     if "name" in author_data:
         return author_data["name"]
@@ -217,9 +163,7 @@ def extract_author_name(author_data: dict) -> str:
 
 
 def parse_author(author_key: str, author_data: dict) -> Author:
-    """
-    Build an :class:`Author` from a raw key and author payload.
-    """
+    """Build an Author instance from a raw key and author payload."""
     return Author(
         author_name=extract_author_name(author_data),
         author_openlibrary_id=extract_author_id(author_key),
@@ -227,31 +171,22 @@ def parse_author(author_key: str, author_data: dict) -> Author:
 
 
 def fetch_all_authors(author_keys: list[str]) -> list[Author]:
-    """
-    Fetch and parse every author in *author_keys*.
-
-    Authors whose network request or parsing fails are skipped with a
-    printed warning so one bad author doesn't abort the whole import.
-    """
+    """Fetch and parse every author in author_keys, skipping failures."""
     authors: list[Author] = []
     for key in author_keys:
         try:
             data = fetch_author_data(key)
             authors.append(parse_author(key, data))
         except Exception as exc:  # noqa: BLE001
-            print(f"Warning: could not fetch author {key!r}: {exc}")
+            logger.warning("Could not fetch author %r: %s", key, exc)
     return authors
 
 
 def fetch_book_data(ol_works_key: str) -> Book:
-    """
-    Main entry point.
+    """Fetch all data for a works key and return a populated Book instance.
 
-    Given an Open Library works key (e.g. ``"OL45804W"`` or
-    ``"/works/OL45804W"``), fetch all data required to populate
-    :class:`Book`, :class:`Author`, and :class:`BookAuthorMapping`.
-
-    Returns a fully populated :class:`Book` instance.
+    Cover URL is intentionally excluded — set book_cover_url manually via
+    the seed file after import.
     """
     works = fetch_works_data(ol_works_key)
     editions = fetch_editions_data(ol_works_key)
@@ -264,10 +199,7 @@ def fetch_book_data(ol_works_key: str) -> Book:
         book_ol_key=ol_works_key,
         book_description=extract_description(works),
         book_publication_year=extract_publication_year(editions),
+        book_cover_url=None,
         book_page_count=extract_page_count(editions),
         authors=authors,
     )
-
-
-if __name__ == "__main__":
-    print(fetch_book_data("OL42549900W"))

@@ -1,5 +1,18 @@
 {% extends "base.html" %}
 
+{% macro star_rating(rating) %}
+  {% if rating is not none %}
+    {% set full = rating | int %}
+    {% set half = ((rating - full) >= 0.5) %}
+    {% set empty = 5 - full - (1 if half else 0) %}
+    <span class="star-rating" title="{{ rating }}/5">
+      {% for _ in range(full) %}⭐{% endfor %}
+      {% if half %}✨{% endif %}
+      {% for _ in range(empty) %}☆{% endfor %}
+    </span>
+  {% endif %}
+{% endmacro %}
+
 {% block header %}
 <h2>Book List</h2>
 {% endblock %}
@@ -15,6 +28,7 @@
       {% if not book.cover_id %}<span aria-hidden="true">📘</span>{% endif %}
       <a href="{{ url_for('books.book_detail', book_id=book.book_id) }}">{{ book.book_title }}</a>
       <span class="text-muted">by {{ book.authors[0].author_name if book.authors else 'Unknown' }}</span>
+      {{ star_rating(book.book_rating) }}
       {% if book.tags %}
         <span class="tag-row">
           {% for tag in book.tags %}
@@ -35,6 +49,7 @@
       {% if not book.cover_id %}<span aria-hidden="true">📘</span>{% endif %}
       <a href="{{ url_for('books.book_detail', book_id=book.book_id) }}">{{ book.book_title }}</a>
       <span class="text-muted">by {{ book.authors[0].author_name if book.authors else 'Unknown' }}</span>
+      {{ star_rating(book.book_rating) }}
       {% if book.tags %}
         <span class="tag-row">
           {% for tag in book.tags %}

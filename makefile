@@ -14,8 +14,10 @@ seed:
 posts:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) import-posts --path $(POSTS)
 
-sync: seed posts
+sync: seed posts restart
 
+restart:
+	touch site/app/__init__.py
 test:
 	uv run pytest -v
 

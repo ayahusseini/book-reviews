@@ -1,22 +1,24 @@
 """Instantiate the Flask application."""
 
-from dotenv import load_dotenv
 import os
+import random
+
+from dotenv import load_dotenv
 from flask import Flask
-from app.extensions import db, migrate
-from app.database import models as models
+
 from app.config import (
+    Config,
     DevelopmentConfig,
     ProductionConfig,
     TestingConfig,
-    Config,
 )
+from app.database import models as models
+from app.extensions import db, migrate
 from app.setup_logging import setup_logging
 
 
 def read_config_setting(default: str = "development") -> str:
-    """Reads the config setting from the environment
-    Defaults to default"""
+    """Read the config setting from the environment, defaulting to default."""
     load_dotenv()
 
     if not isinstance(default, str):
@@ -31,7 +33,7 @@ def read_config_setting(default: str = "development") -> str:
 
 
 def get_config_obj(config_str: str) -> Config:
-    """Return a Config subclass given a string"""
+    """Return a Config subclass given a string."""
     config_str = config_str.strip().lower()
 
     configs = {
@@ -51,14 +53,13 @@ def get_config_obj(config_str: str) -> Config:
 
 def create_app():
     """Create and configure the Flask application."""
-
     config = read_config_setting(default="development")
 
     app = Flask(__name__, instance_relative_config=True)
     setup_logging()
 
     app.config.from_object(get_config_obj(config))
-    app.logger.info(f"Starting app with config: {config}")  # use app.logger
+    app.logger.info(f"Starting app with config: {config}")
 
     os.makedirs(app.instance_path, exist_ok=True)
 
@@ -77,9 +78,16 @@ def create_app():
 
     cli_module.init_app(app)
 
+    @app.context_processor
+    def inject_random_quote():
+        """Inject a randomly selected quote post
+        into every template context."""
+        from app.database.models import Post
+
+        quotes = Post.query.filter_by(post_type="quotes").all()
+        return {"random_quote": random.choice(quotes) if quotes else None}
+
     if app.config.get("TESTING", False):
-        # Only auto-create tables for tests
-        # Otherwise, rely on migrations
         with app.app_context():
             db.create_all()
 
@@ -90,8 +98,3 @@ def create_app():
     )
 
     return app
-
-
-if __name__ == "__main__":
-    app = create_app()
-    app.run(debug=True)

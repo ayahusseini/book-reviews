@@ -511,3 +511,87 @@ textarea {
   h1   { font-size: 1.55rem; }
   .site-nav ul { gap: 0; }
 }
+
+/* ── Page layout (content + sidebar) ── */
+.page-layout {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar {
+  flex: 0 0 220px;
+  width: 220px;
+}
+
+@media (max-width: 720px) {
+  .page-layout {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    flex: none;
+  }
+}
+
+/* ── Sidebar widgets ── */
+.sidebar-widget {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 1rem;
+  margin-bottom: var(--gap);
+}
+
+.sidebar-heading {
+  font-family: var(--mono-font);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+}
+
+.sidebar-quote {
+  font-style: italic;
+  font-size: 0.88rem;
+  color: var(--text);
+  border-left: 3px solid var(--accent);
+  margin: 0 0 0.5rem 0;
+  padding: 0.4rem 0.75rem;
+  background: none;
+}
+
+.sidebar-quote-source {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 0;
+  text-align: right;
+}
+
+/* ── Star rating ── */
+.star-rating {
+  font-size: 0.85rem;
+  margin-left: 0.35rem;
+  vertical-align: middle;
+}
+
+/* ── Full post on book detail page ── */
+.post-full {
+  margin-top: var(--gap);
+}
+
+.post-full__header {
+  margin-bottom: 0.75rem;
+}
+
+.post-full__header h3 {
+  margin-top: 0;
+  margin-bottom: 0.2rem;
+}

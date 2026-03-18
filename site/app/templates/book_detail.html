@@ -16,6 +16,7 @@
   </div>
   <div class="book-header__meta">
     <h2>{{ book.book_title }}</h2>
+    <p class="text-muted">by {% for author in book.authors %}{{ author.author_name }}{% if not loop.last %}, {% endif %}{% endfor %}</p>
     {% if book.tags %}
       <div class="tag-row">
         {% for tag in book.tags %}
@@ -27,28 +28,51 @@
 </div>
 {% endblock %}
 
-{% block main_content %}
-<p><strong>Author(s):</strong> {% for author in book.authors %}{{ author.author_name }}{% if not loop.last %}, {% endif %}{% endfor %}</p>
-<p><strong>Description:</strong> {{ book.book_description or 'No description available.' }}</p>
-<p><strong>Rating:</strong> {{ book.book_rating }}/5</p>
-<p><strong>Publication Year:</strong> {{ book.book_publication_year or 'Unknown' }}</p>
-<p><strong>Page Count:</strong> {{ book.book_page_count or 'Unknown' }}</p>
+{% block sidebar %}
+<div class="sidebar-widget">
+  <h4 class="sidebar-heading">About</h4>
+  {% if book.book_description %}
+    <p class="small">{{ book.book_description }}</p>
+  {% else %}
+    <p class="small text-muted">No description available.</p>
+  {% endif %}
 
-{% if posts %}
   <hr>
-  <h3>Posts</h3>
-  <ul>
-    {% for post in posts %}
-      <li>
-        <a href="{{ url_for('posts.post_detail', slug=post.post_slug) }}">{{ post.post_title }}</a>
-        <small>by {{ post.post_author }}{% if post.post_type %} ({{ post.post_type }}){% endif %}</small>
-      </li>
-    {% endfor %}
-  </ul>
+
+  <p class="small"><strong>Published:</strong> {{ book.book_publication_year or 'Unknown' }}</p>
+  <p class="small"><strong>Pages:</strong> {{ book.book_page_count or 'Unknown' }}</p>
+  {% if book.book_rating %}
+    <p class="small"><strong>Rating:</strong> {{ book.book_rating }}/5</p>
+  {% endif %}
+  {% if book.book_rating_goodreads %}
+    <p class="small"><strong>Goodreads:</strong> {{ book.book_rating_goodreads }}/5</p>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block main_content %}
+<a href="{{ url_for('books.book_list') }}" class="small">← Back to books</a>
+
+{% if rendered_posts %}
+  {% for post, post_html in rendered_posts %}
+    <article class="post-full">
+      <header class="post-full__header">
+        <h3>
+          <a href="{{ url_for('posts.post_detail', slug=post.post_slug) }}">{{ post.post_title }}</a>
+        </h3>
+        <p class="small text-muted">
+          {{ post.post_type }}
+          {% if post.post_rating %} · {{ post.post_rating }}/5{% endif %}
+          · {{ post.post_created_at.strftime('%B %d, %Y') }}
+        </p>
+      </header>
+      <div class="markdown-body">
+        {{ post_html | safe }}
+      </div>
+    </article>
+    {% if not loop.last %}<hr>{% endif %}
+  {% endfor %}
 {% else %}
-  <hr>
   <p class="text-muted">No posts for this book yet.</p>
 {% endif %}
-
-<a href="{{ url_for('books.book_list') }}">Back to Book List</a>
 {% endblock %}
