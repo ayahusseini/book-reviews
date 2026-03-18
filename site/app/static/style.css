@@ -11,10 +11,13 @@
   --link-hover:   #dfcfe7;
   --accent:       #8b1379;
   --code-bg:      #1e3d54;
+  --sidebar-bg:   #1a0a42;
+  --sidebar-text: #a89bc2;
   --heading-font: 'Lora', Georgia, serif;
   --body-font:    'Lora', Georgia, serif;
   --mono-font:    'Source Code Pro', 'Courier New', monospace;
-  --max-width:    720px;
+  --content-width: 720px;
+  --sidebar-width: 220px;
   --gap:          1.5rem;
 }
 
@@ -36,7 +39,99 @@ body {
   font-family: var(--body-font);
   line-height: 1.75;
   min-height: 100vh;
+}
 
+/* ── Outer page layout ── */
+/* The outer shell is wider than the content box and holds both
+   the central .site-wrapper and the .site-sidebar side by side. */
+.page-shell {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding: 1rem;
+  min-height: 100vh;
+}
+
+/* ── Central content box ── */
+.site-wrapper {
+  flex: 0 0 var(--content-width);
+  max-width: var(--content-width);
+  min-width: 0;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  padding: 1.25rem;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* ── Sidebar ── */
+.site-sidebar {
+  flex: 0 0 var(--sidebar-width);
+  width: var(--sidebar-width);
+  padding-top: 1rem;
+}
+
+.sidebar-widget {
+  background: var(--sidebar-bg);
+  border: 1px solid rgba(41, 128, 199, 0.3);
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: var(--gap);
+}
+
+.sidebar-heading {
+  font-family: var(--mono-font);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.sidebar-quote {
+  font-style: italic;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--sidebar-text);
+  border-left: 2px solid var(--accent);
+  margin: 0 0 0.6rem 0;
+  padding: 0.3rem 0.6rem;
+  background: none;
+}
+
+.sidebar-quote-source {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: right;
+  margin: 0;
+}
+
+.sidebar-quote-source a {
+  color: var(--text-muted);
+}
+
+.sidebar-quote-source a:hover {
+  color: var(--link-hover);
+}
+
+/* Book detail sidebar content */
+.sidebar-meta p {
+  font-size: 0.82rem;
+  color: var(--sidebar-text);
+  margin-bottom: 0.4rem;
+  line-height: 1.5;
+}
+
+.sidebar-meta strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.sidebar-description {
+  font-size: 0.82rem;
+  color: var(--sidebar-text);
+  line-height: 1.6;
+  margin-bottom: 0.75rem;
 }
 
 /* ── Skip Link ── */
@@ -53,16 +148,6 @@ body {
   z-index: 999;
 }
 .skip-link:focus { top: 1rem; }
-
-/* ── Layout ── */
-.site-wrapper {
-  max-width: var(--max-width);
-  margin: 1rem auto;
-  padding: 1.25rem;
-  border: 2px solid var(--border);
-  border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.05); /* subtle background for contrast */
-}
 
 /* ── Header ── */
 .site-header {
@@ -132,7 +217,6 @@ main {
   padding-bottom: 3rem;
 }
 
-
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--heading-font);
   font-weight: 600;
@@ -147,9 +231,7 @@ h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom:
 h3 { font-size: 1.1rem; }
 h4 { font-size: 1rem; font-style: italic; }
 
-p {
-  margin-bottom: 1rem;
-}
+p { margin-bottom: 1rem; }
 
 em { font-style: italic; }
 strong { font-weight: 600; }
@@ -166,13 +248,8 @@ a {
   text-underline-offset: 3px;
 }
 
-a:hover {
-  color: var(--link-hover);
-}
-
-a:visited {
-  color: #7a5230;
-}
+a:hover { color: var(--link-hover); }
+a:visited { color: #7a5230; }
 
 /* ── Lists ── */
 ul, ol {
@@ -180,13 +257,9 @@ ul, ol {
   margin-bottom: 1rem;
 }
 
-li {
-  margin-bottom: 0.25rem;
-}
+li { margin-bottom: 0.25rem; }
 
-ul li::marker {
-  color: var(--text-muted);
-}
+ul li::marker { color: var(--text-muted); }
 
 /* ── Blockquote ── */
 blockquote {
@@ -249,9 +322,7 @@ hr {
   margin-bottom: var(--gap);
 }
 
-.box--notice {
-  border-left: 4px solid var(--accent);
-}
+.box--notice { border-left: 4px solid var(--accent); }
 
 /* ── Tables ── */
 table {
@@ -277,9 +348,7 @@ td {
   border-bottom: 1px solid var(--bg-alt);
 }
 
-tr:hover td {
-  background: var(--bg-alt);
-}
+tr:hover td { background: var(--bg-alt); }
 
 /* ── Forms ── */
 label {
@@ -358,9 +427,7 @@ textarea {
 }
 
 /* ── Flash Messages ── */
-.flash-messages {
-  margin-bottom: var(--gap);
-}
+.flash-messages { margin-bottom: var(--gap); }
 
 .flash {
   padding: 0.6rem 1rem;
@@ -371,23 +438,9 @@ textarea {
   border-left: 4px solid;
 }
 
-.flash--success {
-  background: #edf5e8;
-  border-color: #5a8a3c;
-  color: #2d4a1e;
-}
-
-.flash--error {
-  background: #f9ebe8;
-  border-color: #b03a2e;
-  color: #6b1e17;
-}
-
-.flash--info {
-  background: var(--bg-alt);
-  border-color: var(--border);
-  color: var(--text-muted);
-}
+.flash--success { background: #edf5e8; border-color: #5a8a3c; color: #2d4a1e; }
+.flash--error   { background: #f9ebe8; border-color: #b03a2e; color: #6b1e17; }
+.flash--info    { background: var(--bg-alt); border-color: var(--border); color: var(--text-muted); }
 
 /* ── Footer ── */
 .site-footer {
@@ -401,26 +454,8 @@ textarea {
   line-height: 1.9;
 }
 
-.site-footer a {
-  color: var(--text-muted);
-  text-decoration: none;
-}
-
-.site-footer a:hover {
-  color: var(--link-hover);
-  text-decoration: underline;
-}
-
-/* ── Webring / Badge Area ── */
-.webring {
-  font-family: var(--mono-font);
-  font-size: 0.75rem;
-  text-align: left;
-  color: var(--text-muted);
-  margin: 1rem 0;
-}
-
-.webring a { color: var(--link); }
+.site-footer a { color: var(--text-muted); text-decoration: none; }
+.site-footer a:hover { color: var(--link-hover); text-decoration: underline; }
 
 /* ── Utility ── */
 .text-center { text-align: center; }
@@ -428,8 +463,16 @@ textarea {
 .mono         { font-family: var(--mono-font); }
 .mt           { margin-top: var(--gap); }
 .mb           { margin-bottom: var(--gap); }
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
 
-/* ── Tags / Book lists ── */
+/* ── Tags ── */
 .tag-row {
   display: inline-flex;
   flex-wrap: wrap;
@@ -449,12 +492,16 @@ textarea {
   color: var(--text);
 }
 
-.book-list {
-  padding-left: 1.2rem;
-}
+/* ── Book list ── */
+.book-list { padding-left: 1.2rem; }
+.book-list__item { margin-bottom: 0.5rem; }
 
-.book-list__item {
-  margin-bottom: 0.5rem;
+/* ── Star rating ── */
+.star-rating {
+  font-size: 0.82rem;
+  margin-left: 0.35rem;
+  vertical-align: middle;
+  letter-spacing: -0.05em;
 }
 
 /* ── Book header layout ── */
@@ -464,10 +511,7 @@ textarea {
   gap: 1rem;
 }
 
-.book-header__cover {
-  width: 86px;
-  flex: 0 0 86px;
-}
+.book-header__cover { width: 86px; flex: 0 0 86px; }
 
 .book-cover {
   width: 100%;
@@ -486,112 +530,21 @@ textarea {
   line-height: 1;
 }
 
-.book-header__meta h2 {
-  margin-top: 0;
-}
+.book-header__meta h2 { margin-top: 0; }
 
-@media (max-width: 600px) {
-  .book-header__cover {
-    width: 64px;
-    flex-basis: 64px;
-  }
-}
-.sr-only {
-  position: absolute;
-  width: 1px; height: 1px;
-  padding: 0; overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
+/* ── Full post on book detail page ── */
+.post-full { margin-top: var(--gap); }
+.post-full__header { margin-bottom: 0.75rem; }
+.post-full__header h3 { margin-top: 0; margin-bottom: 0.2rem; }
 
 /* ── Responsive ── */
+@media (max-width: 980px) {
+  .site-sidebar { display: none; }
+}
+
 @media (max-width: 600px) {
   html { font-size: 16px; }
   h1   { font-size: 1.55rem; }
   .site-nav ul { gap: 0; }
-}
-
-/* ── Page layout (content + sidebar) ── */
-.page-layout {
-  display: flex;
-  gap: 2rem;
-  align-items: flex-start;
-}
-
-.content {
-  flex: 1;
-  min-width: 0;
-}
-
-.sidebar {
-  flex: 0 0 220px;
-  width: 220px;
-}
-
-@media (max-width: 720px) {
-  .page-layout {
-    flex-direction: column;
-  }
-  .sidebar {
-    width: 100%;
-    flex: none;
-  }
-}
-
-/* ── Sidebar widgets ── */
-.sidebar-widget {
-  background: var(--bg-alt);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 1rem;
-  margin-bottom: var(--gap);
-}
-
-.sidebar-heading {
-  font-family: var(--mono-font);
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-muted);
-  margin-top: 0;
-  margin-bottom: 0.75rem;
-}
-
-.sidebar-quote {
-  font-style: italic;
-  font-size: 0.88rem;
-  color: var(--text);
-  border-left: 3px solid var(--accent);
-  margin: 0 0 0.5rem 0;
-  padding: 0.4rem 0.75rem;
-  background: none;
-}
-
-.sidebar-quote-source {
-  font-size: 0.78rem;
-  color: var(--text-muted);
-  margin: 0;
-  text-align: right;
-}
-
-/* ── Star rating ── */
-.star-rating {
-  font-size: 0.85rem;
-  margin-left: 0.35rem;
-  vertical-align: middle;
-}
-
-/* ── Full post on book detail page ── */
-.post-full {
-  margin-top: var(--gap);
-}
-
-.post-full__header {
-  margin-bottom: 0.75rem;
-}
-
-.post-full__header h3 {
-  margin-top: 0;
-  margin-bottom: 0.2rem;
+  .book-header__cover { width: 64px; flex-basis: 64px; }
 }
