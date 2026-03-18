@@ -79,7 +79,7 @@ uv run python -m app.database.convertor
 
 ## Adding posts (Markdown content workflow)
 
-Posts live as Markdown files under `site/app/content/posts/` and get imported into the database (so you can write content as files, but still query posts/tags/books via SQLAlchemy).
+Posts live as Markdown files under `site/content/posts/` and get imported into the database (so you can write content as files, but still query posts/tags/books via SQLAlchemy).
 
 ### Markdown format (YAML frontmatter)
 
@@ -109,30 +109,8 @@ Your post body in Markdown...
 
 ### Import Markdown posts into the DB
 
-From `site/`:
 
-```sh
-uv run flask --app app import-posts
-```
-
-To import from a custom directory:
-
-```sh
-uv run flask --app app import-posts --path /path/to/posts
-```
-
-### Viewing posts in the browser
-
-Start the server and visit:
-
-- `/posts/` for the list of posts
-- `/posts/<slug>` for a specific post
-
-From the repo root:
-
-```sh
-uv run flask --app site/app run --debug
-```
+#TODO
 
 ## Database migrations
 
@@ -181,23 +159,6 @@ uv run pytest -v
 
 ### Adding new books 
 
-Edit `site/app/database/book_seed.json` to add new entries
-```json
-[
-  {
-    "olid": "OL2743111W",
-    "rating": 5,
-    "description": "A favourite book..."
-  }
-]
-```
-- The OLID is the OpenLibrary Works ID
-- The rating must be out of 5
-
-```sh
-cd site
-uv run python -m app.database.convertor
-```
 
 ## Running helper modules (must be run from `site/`)
 
