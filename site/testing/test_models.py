@@ -19,8 +19,7 @@ def test_book_rating_is_none_with_no_posts(app, db):
         book = Book(book_ol_key="OL1W", book_title="Book 1")
         db.session.add(book)
         db.session.commit()
-
-    assert book.book_rating is None
+        assert book.book_rating is None
 
 
 def test_book_rating_is_none_with_no_review_posts(app, db):
@@ -36,11 +35,9 @@ def test_book_rating_is_none_with_no_review_posts(app, db):
             post_rating=None,
             book=book,
         )
-        db.session.add(book)
-        db.session.add(post)
+        db.session.add_all([book, post])
         db.session.commit()
-
-    assert book.book_rating is None
+        assert book.book_rating is None
 
 
 def test_book_rating_averages_review_post_ratings(app, db):
@@ -68,8 +65,7 @@ def test_book_rating_averages_review_post_ratings(app, db):
         )
         db.session.add_all([book, post_a, post_b])
         db.session.commit()
-
-    assert book.book_rating == 4.5
+        assert book.book_rating == 4.5
 
 
 def test_book_rating_ignores_reviews_without_rating(app, db):
@@ -97,8 +93,7 @@ def test_book_rating_ignores_reviews_without_rating(app, db):
         )
         db.session.add_all([book, post_a, post_b])
         db.session.commit()
-
-    assert book.book_rating == 4.0
+        assert book.book_rating == 4.0
 
 
 def test_author_repr(app, db):
@@ -106,8 +101,7 @@ def test_author_repr(app, db):
         author = Author(author_name="Aya", author_openlibrary_id="OL1A")
         db.session.add(author)
         db.session.commit()
-
-    assert "Aya" in repr(author)
+        assert "Aya" in repr(author)
 
 
 def test_book_repr(app, db):
@@ -115,8 +109,7 @@ def test_book_repr(app, db):
         book = Book(book_ol_key="OL1W", book_title="Dune")
         db.session.add(book)
         db.session.commit()
-
-    assert "Dune" in repr(book)
+        assert "Dune" in repr(book)
 
 
 def test_tag_repr(app, db):
@@ -124,5 +117,4 @@ def test_tag_repr(app, db):
         tag = Tag(tag_name="fiction")
         db.session.add(tag)
         db.session.commit()
-
-    assert "fiction" in repr(tag)
+        assert "fiction" in repr(tag)
