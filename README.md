@@ -77,9 +77,9 @@ cd site
 uv run python -m app.database.convertor
 ```
 
-## Writing posts as Markdown (content workflow)
+## Adding posts (Markdown content workflow)
 
-Posts live as Markdown files under `site/app/content/posts/` and get imported into the database.
+Posts live as Markdown files under `site/app/content/posts/` and get imported into the database (so you can write content as files, but still query posts/tags/books via SQLAlchemy).
 
 ### Markdown format (YAML frontmatter)
 
@@ -101,9 +101,11 @@ tags:
 Your post body in Markdown...
 ```
 
-- **`book_ol_key`**: must reference a book that already exists in the DB (seed books first).
-- **`tags`**: any tags that don’t exist yet will be created and attached to the referenced book.
-- **Idempotency**: a post is updated on re-import based on its relative source path, with a fallback to its slug (defaults to filename).
+- **Required fields**: `title`, `author`.
+- **`book_ol_key`**: optional, but if present must reference a book that already exists in the DB (seed books first). If the book doesn’t exist, the importer will skip that post.
+- **`tags`**: optional list (or a single string). Tags are normalized to lowercase (e.g. `"Non Fiction"` → `"non fiction"`). Any missing tags are created and attached to the referenced book.
+- **Slug / URL**: optional `slug`; if absent it defaults to the markdown filename (without `.md`). Posts are served at `/posts/<slug>`.
+- **Re-import behavior**: re-running the importer updates existing posts by their relative source path (with a fallback lookup by slug).
 
 ### Import Markdown posts into the DB
 
@@ -117,6 +119,19 @@ To import from a custom directory:
 
 ```sh
 uv run flask --app app import-posts --path /path/to/posts
+```
+
+### Viewing posts in the browser
+
+Start the server and visit:
+
+- `/posts/` for the list of posts
+- `/posts/<slug>` for a specific post
+
+From the repo root:
+
+```sh
+uv run flask --app site/app run --debug
 ```
 
 ## Database migrations
@@ -143,7 +158,7 @@ uv run flask --app site/app shell
 Within the REPL, you can run commands like:
 
 ```python
-from app.models import Book, Author 
+from app.database.models import Book, Author
 Book.query.all()
 db.session.execute(...)
 ```
@@ -162,17 +177,6 @@ Run
 
 ```
 uv run pytest -v
-```
-
-### Running migrations 
-
-```sh
-cd site
-uv run flask --app app db init          # creates migrations/ directory
-
-# after any schema change in models.py
-uv run flask --app app db migrate -m "add posts table"    # generates revision
-uv run flask --app app db upgrade                         # apply to dev DB
 ```
 
 ### Adding new books 

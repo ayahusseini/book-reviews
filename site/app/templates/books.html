@@ -6,9 +6,44 @@
 
 {% block main_content %}
 <p>Here are the books I've read this year:</p>
-<ul>
-    {% for book in books %}
-    <li><a href="{{ url_for('books.book_detail', book_id=book.book_id) }}">{{ book.book_title }}</a> by {{ book.authors[0].author_name if book.authors else 'Unknown' }}</li>
-    {% endfor %}
+
+{% if books_2026 %}
+<h3>2026</h3>
+<ul class="book-list">
+  {% for book in books_2026 %}
+    <li class="book-list__item">
+      {% if not book.cover_id %}<span aria-hidden="true">📘</span>{% endif %}
+      <a href="{{ url_for('books.book_detail', book_id=book.book_id) }}">{{ book.book_title }}</a>
+      <span class="text-muted">by {{ book.authors[0].author_name if book.authors else 'Unknown' }}</span>
+      {% if book.tags %}
+        <span class="tag-row">
+          {% for tag in book.tags %}
+            <span class="tag">{{ tag.tag_name }}</span>
+          {% endfor %}
+        </span>
+      {% endif %}
+    </li>
+  {% endfor %}
 </ul>
+{% endif %}
+
+{% if books_previous %}
+<h3>Read previously</h3>
+<ul class="book-list">
+  {% for book in books_previous %}
+    <li class="book-list__item">
+      {% if not book.cover_id %}<span aria-hidden="true">📘</span>{% endif %}
+      <a href="{{ url_for('books.book_detail', book_id=book.book_id) }}">{{ book.book_title }}</a>
+      <span class="text-muted">by {{ book.authors[0].author_name if book.authors else 'Unknown' }}</span>
+      {% if book.tags %}
+        <span class="tag-row">
+          {% for tag in book.tags %}
+            <span class="tag">{{ tag.tag_name }}</span>
+          {% endfor %}
+        </span>
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>
+{% endif %}
 {% endblock %}

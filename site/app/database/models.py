@@ -7,6 +7,8 @@ Schema (from ERD):
 """
 
 from datetime import datetime, timezone
+import re
+from sqlalchemy import CheckConstraint
 from app.extensions import db
 
 
@@ -90,14 +92,20 @@ class Book(db.Model):
     """Model containing book details"""
 
     __tablename__ = "book"
+    __table_args__ = (
+        CheckConstraint(
+            "book_rating IS NULL OR (book_rating >= 0 AND book_rating <= 5)",
+            name="ck_book_rating_0_5",
+        ),
+    )
 
     book_id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     book_ol_key = db.Column(db.String(250), nullable=False, unique=True)
     book_title = db.Column(db.String(250), nullable=False)
     book_description = db.Column(db.Text, nullable=True)
     book_publication_year = db.Column(db.Integer(), nullable=True)
-    book_rating = db.Column(db.Integer(), nullable=True)
-    book_rating_goodreads = db.Column(db.Integer(), nullable=True)
+    book_rating = db.Column(db.Float(), nullable=True)
+    book_rating_goodreads = db.Column(db.Float(), nullable=True)
     book_cover_url = db.Column(db.Text(), nullable=True)
     book_page_count = db.Column(db.Integer(), nullable=True)
     book_isbn = db.Column(db.Text(), nullable=True)
@@ -139,6 +147,19 @@ class Book(db.Model):
             "authors": [a.to_dict() for a in self.authors],
             "tags": [t.to_dict() for t in self.tags],
         }
+
+    @property
+    def cover_id(self) -> int | None:
+        """Extract Open Library cover id from book_cover_url, if present."""
+        if not self.book_cover_url:
+            return None
+        match = re.search(r"/b/id/(\d+)-[A-Z]\.jpg$", self.book_cover_url)
+        if not match:
+            return None
+        try:
+            return int(match.group(1))
+        except ValueError:
+            return None
 
 
 class Tag(db.Model):
