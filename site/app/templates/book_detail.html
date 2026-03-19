@@ -28,25 +28,25 @@
 </div>
 {% endblock %}
 
-{% block sidebar %}
+{% block sidebar_left %}
 <div class="sidebar-widget">
-  <h4 class="sidebar-heading">About</h4>
+  <p class="sidebar-heading">About</p>
   {% if book.book_description %}
-    <p class="small">{{ book.book_description }}</p>
+    <p class="sidebar-description">{{ book.book_description }}</p>
   {% else %}
-    <p class="small text-muted">No description available.</p>
+    <p class="sidebar-description">No description available.</p>
   {% endif %}
-
   <hr>
-
-  <p class="small"><strong>Published:</strong> {{ book.book_publication_year or 'Unknown' }}</p>
-  <p class="small"><strong>Pages:</strong> {{ book.book_page_count or 'Unknown' }}</p>
-  {% if book.book_rating %}
-    <p class="small"><strong>Rating:</strong> {{ book.book_rating }}/5</p>
-  {% endif %}
-  {% if book.book_rating_goodreads %}
-    <p class="small"><strong>Goodreads:</strong> {{ book.book_rating_goodreads }}/5</p>
-  {% endif %}
+  <div class="sidebar-meta">
+    <p><strong>Published:</strong> {{ book.book_publication_year or 'Unknown' }}</p>
+    <p><strong>Pages:</strong> {{ book.book_page_count or 'Unknown' }}</p>
+    {% if book.book_rating %}
+    <p><strong>Rating:</strong> {{ book.book_rating }}/5</p>
+    {% endif %}
+    {% if book.book_rating_goodreads %}
+    <p><strong>Goodreads:</strong> {{ book.book_rating_goodreads }}/5</p>
+    {% endif %}
+  </div>
 </div>
 {% endblock %}
 
