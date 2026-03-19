@@ -2,6 +2,8 @@
 
 A Flask application for displaying book reviews and personal writing, backed by SQLite and Open Library.
 
+![main-page](docs/img/main_page_sh.png)
+
 ## Setup
 
 Recommended setup is through [uv](https://docs.astral.sh/uv/getting-started/installation/).
