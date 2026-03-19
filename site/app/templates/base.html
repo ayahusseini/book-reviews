@@ -8,6 +8,19 @@
 <body>
     <div class="page-shell">
         <aside class="site-sidebar-left">
+            {% if random_quote %}
+            <div class="sidebar-widget sidebar-widget--quote">
+                <p class="sidebar-heading">// quote</p>
+                <blockquote class="sidebar-quote">
+                    {{ random_quote.post_body_markdown }}
+                </blockquote>
+                {% if random_quote.book %}
+                <p class="sidebar-quote-source">
+                    — <a href="{{ url_for('books.book_detail', book_id=random_quote.book.book_id) }}">{{ random_quote.book.book_title }}</a>
+                </p>
+                {% endif %}
+            </div>
+            {% endif %}
             {% block sidebar_left %}{% endblock %}
         </aside>
         <div class="site-wrapper">
@@ -25,19 +38,6 @@
             </main>
         </div>
         <aside class="site-sidebar">
-            {% if random_quote %}
-            <div class="sidebar-widget">
-                <p class="sidebar-heading">Quote</p>
-                <blockquote class="sidebar-quote">
-                    {{ random_quote.post_body_markdown }}
-                </blockquote>
-                {% if random_quote.book %}
-                <p class="sidebar-quote-source">
-                    — <a href="{{ url_for('books.book_detail', book_id=random_quote.book.book_id) }}">{{ random_quote.book.book_title }}</a>
-                </p>
-                {% endif %}
-            </div>
-            {% endif %}
             {% block sidebar_right %}{% endblock %}
         </aside>
     </div>

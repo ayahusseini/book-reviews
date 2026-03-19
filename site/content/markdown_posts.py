@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+import re
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -18,6 +19,7 @@ class MarkdownPost:
     source_path: Path
     metadata: dict[str, Any]
     body_markdown: str
+    quotes: list[str] = field(default_factory=list)
 
     @property
     def slug(self) -> str:
@@ -28,14 +30,42 @@ class MarkdownPost:
         return self.source_path.stem
 
 
+# Matches ```ad-quote ... ``` blocks (non-greedy, dotall)
+_AD_QUOTE_RE = re.compile(
+    r"```ad-quote\n(.*?)```",
+    re.DOTALL,
+)
+
+
+def extract_ad_quotes(body: str) -> list[str]:
+    """Return the text content of every ```ad-quote block in body."""
+    return [m.group(1).strip() for m in _AD_QUOTE_RE.finditer(body)]
+
+
+def replace_ad_quotes_with_blockquotes(body: str) -> str:
+    """Replace ```ad-quote blocks with Markdown blockquote syntax."""
+
+    def _to_blockquote(m: re.Match) -> str:
+        text = m.group(1).strip()
+        # Prefix every line with "> " so markdown renders it as a blockquote
+        quoted = "\n".join(f"> {line}" for line in text.splitlines())
+        return quoted
+
+    return _AD_QUOTE_RE.sub(_to_blockquote, body)
+
+
 def normalize_tag(tag: str) -> str:
     """Lowercase and collapse internal whitespace in a tag string."""
     return " ".join(tag.strip().split()).lower()
 
 
 def parse_markdown_with_frontmatter(path: Path) -> MarkdownPost:
-    """Parse a markdown file and return its frontmatter metadata
-    and body."""
+    """Parse a markdown file and return its frontmatter metadata and body.
+
+    Any ```ad-quote blocks found in the body are:
+    - extracted into the returned ``quotes`` list
+    - replaced in the body with standard Markdown blockquote syntax
+    """
     text = path.read_text(encoding="utf-8")
 
     metadata: dict[str, Any] = {}
@@ -56,14 +86,19 @@ def parse_markdown_with_frontmatter(path: Path) -> MarkdownPost:
                     metadata = loaded
             body = "\n".join(lines[end_idx + 1 :]).lstrip("\n")
 
+    quotes = extract_ad_quotes(body)
+    clean_body = replace_ad_quotes_with_blockquotes(body)
+
     return MarkdownPost(
-        source_path=path, metadata=metadata, body_markdown=body
+        source_path=path,
+        metadata=metadata,
+        body_markdown=clean_body,
+        quotes=quotes,
     )
 
 
 def extract_tags(metadata: dict[str, Any]) -> list[str]:
-    """Return a normalised, deduplicated,
-    order-preserving list of tags."""
+    """Return a normalised, deduplicated, order-preserving list of tags."""
     tags_val = metadata.get("tags", [])
 
     if isinstance(tags_val, str):

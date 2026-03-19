@@ -23,7 +23,10 @@
 <div class="sidebar-widget">
   <p class="sidebar-heading">About</p>
   {% if book.book_description %}
-    <p class="sidebar-description">{{ book.book_description }}</p>
+    <div class="sidebar-description-wrap">
+      <p class="sidebar-description" id="book-desc">{{ book.book_description }}</p>
+      <button class="desc-toggle" id="desc-toggle" aria-expanded="false" aria-controls="book-desc">...</button>
+    </div>
   {% else %}
     <p class="sidebar-description">No description available.</p>
   {% endif %}
@@ -39,6 +42,30 @@
     {% endif %}
   </div>
 </div>
+
+<script>
+(function() {
+  var desc = document.getElementById('book-desc');
+  var btn = document.getElementById('desc-toggle');
+  if (!desc || !btn) return;
+
+  var collapsed = true;
+  desc.classList.add('sidebar-description--collapsed');
+
+  btn.addEventListener('click', function() {
+    collapsed = !collapsed;
+    if (collapsed) {
+      desc.classList.add('sidebar-description--collapsed');
+      btn.textContent = '...';
+      btn.setAttribute('aria-expanded', 'false');
+    } else {
+      desc.classList.remove('sidebar-description--collapsed');
+      btn.textContent = 'show less';
+      btn.setAttribute('aria-expanded', 'true');
+    }
+  });
+})();
+</script>
 {% endblock %}
 
 {% block main_content %}
