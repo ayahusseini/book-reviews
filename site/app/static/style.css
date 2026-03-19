@@ -362,6 +362,7 @@ blockquote {
 }
 
 /* Post title with inline stars */
+h3.post-title,
 .post-title {
   display: flex;
   align-items: center;
@@ -372,11 +373,12 @@ blockquote {
   font-weight: 700;
   text-transform: none;
   letter-spacing: -0.01em;
-  color: var(--gold);
+  color: var(--link) !important;
   margin-top: 0;
   margin-bottom: 0.2rem;
 }
 
+h3.post-title .star-rating,
 .post-title .star-rating {
   top: 0;
   margin-left: 0;
