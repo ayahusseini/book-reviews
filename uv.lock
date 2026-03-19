@@ -57,6 +57,7 @@ dependencies = [
     { name = "requests" },
     { name = "ruff" },
     { name = "sqlalchemy" },
+    { name = "werkzeug" },
 ]
 
 [package.metadata]
@@ -76,6 +77,7 @@ requires-dist = [
     { name = "requests", specifier = ">=2.32.5" },
     { name = "ruff", specifier = ">=0.15.4" },
     { name = "sqlalchemy", specifier = ">=2.0.48" },
+    { name = "werkzeug", specifier = ">=3.1.6" },
 ]
 
 [[package]]

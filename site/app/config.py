@@ -34,6 +34,10 @@ class TestingConfig(Config):
 class ProductionConfig(Config):
     DEBUG = False
     SECRET_KEY = os.getenv("SECRET_KEY")
+    PROXY_FIX = True
     SQLALCHEMY_DATABASE_URI = (
         f"sqlite:///{os.path.join(Config.BASE_DIR, 'instance', 'site.db')}"
     )
+    SECRET_KEY = os.getenv("SECRET_KEY")
+    if not SECRET_KEY:
+        raise ValueError("SECRET_KEY environment variable is not set")

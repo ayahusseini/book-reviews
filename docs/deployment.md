@@ -55,3 +55,20 @@ Gunicorn → Flask app
 - It can serve static files directly without the request ever reaching python.
 
 ## Telling Flask it is behind a proxy
+
+When NGINX forwards a request to GUNICORN, flask sees a request from nginx (a local address) rather than the real client. This matters for things like URL generation (e.g. generating `http://` instead of `https://` because it thinks requests are local). 
+
+Flask solves this using `ProxyFix` middleware, added into `create_app()`
+
+## Getting a VPS
+
+A VPS is a machine that we will rent and then SSH into. When we set up an NGINX web server, this means renting out a VPS and installing and configuring everything directly onto that machien. We would then communicate with this machine using SSH on our laptop 
+
+```
+Your laptop  ──SSH──►  VPS (Ubuntu machine)
+                         │
+                         ├── nginx        (installed as a system package)
+                         ├── gunicorn     (running your Flask app)
+                         ├── your code    (cloned from git)
+                         └── systemd      (keeps gunicorn alive/restarts it)
+```
