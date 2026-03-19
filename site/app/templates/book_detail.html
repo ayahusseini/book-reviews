@@ -1,5 +1,28 @@
 {% extends "base.html" %}
 
+{% macro star_rating(rating) %}
+  {% if rating is not none %}
+    {% set rounded = (rating * 2) | round / 2 %}
+    {% set full = rounded | int %}
+    {% set half = (rounded - full) == 0.5 %}
+    {% set empty = 5 - full - (1 if half else 0) %}
+    <span class="star-rating" title="{{ rating }}/5">
+      {% for _ in range(full) %}
+        <span class="star full"><svg viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.848 1.48 8.246L12 18.896l-7.416 4.504 1.48-8.246L0 9.306l8.332-1.151z"/></svg></span>
+      {% endfor %}
+      {% if half %}
+        <span class="star half"><svg viewBox="0 0 24 24">
+          <defs><linearGradient id="hg-{{ rating }}"><stop offset="50%" stop-color="var(--gold)"/><stop offset="50%" stop-color="oklch(0.14 0.13 268)"/></linearGradient></defs>
+          <path fill="url(#hg-{{ rating }})" d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.848 1.48 8.246L12 18.896l-7.416 4.504 1.48-8.246L0 9.306l8.332-1.151z"/>
+        </svg></span>
+      {% endif %}
+      {% for _ in range(empty) %}
+        <span class="star empty"><svg viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.848 1.48 8.246L12 18.896l-7.416 4.504 1.48-8.246L0 9.306l8.332-1.151z"/></svg></span>
+      {% endfor %}
+    </span>
+  {% endif %}
+{% endmacro %}
+
 {% block sidebar_left %}
 
 {% if book.book_description %}
@@ -15,7 +38,7 @@
   <p><strong>Published:</strong> {{ book.book_publication_year or 'Unknown' }}</p>
   <p><strong>Pages:</strong> {{ book.book_page_count or 'Unknown' }}</p>
   {% if book.book_rating %}
-  <p><strong>Rating:</strong> {{ book.book_rating }}/5</p>
+  <p><strong>Rating:</strong> {{ star_rating(book.book_rating) }}</p>
   {% endif %}
 </div>
 
@@ -24,7 +47,6 @@
   var desc = document.getElementById('book-desc');
   var btn = document.getElementById('desc-toggle');
   if (!desc || !btn) return;
-
   btn.onclick = function() {
     desc.classList.toggle('sidebar-description--collapsed');
     btn.textContent = desc.classList.contains('sidebar-description--collapsed') ? '...' : 'less';
@@ -35,17 +57,31 @@
 {% endblock %}
 
 {% block header %}
-<h2>{{ book.book_title }}</h2>
-{% if book.authors %}
-<p class="text-muted" style="margin-bottom:0">{{ book.authors[0].author_name }}</p>
+<div class="book-header__title-row">
+  <span class="book-header__title">{{ book.book_title }}</span>
+  {% if book.authors %}
+  <span class="book-header__author">— {{ book.authors[0].author_name }}</span>
+  {% endif %}
+</div>
+{% if book.tags %}
+<div class="book-header__tags">
+  {% for tag in book.tags %}
+    <span class="tag">{{ tag.tag_name }}</span>
+  {% endfor %}
+</div>
 {% endif %}
 {% endblock %}
 
 {% block main_content %}
 {% for post, post_html in rendered_posts %}
-  <article class="markdown-body" style="margin-bottom: 2rem;">
-    <h3>{{ post.post_title }}</h3>
-    <p><small class="text-muted">{{ post.post_type }}</small></p>
+  <article class="markdown-body" style="margin-bottom: 2.5rem;">
+    <h3 class="post-title">
+      {{ post.post_title }}
+      {% if book.book_rating %}
+        {{ star_rating(book.book_rating) }}
+      {% endif %}
+    </h3>
+    <p style="margin-bottom: 0.75rem;"><small class="text-muted">{{ post.post_type }}</small></p>
     {{ post_html | safe }}
   </article>
 {% endfor %}
