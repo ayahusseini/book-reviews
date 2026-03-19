@@ -19,6 +19,16 @@
   --content-width: 720px;
   --sidebar-width: 220px;
   --gap:          1.5rem;
+
+  /* ── Quote block colours — tweak these to restyle all quotes ── */
+  --quote-bg:          #0d1f2d;
+  --quote-border:      #2980c7;
+  --quote-border-left: #5ec4e6;
+  --quote-text:        #a8d8e8;
+  --quote-font:        'Source Code Pro', 'Courier New', monospace;
+  --quote-font-size:   0.82rem;
+  --quote-label-color: #3a818f;
+  --quote-source-color: #5ec4e6;
 }
 
 /* ── Reset & Base ── */
@@ -70,7 +80,7 @@ body {
   padding-top: 1rem;
 }
 
-
+/* ── Generic sidebar widget ── */
 .sidebar-widget {
   background: var(--sidebar-bg);
   border: 2px solid var(--border);
@@ -92,34 +102,56 @@ body {
   margin-bottom: 0.75rem;
 }
 
+/* ── Quote sidebar widget — retro codeblock styling ── */
+.sidebar-widget--quote {
+  background: var(--quote-bg);
+  border: 1px solid var(--quote-border);
+  border-left: 3px solid var(--quote-border-left);
+  border-radius: 4px;
+  padding: 0.85rem 1rem;
+  font-family: var(--quote-font);
+}
+
+.sidebar-widget--quote .sidebar-heading {
+  color: var(--quote-label-color);
+  font-family: var(--mono-font);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  margin-bottom: 0.6rem;
+}
+
+/* The quote blockquote inside the sidebar widget */
 .sidebar-quote {
   font-style: italic;
-  font-family: var(--body-font);
-  font-size: 0.85rem;
-  line-height: 1.6;
-  color: var(--sidebar-text);
-  border-left: 2px solid var(--accent);
+  font-family: var(--quote-font);
+  font-size: var(--quote-font-size);
+  line-height: 1.65;
+  color: var(--quote-text);
+  border: none;
   margin: 0 0 0.6rem 0;
-  padding: 0.3rem 0.6rem;
+  padding: 0;
   background: none;
 }
 
 .sidebar-quote-source {
-  font-size: 0.75rem;
-  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-family: var(--mono-font);
+  color: var(--quote-source-color);
   text-align: right;
   margin: 0;
 }
 
 .sidebar-quote-source a {
-  color: var(--text-muted);
+  color: var(--quote-source-color);
+  text-decoration: none;
 }
 
 .sidebar-quote-source a:hover {
   color: var(--link-hover);
+  text-decoration: underline;
 }
 
-/* Book detail sidebar content */
+/* ── Book detail sidebar content ── */
 .sidebar-meta p {
   font-family: var(--body-font);
   font-size: 0.82rem;
@@ -133,12 +165,44 @@ body {
   font-weight: 600;
 }
 
+/* ── Collapsible book description ── */
+.sidebar-description-wrap {
+  position: relative;
+  margin-bottom: 0.75rem;
+}
+
 .sidebar-description {
   font-family: var(--body-font);
   font-size: 0.82rem;
   color: var(--sidebar-text);
   line-height: 1.6;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0;
+}
+
+.sidebar-description--collapsed {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.desc-toggle {
+  display: inline-block;
+  margin-top: 0.3rem;
+  background: none;
+  border: none;
+  border-bottom: 1px dashed var(--text-muted);
+  color: var(--text-muted);
+  font-family: var(--mono-font);
+  font-size: 0.72rem;
+  cursor: pointer;
+  padding: 0;
+  letter-spacing: 0.05em;
+}
+
+.desc-toggle:hover {
+  color: var(--link-hover);
+  border-bottom-color: var(--link-hover);
 }
 
 /* ── Skip Link ── */
@@ -268,21 +332,27 @@ li { margin-bottom: 0.25rem; }
 
 ul li::marker { color: var(--text-muted); }
 
-/* ── Blockquote ── */
+/* ── Blockquote — in post body (ad-quote blocks render here) ── */
 blockquote {
-  border-left: 3px solid var(--border);
-  margin: 1.25rem 0;
-  padding: 0.5rem 1rem;
-  color: var(--text-muted);
+  font-family: var(--quote-font);
+  font-size: var(--quote-font-size);
   font-style: italic;
-  background: var(--bg-alt);
+  color: var(--quote-text);
+  background: var(--quote-bg);
+  border: 1px solid var(--quote-border);
+  border-left: 3px solid var(--quote-border-left);
+  border-radius: 4px;
+  margin: 1.25rem 0;
+  padding: 0.75rem 1rem;
+  line-height: 1.65;
 }
 
 blockquote cite {
   display: block;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   margin-top: 0.4rem;
   font-style: normal;
+  color: var(--quote-source-color);
 }
 
 /* ── Code ── */
@@ -560,4 +630,21 @@ textarea {
   html { font-size: 16px; }
   h1   { font-size: 1.55rem; }
   .book-header__cover { width: 64px; flex-basis: 64px; }
+}
+
+/* ── Unlinked book titles (no posts yet) ── */
+.book-list__item--no-posts {
+  opacity: 0.55;
+}
+
+.book-title--unlinked {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.no-posts-hint {
+  font-family: var(--mono-font);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-left: 0.2rem;
 }

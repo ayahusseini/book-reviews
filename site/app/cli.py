@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 from pathlib import Path
 
 import click
@@ -158,6 +159,77 @@ def upsert_post(
     return post, is_new
 
 
+def _quote_hash(text: str) -> str:
+    """Return an 8-char hex hash of the first min(100, len) chars of text."""
+    sample = text[: min(100, len(text))]
+    return hashlib.sha1(sample.encode("utf-8")).hexdigest()[:8]
+
+
+def _quote_source_path(rel_source: str, h: str) -> str:
+    """Encode a stable source path for a quote post."""
+    return f"{rel_source}::quote:{h}"
+
+
+def _quote_slug(h: str) -> str:
+    """Return a slug for a quote post."""
+    return f"quote-{h}"
+
+
+def sync_quotes(
+    *,
+    quotes: list[str],
+    rel_source: str,
+    author: str,
+    book: Book | None,
+) -> tuple[int, int]:
+    """Upsert quote posts extracted from a parent markdown file.
+
+    - Creates or updates one Post(post_type='quotes') per quote.
+    - Deletes any stale quote posts from this source file whose hash
+      is no longer present in the current set.
+
+    Returns (created_count, updated_count).
+    """
+    current_hashes: set[str] = set()
+    created = updated = 0
+
+    for quote_text in quotes:
+        h = _quote_hash(quote_text)
+        current_hashes.add(h)
+        source_path = _quote_source_path(rel_source, h)
+        slug = _quote_slug(h)
+
+        _, is_new = upsert_post(
+            slug=slug,
+            rel_source=source_path,
+            title=f"Quote ({h})",
+            author=author,
+            body=quote_text,
+            post_type="quotes",
+            post_rating=None,
+            book=book,
+        )
+        if is_new:
+            created += 1
+        else:
+            updated += 1
+
+    # Remove stale quote posts from this source file
+    prefix = f"{rel_source}::quote:"
+    all_quotes_for_source = Post.query.filter(
+        Post.post_source_path.like(f"{prefix}%"),
+        Post.post_type == "quotes",
+    ).all()
+
+    for stale in all_quotes_for_source:
+        # Extract hash from source path suffix
+        stored_hash = stale.post_source_path[len(prefix) :]
+        if stored_hash not in current_hashes:
+            db.session.delete(stale)
+
+    return created, updated
+
+
 def import_post_file(path: Path, posts_dir: Path) -> bool:
     """Parse and upsert a single markdown post file.
 
@@ -203,6 +275,14 @@ def import_post_file(path: Path, posts_dir: Path) -> bool:
 
     if book:
         attach_tags(book, extract_tags(meta))
+
+    # Sync extracted ad-quote blocks as separate quote posts
+    sync_quotes(
+        quotes=parsed.quotes,
+        rel_source=rel_source,
+        author=author.strip(),
+        book=book,
+    )
 
     return is_new
 
