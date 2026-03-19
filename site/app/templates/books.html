@@ -2,58 +2,90 @@
 
 {% macro star_rating(rating) %}
   {% if rating is not none %}
-    {% set full = rating | int %}
-    {% set half = ((rating - full) >= 0.5) %}
+    {% set rounded = (rating * 2) | round / 2 %}
+    {% set full = rounded | int %}
+    {% set half = (rounded - full) == 0.5 %}
     {% set empty = 5 - full - (1 if half else 0) %}
+
     <span class="star-rating" title="{{ rating }}/5">
-      {%- for _ in range(full) %}⭐{%- endfor -%}
-      {%- if half %}🌟{%- endif -%}
-      {%- for _ in range(empty) %}☆{%- endfor -%}
+      {% for _ in range(full) %}
+        <span class="star full">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.848 1.48 8.246L12 18.896l-7.416 4.504 1.48-8.246L0 9.306l8.332-1.151z"/>
+          </svg>
+        </span>
+      {% endfor %}
+
+      {% if half %}
+        <span class="star half">
+          <svg viewBox="0 0 24 24">
+            <defs>
+              <linearGradient id="half-grad-{{ loop.index }}">
+                <stop offset="50%" stop-color="var(--highlight)"/>
+                <stop offset="50%" stop-color="oklch(0.35 0.05 266)"/>
+              </linearGradient>
+            </defs>
+            <path fill="url(#half-grad-{{ loop.index }})"
+              d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.848 1.48 8.246L12 18.896l-7.416 4.504 1.48-8.246L0 9.306l8.332-1.151z"/>
+          </svg>
+        </span>
+      {% endif %}
+
+      {% for _ in range(empty) %}
+        <span class="star empty">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.848 1.48 8.246L12 18.896l-7.416 4.504 1.48-8.246L0 9.306l8.332-1.151z"/>
+          </svg>
+        </span>
+      {% endfor %}
     </span>
   {% endif %}
 {% endmacro %}
 
 {% block header %}
-<h2>Book List</h2>
+<h2>Books</h2>
 {% endblock %}
 
 {% macro book_item(book) %}
-  <li class="book-list__item{% if book.book_id not in has_posts %} book-list__item--no-posts{% endif %}">
-    <span aria-hidden="true">📘</span>
+<li class="book-list__item">
+  <div>
     {% if book.book_id in has_posts %}
-      <a href="{{ url_for('books.book_detail', book_id=book.book_id) }}">{{ book.book_title }}</a>
+      <a href="{{ url_for('books.book_detail', book_id=book.book_id) }}">
+        {{ book.book_title }}
+      </a>
     {% else %}
-      <span class="book-title--unlinked" title="No posts yet">{{ book.book_title }}</span>
+      <span class="book-title--unlinked">{{ book.book_title }}</span>
     {% endif %}
-    <span class="text-muted">by {{ book.authors[0].author_name if book.authors else 'Unknown' }}</span>
+
+    <div class="text-muted">
+      {{ book.authors[0].author_name if book.authors else 'Unknown' }}
+    </div>
+  </div>
+
+  <div>
     {{ star_rating(book.book_rating) }}
-    {% if book.book_id not in has_posts %}
-      <span class="no-posts-hint">· no posts yet</span>
-    {% endif %}
-    {% if book.tags %}
-      <span class="tag-row">
-        {% for tag in book.tags %}
-          <span class="tag">{{ tag.tag_name }}</span>
-        {% endfor %}
-      </span>
-    {% endif %}
-  </li>
+  </div>
+</li>
 {% endmacro %}
 
 {% block main_content %}
-<p>Here are the books I've read this year:</p>
 
 {% if books_2026 %}
 <h3>2026</h3>
 <ul class="book-list">
-  {% for book in books_2026 %}{{ book_item(book) }}{% endfor %}
+  {% for book in books_2026 %}
+    {{ book_item(book) }}
+  {% endfor %}
 </ul>
 {% endif %}
 
 {% if books_previous %}
-<h3>Read previously</h3>
+<h3>Previously Read</h3>
 <ul class="book-list">
-  {% for book in books_previous %}{{ book_item(book) }}{% endfor %}
+  {% for book in books_previous %}
+    {{ book_item(book) }}
+  {% endfor %}
 </ul>
 {% endif %}
+
 {% endblock %}

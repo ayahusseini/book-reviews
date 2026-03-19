@@ -1,650 +1,216 @@
 @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Source+Code+Pro:wght@400;600&display=swap');
 
-/* ── CSS Variables ── */
 :root {
-  --bg:           #290d68;
-  --bg-alt:       #342fc7;
-  --border:       #2980c7;
-  --text:         #dee7e8;
-  --text-muted:   #3a818f;
-  --link:         #83669b;
-  --link-hover:   #dfcfe7;
-  --accent:       #8b1379;
-  --code-bg:      #1e3d54;
-  --sidebar-bg:   rgba(255, 255, 255, 0.05);
-  --sidebar-text: #8a9a9b;
-  --heading-font: 'Lora', Georgia, serif;
-  --body-font:    'Lora', Georgia, serif;
-  --mono-font:    'Source Code Pro', 'Courier New', monospace;
+  --bg: oklch(0.16 0.11 266.88);
+  --bg-soft: oklch(0.20 0.10 266.88);
+  --bg-elevated: oklch(0.25 0.10 266.88);
+
+  --text: oklch(0.83 0.08 266.57);
+  --text-muted: oklch(0.65 0.05 266.57);
+
+  --border-soft: oklch(0.40 0.10 266.34);
+
+  --accent: oklch(0.56 0.18 266.4);
+  --highlight: oklch(0.85 0.18 90); /* yellow */
+
+  --code-bg: oklch(0.25 0.16 266.52);
+
   --content-width: 720px;
-  --sidebar-width: 220px;
-  --gap:          1.5rem;
+  --sidebar-width: 260px;
+  --gap: 1.5rem;
 
-  /* ── Quote block colours — tweak these to restyle all quotes ── */
-  --quote-bg:          #0d1f2d;
-  --quote-border:      #2980c7;
-  --quote-border-left: #5ec4e6;
-  --quote-text:        #a8d8e8;
-  --quote-font:        'Source Code Pro', 'Courier New', monospace;
-  --quote-font-size:   0.82rem;
-  --quote-label-color: #3a818f;
-  --quote-source-color: #5ec4e6;
+  --heading-font: 'Lora', serif;
+  --body-font: 'Lora', serif;
+  --mono-font: 'Source Code Pro', monospace;
 }
 
-/* ── Reset & Base ── */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  font-size: 17px;
-  scroll-behavior: smooth;
-}
+/* Reset */
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  background-color: var(--bg);
+  background: var(--bg);
   color: var(--text);
   font-family: var(--body-font);
-  line-height: 1.75;
-  min-height: 100vh;
-}
-
-/* ── Outer page layout ── */
-.page-shell {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 1.5rem;
-  padding: 1rem;
-  min-height: 100vh;
-}
-
-/* ── Central content box ── */
-.site-wrapper {
-  flex: 0 0 var(--content-width);
-  min-width: 0;
-  border: 2px solid var(--border);
-  border-radius: 8px;
-  padding: 1.25rem;
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-/* ── Sidebars ── */
-.site-sidebar,
-.site-sidebar-left {
-  flex: 0 0 var(--sidebar-width);
-  min-width: 0;
-  padding-top: 1rem;
-}
-
-/* ── Generic sidebar widget ── */
-.sidebar-widget {
-  background: var(--sidebar-bg);
-  border: 2px solid var(--border);
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: var(--gap);
-  font-family: var(--body-font);
-  color: var(--sidebar-text);
-  font-size: 0.85rem;
   line-height: 1.7;
 }
 
-.sidebar-heading {
-  font-family: var(--mono-font);
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text-muted);
-  margin-bottom: 0.75rem;
+/* Layout */
+.page-shell {
+  display: flex;
+  justify-content: center;
+  gap: var(--gap);
+  padding: 1rem;
 }
 
-/* ── Quote sidebar widget — retro codeblock styling ── */
-.sidebar-widget--quote {
-  background: var(--quote-bg);
-  border: 1px solid var(--quote-border);
-  border-left: 3px solid var(--quote-border-left);
-  border-radius: 4px;
-  padding: 0.85rem 1rem;
-  font-family: var(--quote-font);
+.site-wrapper {
+  flex: 0 0 var(--content-width);
+  background: var(--bg-soft);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 1.5rem 1.75rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
 }
 
-.sidebar-widget--quote .sidebar-heading {
-  color: var(--quote-label-color);
-  font-family: var(--mono-font);
-  font-size: 0.65rem;
-  letter-spacing: 0.15em;
-  margin-bottom: 0.6rem;
+/* Sidebar = ONE PANEL */
+.site-sidebar-left {
+  flex: 0 0 var(--sidebar-width);
+  background: var(--bg-soft);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  position: sticky;
+  top: 1rem;
+  height: fit-content;
+  --sidebar-width: 230px;
 }
 
-/* The quote blockquote inside the sidebar widget */
-.sidebar-quote {
-  font-style: italic;
-  font-family: var(--quote-font);
-  font-size: var(--quote-font-size);
-  line-height: 1.65;
-  color: var(--quote-text);
-  border: none;
-  margin: 0 0 0.6rem 0;
-  padding: 0;
+/* Remove boxed widgets */
+.sidebar-widget {
   background: none;
+  border: none;
+  padding: 0;
+}
+
+/* Quote = hero */
+.sidebar-widget--quote {
+  background: var(--code-bg);
+  border-left: 4px solid var(--accent);
+  padding: 0.7rem 0.8rem;
+  border-radius: 4px;
+  font-family: var(--mono-font);
+  font-size:  0.78rem;
+  line-height: 1.6;
+}
+
+.sidebar-heading {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-bottom: 0.5rem;
 }
 
 .sidebar-quote-source {
-  font-size: 0.72rem;
-  font-family: var(--mono-font);
-  color: var(--quote-source-color);
-  text-align: right;
-  margin: 0;
+  font-size: 0.75rem;
+  opacity: 0.7;
 }
 
-.sidebar-quote-source a {
-  color: var(--quote-source-color);
-  text-decoration: none;
-}
-
-.sidebar-quote-source a:hover {
-  color: var(--link-hover);
-  text-decoration: underline;
-}
-
-/* ── Book detail sidebar content ── */
-.sidebar-meta p {
-  font-family: var(--body-font);
-  font-size: 0.82rem;
-  color: var(--sidebar-text);
-  margin-bottom: 0.4rem;
-  line-height: 1.5;
-}
-
-.sidebar-meta strong {
-  color: var(--sidebar-text);
-  font-weight: 600;
-}
-
-/* ── Collapsible book description ── */
-.sidebar-description-wrap {
-  position: relative;
-  margin-bottom: 0.75rem;
+/* ABOUT → quiet metadata */
+.sidebar-meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-soft);
+  padding-top: 0.75rem;
 }
 
 .sidebar-description {
-  font-family: var(--body-font);
   font-size: 0.82rem;
-  color: var(--sidebar-text);
-  line-height: 1.6;
-  margin-bottom: 0;
+  color: var(--text-muted);
 }
 
 .sidebar-description--collapsed {
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-.desc-toggle {
-  display: inline-block;
-  margin-top: 0.3rem;
-  background: none;
-  border: none;
-  border-bottom: 1px dashed var(--text-muted);
-  color: var(--text-muted);
-  font-family: var(--mono-font);
-  font-size: 0.72rem;
-  cursor: pointer;
-  padding: 0;
-  letter-spacing: 0.05em;
-}
-
-.desc-toggle:hover {
-  color: var(--link-hover);
-  border-bottom-color: var(--link-hover);
-}
-
-/* ── Skip Link ── */
-.skip-link {
-  position: absolute;
-  top: -999px;
-  left: 1rem;
-  background: var(--accent);
-  color: #fff;
-  padding: 0.4em 0.8em;
-  font-family: var(--mono-font);
-  font-size: 0.8rem;
-  text-decoration: none;
-  z-index: 999;
-}
-.skip-link:focus { top: 1rem; }
-
-/* ── Header ── */
-.site-header {
-  border-bottom: 2px solid var(--border);
-  padding: 1.5rem 0 1rem;
-  margin-bottom: var(--gap);
-}
-
-.site-title {
-  font-family: var(--heading-font);
-  font-size: 1.6rem;
+/* Header/Nav */
+nav h1 {
+  font-size: 1.8rem;
   font-weight: 600;
   letter-spacing: -0.02em;
-  color: var(--text);
-  text-decoration: none;
+  margin-bottom: 0.2rem;
 }
 
-.site-title:hover { color: var(--link-hover); }
-
-.site-tagline {
-  font-size: 0.85rem;
-  font-style: italic;
-  color: var(--text-muted);
-  margin-top: 0.1rem;
+nav h1 span {
+  color: var(--highlight);
 }
 
-/* ── Navigation ── */
-.site-nav {
-  margin-top: 0.75rem;
-  font-family: var(--mono-font);
-  font-size: 0.78rem;
-}
-
-.site-nav ul {
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem 0;
-}
-
-.site-nav li::after {
-  content: ' · ';
-  color: var(--border);
-  margin: 0 0.3rem;
-}
-
-.site-nav li:last-child::after { content: ''; }
-
-.site-nav a {
-  color: var(--link);
-  text-decoration: none;
-}
-
-.site-nav a:hover {
-  color: var(--link-hover);
-  text-decoration: underline;
-}
-
-.site-nav a[aria-current="page"] {
+nav a {
   color: var(--accent);
-  font-weight: 600;
-  text-decoration: underline;
-}
-
-/* ── Main Content ── */
-main {
-  padding-bottom: 3rem;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--heading-font);
-  font-weight: 600;
-  line-height: 1.3;
-  color: var(--text);
-  margin-top: calc(var(--gap) * 1.5);
-  margin-bottom: 0.5rem;
-}
-
-h1 { font-size: 1.9rem; margin-top: var(--gap); }
-h2 { font-size: 1.35rem; border-bottom: 1px solid var(--border); padding-bottom: 0.25rem; }
-h3 { font-size: 1.1rem; }
-h4 { font-size: 1rem; font-style: italic; }
-
-p { margin-bottom: 1rem; }
-
-em { font-style: italic; }
-strong { font-weight: 600; }
-
-small, .small {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
-
-/* ── Links ── */
-a {
-  color: var(--link);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-a:hover { color: var(--link-hover); }
-a:visited { color: #7a5230; }
-
-/* ── Lists ── */
-ul, ol {
-  padding-left: 1.4rem;
-  margin-bottom: 1rem;
-}
-
-li { margin-bottom: 0.25rem; }
-
-ul li::marker { color: var(--text-muted); }
-
-/* ── Blockquote — in post body (ad-quote blocks render here) ── */
-blockquote {
-  font-family: var(--quote-font);
-  font-size: var(--quote-font-size);
-  font-style: italic;
-  color: var(--quote-text);
-  background: var(--quote-bg);
-  border: 1px solid var(--quote-border);
-  border-left: 3px solid var(--quote-border-left);
-  border-radius: 4px;
-  margin: 1.25rem 0;
-  padding: 0.75rem 1rem;
-  line-height: 1.65;
-}
-
-blockquote cite {
-  display: block;
-  font-size: 0.78rem;
-  margin-top: 0.4rem;
-  font-style: normal;
-  color: var(--quote-source-color);
-}
-
-/* ── Code ── */
-code, kbd, samp {
-  font-family: var(--mono-font);
-  font-size: 0.85em;
-  background: var(--code-bg);
-  padding: 0.1em 0.35em;
-  border-radius: 2px;
-  border: 1px solid var(--border);
-}
-
-pre {
-  background: var(--code-bg);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 1rem;
-  overflow-x: auto;
-  margin-bottom: 1rem;
-  font-family: var(--mono-font);
-  font-size: 0.83rem;
-  line-height: 1.6;
-}
-
-pre code {
-  background: none;
-  border: none;
-  padding: 0;
-}
-
-/* ── Horizontal Rule ── */
-hr {
-  border: none;
-  border-top: 1px dashed var(--border);
-  margin: var(--gap) 0;
-}
-
-/* ── Cards / Boxes ── */
-.box {
-  background: var(--bg-alt);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 1rem 1.25rem;
-  margin-bottom: var(--gap);
-}
-
-.box--notice { border-left: 4px solid var(--accent); }
-
-/* ── Tables ── */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
-  margin-bottom: var(--gap);
-}
-
-th {
-  font-family: var(--mono-font);
-  font-size: 0.78rem;
-  text-align: left;
-  border-bottom: 2px solid var(--border);
-  padding: 0.4rem 0.6rem;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-td {
-  padding: 0.4rem 0.6rem;
-  border-bottom: 1px solid var(--bg-alt);
-}
-
-tr:hover td { background: var(--bg-alt); }
-
-/* ── Forms ── */
-label {
-  display: block;
+  text-decoration: none;
   font-family: var(--mono-font);
   font-size: 0.8rem;
-  color: var(--text-muted);
-  margin-bottom: 0.25rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
 }
 
-input[type="text"],
-input[type="email"],
-input[type="search"],
-input[type="password"],
-input[type="url"],
-textarea,
-select {
-  display: block;
-  width: 100%;
-  padding: 0.45rem 0.65rem;
-  font-family: var(--body-font);
-  font-size: 0.95rem;
-  color: var(--text);
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 2px;
-  outline: none;
-  margin-bottom: 0.9rem;
-  transition: border-color 0.15s;
+nav a:hover {
+  text-decoration: underline;
 }
 
-input:focus, textarea:focus, select:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(139,69,19,0.12);
+/* Typography */
+h2 {
+  margin-top: 1rem;
+  border-bottom: 1px solid var(--border-soft);
 }
 
-textarea {
-  resize: vertical;
-  min-height: 100px;
-}
+p { margin-bottom: 1rem; max-width: 65ch; }
 
-/* ── Buttons ── */
-.btn, button, input[type="submit"] {
-  display: inline-block;
-  padding: 0.4rem 1rem;
-  font-family: var(--mono-font);
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--bg);
-  background: var(--accent);
-  border: 2px solid var(--accent);
-  border-radius: 2px;
-  cursor: pointer;
-  text-decoration: none;
-  letter-spacing: 0.04em;
-  transition: background 0.15s, color 0.15s;
-}
-
-.btn:hover, button:hover, input[type="submit"]:hover {
-  background: var(--link-hover);
-  border-color: var(--link-hover);
-  color: #fff;
-}
-
-.btn--ghost {
-  background: transparent;
-  color: var(--accent);
-}
-
-.btn--ghost:hover {
-  background: var(--bg-alt);
-  color: var(--link-hover);
-  border-color: var(--link-hover);
-}
-
-/* ── Flash Messages ── */
-.flash-messages { margin-bottom: var(--gap); }
-
-.flash {
-  padding: 0.6rem 1rem;
-  border-radius: 2px;
-  font-size: 0.88rem;
-  font-family: var(--mono-font);
-  margin-bottom: 0.5rem;
-  border-left: 4px solid;
-}
-
-.flash--success { background: #edf5e8; border-color: #5a8a3c; color: #2d4a1e; }
-.flash--error   { background: #f9ebe8; border-color: #b03a2e; color: #6b1e17; }
-.flash--info    { background: var(--bg-alt); border-color: var(--border); color: var(--text-muted); }
-
-/* ── Footer ── */
-.site-footer {
-  border-top: 1px dashed var(--border);
-  padding: 1.5rem 0;
-  margin-top: var(--gap);
-  font-family: var(--mono-font);
-  font-size: 0.78rem;
-  color: var(--text-muted);
-  text-align: left;
-  line-height: 1.9;
-}
-
-.site-footer a { color: var(--text-muted); text-decoration: none; }
-.site-footer a:hover { color: var(--link-hover); text-decoration: underline; }
-
-/* ── Utility ── */
-.text-center { text-align: center; }
-.text-muted   { color: var(--text-muted); }
-.mono         { font-family: var(--mono-font); }
-.mt           { margin-top: var(--gap); }
-.mb           { margin-bottom: var(--gap); }
-.sr-only {
-  position: absolute;
-  width: 1px; height: 1px;
-  padding: 0; overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
-}
-
-/* ── Tags ── */
-.tag-row {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  margin-left: 0.5rem;
-  vertical-align: middle;
-}
-
-.tag {
-  display: inline-block;
-  font-family: var(--mono-font);
-  font-size: 0.72rem;
-  padding: 0.05rem 0.45rem;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--text);
-}
-
-/* ── Book list ── */
-.book-list { padding-left: 1.2rem; }
-.book-list__item { margin-bottom: 0.5rem; }
-
-/* ── Star rating ── */
-.star-rating {
-  font-size: 0.82rem;
-  margin-left: 0.35rem;
-  vertical-align: middle;
-  letter-spacing: -0.05em;
-}
-
-/* ── Book header layout ── */
-.book-header {
+/* Book list */
+.book-list__item {
   display: flex;
-  align-items: flex-start;
+  justify-content: space-between;
+  align-items: center;
   gap: 1rem;
 }
 
-.book-header__cover { width: 86px; flex: 0 0 86px; }
-
-.book-cover {
-  width: 100%;
-  height: auto;
-  display: block;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.06);
+.book-list__item:hover {
+  background: var(--bg-elevated);
 }
 
-.book-cover--placeholder {
-  display: grid;
-  place-items: center;
-  aspect-ratio: 2 / 3;
-  font-size: 2rem;
-  line-height: 1;
+/* Tags */
+.tag {
+  font-family: var(--mono-font);
+  font-size: 0.7rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-soft);
 }
 
-.book-header__meta h2 { margin-top: 0; }
+.star svg {
+  width: 18px;
+  height: 18px;
+}
 
-/* ── Full post on book detail page ── */
-.post-full { margin-top: var(--gap); }
-.post-full__header { margin-bottom: 0.75rem; }
-.post-full__header h3 { margin-top: 0; margin-bottom: 0.2rem; }
+.star.full svg {
+  fill: var(--highlight);
+}
 
-/* ── Responsive ── */
+.star.half svg {
+  fill: var(--highlight);
+}
+
+.star.empty svg {
+  fill: oklch(0.35 0.05 266); /* darker empty for contrast */
+}
+
+/* Quotes in content */
+blockquote {
+  background: var(--code-bg);
+  border-left: 4px solid var(--accent);
+  padding: 0.8rem;
+  font-family: var(--mono-font);
+  border-radius: 4px;
+}
+
+/* Small text */
+.text-muted {
+  color: var(--text-muted);
+}
+
+/* Responsive */
 @media (max-width: 900px) {
-  .site-sidebar,
   .site-sidebar-left {
     display: none;
   }
-  .site-wrapper {
-    flex: 1 1 auto;
-    max-width: var(--content-width);
-  }
 }
 
-@media (max-width: 600px) {
-  html { font-size: 16px; }
-  h1   { font-size: 1.55rem; }
-  .book-header__cover { width: 64px; flex-basis: 64px; }
+a {
+  color: var(--accent);
 }
 
-/* ── Unlinked book titles (no posts yet) ── */
-.book-list__item--no-posts {
-  opacity: 0.55;
-}
-
-.book-title--unlinked {
-  color: var(--text-muted);
-  font-style: italic;
-}
-
-.no-posts-hint {
-  font-family: var(--mono-font);
-  font-size: 0.72rem;
-  color: var(--text-muted);
-  margin-left: 0.2rem;
+a:hover {
+  color: var(--highlight);
 }
