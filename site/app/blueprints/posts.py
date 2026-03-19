@@ -7,16 +7,20 @@ from flask import Blueprint, abort, render_template
 from content.markdown_posts import render_markdown_to_safe_html
 from app.database.models import Post
 
+from app.extensions import cache
+
 posts_bp = Blueprint("posts", __name__)
 
 
 @posts_bp.route("/", methods=["GET"])
+@cache.cached()
 def post_list():
     posts = Post.query.order_by(Post.post_created_at.desc()).all()
     return render_template("posts.html", posts=posts)
 
 
 @posts_bp.route("/misc_posts", methods=["GET"])
+@cache.cached()
 def misc_post_list():
     posts = (
         Post.query.filter(Post.book_id.is_(None))
@@ -27,6 +31,7 @@ def misc_post_list():
 
 
 @posts_bp.route("/<string:slug>", methods=["GET"])
+@cache.cached()
 def post_detail(slug: str):
     post = Post.query.filter_by(post_slug=slug).first()
     if not post:

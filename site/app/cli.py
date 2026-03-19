@@ -14,7 +14,7 @@ from content.markdown_posts import (
 )
 from app.database.models import VALID_POST_TYPES, Author, Book, Post, Tag
 from seed_database.open_library import fetch_book_data
-from app.extensions import db
+from app.extensions import db, cache
 
 
 def upsert_tag(tag_name: str) -> Tag:
@@ -320,6 +320,8 @@ def import_posts_command(path_str: str) -> None:
         f"Imported posts from {posts_dir}: "
         f"created={created}, updated={updated}"
     )
+    cache.clear()  # bust everything — next request repopulates
+    click.echo("Cache cleared.")
 
 
 def init_app(app) -> None:
