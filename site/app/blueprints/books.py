@@ -6,7 +6,7 @@ from flask import Blueprint, abort, render_template
 from sqlalchemy import distinct
 
 from app.database.models import Book, Post, Tag
-from app.extensions import db
+from app.extensions import db, cache
 from content.markdown_posts import render_markdown_to_safe_html
 
 books_bp = Blueprint("books", __name__)
@@ -26,6 +26,7 @@ def _book_ids_with_posts() -> set[int]:
 
 
 @books_bp.route("/", methods=["GET"])
+@cache.cached()
 def book_list():
     """Render the full book list,
     split into current year and previous reads."""
@@ -55,6 +56,7 @@ def book_list():
 
 
 @books_bp.route("/<int:book_id>", methods=["GET"])
+@cache.cached()
 def book_detail(book_id: int):
     """Render the book detail page with all non-quote posts rendered to HTML.
 

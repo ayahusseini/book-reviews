@@ -13,7 +13,7 @@ from app.config import (
     TestingConfig,
 )
 from app.database import models as models
-from app.extensions import db, migrate
+from app.extensions import db, migrate, cache
 from app.setup_logging import setup_logging
 
 
@@ -72,6 +72,9 @@ def create_app():
     app.register_blueprint(posts_bp, url_prefix="/posts")
 
     db.init_app(app)
+    cache.init_app(
+        app, config={"CACHE_TYPE": "SimpleCache", "CACHE_DEFAULT_TIMEOUT": 0}
+    )
     migrate.init_app(app, db)
 
     from . import cli as cli_module
