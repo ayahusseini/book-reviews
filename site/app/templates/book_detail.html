@@ -1,46 +1,20 @@
-{% extends "base.html" %}
-
-{% block header %}
-<div class="book-header">
-  <div class="book-header__cover">
-      <div class="book-cover book-cover--placeholder" aria-hidden="true">📘</div>
-  </div>
-  <div class="book-header__meta">
-    <h2>{{ book.book_title }}</h2>
-    <p class="text-muted">by {% for author in book.authors %}{{ author.author_name }}{% if not loop.last %}, {% endif %}{% endfor %}</p>
-    {% if book.tags %}
-      <div class="tag-row">
-        {% for tag in book.tags %}
-          <span class="tag">{{ tag.tag_name }}</span>
-        {% endfor %}
-      </div>
-    {% endif %}
-  </div>
-</div>
-{% endblock %}
-
 {% block sidebar_left %}
-<div class="sidebar-widget">
-  <p class="sidebar-heading">About</p>
-  {% if book.book_description %}
-    <div class="sidebar-description-wrap">
-      <p class="sidebar-description" id="book-desc">{{ book.book_description }}</p>
-      <button class="desc-toggle" id="desc-toggle" aria-expanded="false" aria-controls="book-desc">...</button>
-    </div>
-  {% else %}
-    <p class="sidebar-description">No description available.</p>
+
+{% if book.book_description %}
+<div class="sidebar-description-wrap">
+  <p class="sidebar-description sidebar-description--collapsed" id="book-desc">
+    {{ book.book_description }}
+  </p>
+  <button class="desc-toggle" id="desc-toggle">...</button>
+</div>
+{% endif %}
+
+<div class="sidebar-meta">
+  <p><strong>Published:</strong> {{ book.book_publication_year or 'Unknown' }}</p>
+  <p><strong>Pages:</strong> {{ book.book_page_count or 'Unknown' }}</p>
+  {% if book.book_rating %}
+  <p><strong>Rating:</strong> {{ book.book_rating }}/5</p>
   {% endif %}
-  <hr>
-  <div class="sidebar-meta">
-    <p><strong>Published:</strong> {{ book.book_publication_year or 'Unknown' }}</p>
-    <p><strong>Pages:</strong> {{ book.book_page_count or 'Unknown' }}</p>
-    {% if book.book_rating %}
-    <p><strong>Rating:</strong> {{ book.book_rating }}/5</p>
-    {% endif %}
-    {% if book.book_rating_goodreads %}
-    <p><strong>Goodreads:</strong> {{ book.book_rating_goodreads }}/5</p>
-    {% endif %}
-  </div>
 </div>
 
 <script>
@@ -49,45 +23,11 @@
   var btn = document.getElementById('desc-toggle');
   if (!desc || !btn) return;
 
-  var collapsed = true;
-  desc.classList.add('sidebar-description--collapsed');
-
-  btn.addEventListener('click', function() {
-    collapsed = !collapsed;
-    if (collapsed) {
-      desc.classList.add('sidebar-description--collapsed');
-      btn.textContent = '...';
-      btn.setAttribute('aria-expanded', 'false');
-    } else {
-      desc.classList.remove('sidebar-description--collapsed');
-      btn.textContent = 'show less';
-      btn.setAttribute('aria-expanded', 'true');
-    }
-  });
+  btn.onclick = function() {
+    desc.classList.toggle('sidebar-description--collapsed');
+    btn.textContent = desc.classList.contains('sidebar-description--collapsed') ? '...' : 'less';
+  };
 })();
 </script>
-{% endblock %}
 
-{% block main_content %}
-<a href="{{ url_for('books.book_list') }}" class="small">← Back to books</a>
-
-{% if rendered_posts %}
-  {% for post, post_html in rendered_posts %}
-    <article class="post-full">
-      <header class="post-full__header">
-        <p class="small text-muted">
-          {{ post.post_type }}
-          {% if post.post_rating %} · {{ post.post_rating }}/5{% endif %}
-          · {{ post.post_created_at.strftime('%B %d, %Y') }}
-        </p>
-      </header>
-      <div class="markdown-body">
-        {{ post_html | safe }}
-      </div>
-    </article>
-    {% if not loop.last %}<hr>{% endif %}
-  {% endfor %}
-{% else %}
-  <p class="text-muted">No posts for this book yet.</p>
-{% endif %}
 {% endblock %}

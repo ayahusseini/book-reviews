@@ -1,45 +1,61 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <title>HusseiniReads</title>
+    <title>📖HusseiniReads</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="page-shell">
-        <aside class="site-sidebar-left">
-            {% if random_quote %}
-            <div class="sidebar-widget sidebar-widget--quote">
-                <p class="sidebar-heading">// quote</p>
-                <blockquote class="sidebar-quote">
-                    {{ random_quote.post_body_markdown }}
-                </blockquote>
-                {% if random_quote.book %}
-                <p class="sidebar-quote-source">
-                    — <a href="{{ url_for('books.book_detail', book_id=random_quote.book.book_id) }}">{{ random_quote.book.book_title }}</a>
-                </p>
-                {% endif %}
+
+<div class="page-shell">
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="site-sidebar-left">
+
+        {% if random_quote %}
+        <div class="sidebar-widget sidebar-widget--quote">
+            <div class="sidebar-heading">// quote</div>
+
+            <blockquote class="sidebar-quote">
+                {{ random_quote.post_body_markdown }}
+            </blockquote>
+
+            {% if random_quote.book %}
+            <div class="sidebar-quote-source">
+                — <a href="{{ url_for('books.book_detail', book_id=random_quote.book.book_id) }}">
+                    {{ random_quote.book.book_title }}
+                </a>
             </div>
             {% endif %}
-            {% block sidebar_left %}{% endblock %}
-        </aside>
-        <div class="site-wrapper">
-            <nav>
-                <h1>📖 HusseiniReads</h1>
-                <a href="{{ url_for('books.book_list') }}">Books</a> |
-                <a href="{{ url_for('posts.misc_post_list') }}">Misc. Posts</a> |
-                <a href="{{ url_for('homepage.about') }}">About</a>
-            </nav>
-            <header>
-                {% block header %}{% endblock %}
-            </header>
-            <main>
-                {% block main_content %}{% endblock %}
-            </main>
         </div>
-        <aside class="site-sidebar">
-            {% block sidebar_right %}{% endblock %}
-        </aside>
+        {% endif %}
+
+        {% block sidebar_left %}{% endblock %}
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="site-wrapper">
+
+        <nav>
+            <h1>📖 HusseiniReads</h1>
+            <div>
+                <a href="{{ url_for('books.book_list') }}">Books</a> ·
+                <a href="{{ url_for('posts.misc_post_list') }}">Posts</a> ·
+                <a href="{{ url_for('homepage.about') }}">About</a>
+            </div>
+        </nav>
+
+        <header>
+            {% block header %}{% endblock %}
+        </header>
+
+        <main>
+            {% block main_content %}{% endblock %}
+        </main>
+
     </div>
+
+</div>
+
 </body>
 </html>
