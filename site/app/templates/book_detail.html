@@ -1,3 +1,5 @@
+{% extends "base.html" %}
+
 {% block sidebar_left %}
 
 {% if book.book_description %}
@@ -30,4 +32,23 @@
 })();
 </script>
 
+{% endblock %}
+
+{% block header %}
+<h2>{{ book.book_title }}</h2>
+{% if book.authors %}
+<p class="text-muted" style="margin-bottom:0">{{ book.authors[0].author_name }}</p>
+{% endif %}
+{% endblock %}
+
+{% block main_content %}
+{% for post, post_html in rendered_posts %}
+  <article class="markdown-body" style="margin-bottom: 2rem;">
+    <h3>{{ post.post_title }}</h3>
+    <p><small class="text-muted">{{ post.post_type }}</small></p>
+    {{ post_html | safe }}
+  </article>
+{% endfor %}
+
+<p><a href="{{ url_for('books.book_list') }}">← Back to books</a></p>
 {% endblock %}
