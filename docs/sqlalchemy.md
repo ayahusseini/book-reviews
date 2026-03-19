@@ -44,3 +44,7 @@ SQLAlchemy is framework agnostic. In order to work, it needs to know about Flask
 
 - Our flask config needs to set the `SQLALCHEMY_DATABASE_URI` - this is set by the `Config` objects
 - Then we import `db` and it is set up according to the app configuration. Everthing is accessible from the `db` object
+
+## Understanding Sessions
+SQLALchemy uses sessions to manage database connections
+Whenever an object from the database is loaded, it is attatched to a session. Through this session, the object can go back and fetch related items on demand. The 

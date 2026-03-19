@@ -83,11 +83,18 @@ def create_app():
 
     @app.context_processor
     def inject_random_quote():
-        """Inject a randomly selected quote post
-        into every template context."""
+        """
+        Injects a random quote into the app's context
+        (the return value is merged into the template context for
+        every render_template call)
+        If the cache already has a list of all_quotes, a random one
+        is returned. Otherwise, the list is generated, cached, and
+        then returned.
+        """
         from app.database.models import Post
 
         quotes = Post.query.filter_by(post_type="quotes").all()
+
         return {"random_quote": random.choice(quotes) if quotes else None}
 
     if app.config.get("TESTING", False):
