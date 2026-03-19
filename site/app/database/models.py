@@ -7,7 +7,6 @@ Schema (from ERD):
 """
 
 from datetime import datetime, timezone
-import re
 from sqlalchemy import CheckConstraint
 from app.extensions import db
 
@@ -95,7 +94,6 @@ class Book(db.Model):
     book_description = db.Column(db.Text, nullable=True)
     book_publication_year = db.Column(db.Integer(), nullable=True)
     book_rating_goodreads = db.Column(db.Float(), nullable=True)
-    book_cover_url = db.Column(db.Text(), nullable=True)
     book_page_count = db.Column(db.Integer(), nullable=True)
     book_isbn = db.Column(db.Text(), nullable=True)
 
@@ -135,19 +133,6 @@ class Book(db.Model):
         if not ratings:
             return None
         return round(sum(ratings) / len(ratings), 2)
-
-    @property
-    def cover_id(self) -> int | None:
-        """Extract Open Library cover id from book_cover_url, if present."""
-        if not self.book_cover_url:
-            return None
-        match = re.search(r"/b/id/(\d+)-[A-Z]\.jpg$", self.book_cover_url)
-        if not match:
-            return None
-        try:
-            return int(match.group(1))
-        except ValueError:
-            return None
 
 
 class Tag(db.Model):

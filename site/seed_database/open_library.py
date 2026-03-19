@@ -183,11 +183,7 @@ def fetch_all_authors(author_keys: list[str]) -> list[Author]:
 
 
 def fetch_book_data(ol_works_key: str) -> Book:
-    """Fetch all data for a works key and return a populated Book instance.
-
-    Cover URL is intentionally excluded — set book_cover_url manually via
-    the seed file after import.
-    """
+    """Fetch all data for a works key and return a populated Book instance."""
     works = fetch_works_data(ol_works_key)
     editions = fetch_editions_data(ol_works_key)
     author_keys = extract_author_keys(works)
@@ -199,7 +195,6 @@ def fetch_book_data(ol_works_key: str) -> Book:
         book_ol_key=ol_works_key,
         book_description=extract_description(works),
         book_publication_year=extract_publication_year(editions),
-        book_cover_url=None,
         book_page_count=extract_page_count(editions),
         authors=authors,
     )

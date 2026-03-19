@@ -16,6 +16,16 @@ def post_list():
     return render_template("posts.html", posts=posts)
 
 
+@posts_bp.route("/misc_posts", methods=["GET"])
+def misc_post_list():
+    posts = (
+        Post.query.filter(Post.book_id.is_(None))
+        .order_by(Post.post_created_at.desc())
+        .all()
+    )
+    return render_template("posts.html", posts=posts)
+
+
 @posts_bp.route("/<string:slug>", methods=["GET"])
 def post_detail(slug: str):
     post = Post.query.filter_by(post_slug=slug).first()
