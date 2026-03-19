@@ -18,4 +18,4 @@ htmlcov/
 *.log
 
 instance/
-posts/
+**/posts/**
