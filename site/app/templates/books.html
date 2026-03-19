@@ -10,9 +10,7 @@
     <span class="star-rating" title="{{ rating }}/5">
       {% for _ in range(full) %}
         <span class="star full">
-          <svg viewBox="0 0 24 24">
-            <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.848 1.48 8.246L12 18.896l-7.416 4.504 1.48-8.246L0 9.306l8.332-1.151z"/>
-          </svg>
+          <svg viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.848 1.48 8.246L12 18.896l-7.416 4.504 1.48-8.246L0 9.306l8.332-1.151z"/></svg>
         </span>
       {% endfor %}
 
@@ -20,22 +18,19 @@
         <span class="star half">
           <svg viewBox="0 0 24 24">
             <defs>
-              <linearGradient id="half-grad-{{ loop.index }}">
+              <linearGradient id="half-grad-{{ rating }}">
                 <stop offset="50%" stop-color="var(--highlight)"/>
                 <stop offset="50%" stop-color="oklch(0.35 0.05 266)"/>
               </linearGradient>
             </defs>
-            <path fill="url(#half-grad-{{ loop.index }})"
-              d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.848 1.48 8.246L12 18.896l-7.416 4.504 1.48-8.246L0 9.306l8.332-1.151z"/>
+            <path fill="url(#half-grad-{{ rating }})" d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.848 1.48 8.246L12 18.896l-7.416 4.504 1.48-8.246L0 9.306l8.332-1.151z"/>
           </svg>
         </span>
       {% endif %}
 
       {% for _ in range(empty) %}
         <span class="star empty">
-          <svg viewBox="0 0 24 24">
-            <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.848 1.48 8.246L12 18.896l-7.416 4.504 1.48-8.246L0 9.306l8.332-1.151z"/>
-          </svg>
+          <svg viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.848 1.48 8.246L12 18.896l-7.416 4.504 1.48-8.246L0 9.306l8.332-1.151z"/></svg>
         </span>
       {% endfor %}
     </span>
@@ -48,23 +43,32 @@
 
 {% macro book_item(book) %}
 <li class="book-list__item">
-  <div>
+
+  {# Title + stars #}
+  <span class="book-list__title">
     {% if book.book_id in has_posts %}
-      <a href="{{ url_for('books.book_detail', book_id=book.book_id) }}">
-        {{ book.book_title }}
-      </a>
+      <a href="{{ url_for('books.book_detail', book_id=book.book_id) }}">{{ book.book_title }}</a>
     {% else %}
       <span class="book-title--unlinked">{{ book.book_title }}</span>
     {% endif %}
-
-    <div class="text-muted">
-      {{ book.authors[0].author_name if book.authors else 'Unknown' }}
-    </div>
-  </div>
-
-  <div>
     {{ star_rating(book.book_rating) }}
-  </div>
+  </span>
+
+  {# Author #}
+  <span class="book-list__author">
+    {{ book.authors[0].author_name if book.authors else 'Unknown' }}
+  </span>
+
+  {# Tags — exclude the year tags used for grouping #}
+  {% set display_tags = book.tags | rejectattr('tag_name', 'in', ['2026', '2025', '2024', '2023']) | list %}
+  {% if display_tags %}
+  <span class="book-list__tags">
+    {% for tag in display_tags %}
+      <span class="tag">{{ tag.tag_name }}</span>
+    {% endfor %}
+  </span>
+  {% endif %}
+
 </li>
 {% endmacro %}
 

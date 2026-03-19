@@ -37,8 +37,15 @@
     <div class="site-wrapper">
 
         <nav>
-            <h1>📖 HusseiniReads</h1>
-            <div>
+            <div class="nav-title">
+                <img
+                  src="{{ url_for('static', filename='logo.png') }}"
+                  alt="HusseiniReads logo"
+                  class="nav-logo"
+                >
+                <h1>HusseiniReads</h1>
+            </div>
+            <div class="nav-links">
                 <a href="{{ url_for('books.book_list') }}">Books</a> ·
                 <a href="{{ url_for('posts.misc_post_list') }}">Posts</a> ·
                 <a href="{{ url_for('homepage.about') }}">About</a>
