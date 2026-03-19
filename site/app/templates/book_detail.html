@@ -3,16 +3,7 @@
 {% block header %}
 <div class="book-header">
   <div class="book-header__cover">
-    {% if book.cover_id %}
-      <img
-        class="book-cover"
-        src="{{ url_for('books.cover_proxy', cover_id=book.cover_id, size='M') }}"
-        alt="Cover of {{ book.book_title }}"
-        loading="lazy"
-      >
-    {% else %}
       <div class="book-cover book-cover--placeholder" aria-hidden="true">📘</div>
-    {% endif %}
   </div>
   <div class="book-header__meta">
     <h2>{{ book.book_title }}</h2>
@@ -57,9 +48,6 @@
   {% for post, post_html in rendered_posts %}
     <article class="post-full">
       <header class="post-full__header">
-        <h3>
-          <a href="{{ url_for('posts.post_detail', slug=post.post_slug) }}">{{ post.post_title }}</a>
-        </h3>
         <p class="small text-muted">
           {{ post.post_type }}
           {% if post.post_rating %} · {{ post.post_rating }}/5{% endif %}
