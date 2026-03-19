@@ -6,39 +6,40 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="site-wrapper">
-        <nav>
-            <h1>📖 HusseiniReads</h1>
-            <a href="{{ url_for('books.book_list') }}">Books</a> |
-            <a href="{{ url_for('posts.post_list') }}">Posts</a> |
-            <a href="{{ url_for('homepage.about') }}">About</a>
-        </nav>
-        <div class="page-layout">
-            <section class="content">
-                <header>
-                    {% block header %}{% endblock %}
-                </header>
-                <main>
-                    {% block main_content %}{% endblock %}
-                </main>
-            </section>
-            <aside class="sidebar">
-                {% if random_quote %}
-                <div class="sidebar-widget">
-                    <h4 class="sidebar-heading">Quote</h4>
-                    <blockquote class="sidebar-quote">
-                        {{ random_quote.post_body_markdown }}
-                    </blockquote>
-                    {% if random_quote.book %}
-                    <p class="sidebar-quote-source">
-                        — <a href="{{ url_for('books.book_detail', book_id=random_quote.book.book_id) }}">{{ random_quote.book.book_title }}</a>
-                    </p>
-                    {% endif %}
-                </div>
-                {% endif %}
-                {% block sidebar %}{% endblock %}
-            </aside>
+    <div class="page-shell">
+        <aside class="site-sidebar-left">
+            {% block sidebar_left %}{% endblock %}
+        </aside>
+        <div class="site-wrapper">
+            <nav>
+                <h1>📖 HusseiniReads</h1>
+                <a href="{{ url_for('books.book_list') }}">Books</a> |
+                <a href="{{ url_for('posts.misc_posts') }}">Posts</a> |
+                <a href="{{ url_for('homepage.about') }}">About</a>
+            </nav>
+            <header>
+                {% block header %}{% endblock %}
+            </header>
+            <main>
+                {% block main_content %}{% endblock %}
+            </main>
         </div>
+        <aside class="site-sidebar">
+            {% if random_quote %}
+            <div class="sidebar-widget">
+                <p class="sidebar-heading">Quote</p>
+                <blockquote class="sidebar-quote">
+                    {{ random_quote.post_body_markdown }}
+                </blockquote>
+                {% if random_quote.book %}
+                <p class="sidebar-quote-source">
+                    — <a href="{{ url_for('books.book_detail', book_id=random_quote.book.book_id) }}">{{ random_quote.book.book_title }}</a>
+                </p>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% block sidebar_right %}{% endblock %}
+        </aside>
     </div>
 </body>
 </html>
