@@ -3,7 +3,7 @@ PYPATH  = site
 MIGRATIONS = site/migrations
 POSTS   = site/content/posts
 
-.PHONY: dev seed posts sync test migrate migration shell
+.PHONY: dev seed posts sync test migrate migration shell setup
 
 dev:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) run --debug
@@ -29,3 +29,10 @@ migration:
 
 shell:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) shell
+
+setup:
+	rm -f site/instance/site.db
+	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) shell -c "from app.extensions import db; db.create_all()"
+	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) db stamp head --directory $(MIGRATIONS)
+	$(MAKE) migrate
+	$(MAKE) sync
