@@ -16,11 +16,9 @@
         {% if random_quote %}
         <div class="sidebar-widget sidebar-widget--quote">
             <div class="sidebar-heading">Random quote</div>
-
             <blockquote class="sidebar-quote">
                 {{ random_quote.post_body_markdown }}
             </blockquote>
-
             {% if random_quote.book %}
             <div class="sidebar-quote-source">
                 — <a href="{{ url_for('books.book_detail', book_id=random_quote.book.book_id) }}">
@@ -52,6 +50,23 @@
                 <a href="{{ url_for('homepage.about') }}">About</a>
             </div>
         </nav>
+
+        <!-- Mobile-only quote, hidden on wider screens -->
+        {% if random_quote %}
+        <div class="mobile-quote">
+            <div class="sidebar-heading">Random quote</div>
+            <blockquote class="sidebar-quote">
+                {{ random_quote.post_body_markdown }}
+            </blockquote>
+            {% if random_quote.book %}
+            <div class="sidebar-quote-source">
+                — <a href="{{ url_for('books.book_detail', book_id=random_quote.book.book_id) }}">
+                    {{ random_quote.book.book_title }}
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
 
         <header>
             {% block header %}{% endblock %}
