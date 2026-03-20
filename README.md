@@ -170,6 +170,35 @@ make migration m="describe change"
 make migrate
 ```
 
+## Managing tags
+
+Tags are attached to books during import (`make posts`) and seeding (`make seed`).
+
+Use the `manage-tags` CLI command to make ad-hoc changes without re-importing anything.
+ 
+```sh
+# Add one or more tags to a book
+flask manage-tags --book OL42549900W --add "fiction" --add "2026"
+ 
+# Remove a tag from a book (does not delete the tag itself)
+flask manage-tags --book OL42549900W --remove "2025"
+```
+ 
+`--add` and `--remove` can be combined in a single call:
+ 
+```sh
+flask manage-tags --book OL42549900W --add "2026" --remove "2025"
+```
+ 
+All tag names are normalised to lowercase with collapsed whitespace before being written to the database.
+ 
+The `flask manage-tags` command is the canonical interface. 
+
+> **Note:** avoid `make tags ARGS="..."` for tag names that contain hyphens,
+> spaces, or quotes — `make` strips quoting before the shell sees it, which
+> causes argument-splitting errors. Use the alias or invoke `flask manage-tags`
+> directly instead.
+
 ## Generating a production secret key
 
 ```sh
@@ -184,6 +213,25 @@ This writes `SECRET_KEY=...` to `.env`. The script errors if a key already exist
 ```sh
 make test
 ```
+---
+
+## Deploying the database
+ 
+For routine content updates (new posts, tag edits) it is faster to copy the local SQLite database directly to the server than to re-seed and re-import everything from scratch.
+ 
+```sh
+# One-off: export your server's address
+export DEPLOY_HOST=root@your_server_ip
+ 
+# Deploy
+make deploy-db
+```
+ 
+What `make deploy-db` does:
+ 
+1. Copies `site/instance/site.db` to the server via `scp`.
+2. Restarts Gunicorn so the in-process `SimpleCache` is cleared.
+ 
 
 ---
 
