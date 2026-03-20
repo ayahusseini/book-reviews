@@ -82,7 +82,12 @@
       {% endif %}
     </h3>
     <p style="margin-bottom: 0.75rem;"><small class="text-muted">{{ post.post_type }}</small></p>
-    {{ post_html | safe }}
+
+    {% if post_html and post_html | trim %}
+      {{ post_html | safe }}
+    {% else %}
+      {% include "under_construction.html" %}
+    {% endif %}
   </article>
 {% endfor %}
 

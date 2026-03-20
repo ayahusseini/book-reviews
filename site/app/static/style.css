@@ -439,3 +439,27 @@ a:hover   { color: var(--link-hover); }
   nav h1 { font-size: 1.9rem; }
   nav .nav-links { padding-left: 0; }
 }
+
+/* ─── Under construction ─────────────────────────── */
+.under-construction {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem 0;
+  width: 100%;
+}
+ 
+.under-construction__emoji {
+  font-size: 5rem;
+}
+ 
+.under-construction__label {
+  font-family: var(--mono-font);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--orange-dim);
+  margin: 0;
+}
+ 
