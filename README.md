@@ -21,22 +21,7 @@ uv run pre-commit install
 One-off setup of the database:
 
 ```sh
-PYTHONPATH=site uv run flask --app site/app shell
-```
-
-Inside the shell:
-
-```python
-from app.extensions import db
-db.create_all()
-exit()
-```
-
-Then stamp and migrate:
-
-```sh
-PYTHONPATH=site uv run flask --app site/app db stamp head --directory site/migrations
-make migrate
+make setup
 ```
 
 ## Development workflow
@@ -51,6 +36,7 @@ make sync     # seed books then import posts (seed + posts)
 make test     # run the test suite
 make migrate  # apply pending database migrations
 make shell    # open a Flask shell with DB access
+make setup.   # one-off database setup 
 ```
 
 ## Project structure
@@ -232,22 +218,7 @@ You should see exactly two lines: `SECRET_KEY=...` and `FLASK_ENV=production`.
 Create the base schema, stamp it, then run migrations:
 
 ```sh
-PYTHONPATH=site uv run flask --app site/app shell
-```
-
-Inside the shell:
-
-```python
-from app.extensions import db
-db.create_all()
-exit()
-```
-
-Then stamp and migrate:
-
-```sh
-PYTHONPATH=site uv run flask --app site/app db stamp head --directory site/migrations
-make migrate
+make setup
 ```
 
 ### 7. Seed the database
