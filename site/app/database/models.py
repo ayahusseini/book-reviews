@@ -10,7 +10,6 @@ from datetime import datetime, timezone
 from sqlalchemy import CheckConstraint
 from app.extensions import db
 
-
 VALID_POST_TYPES = {"review", "essay", "standalone", "note", "quotes", "poem"}
 
 
@@ -68,9 +67,7 @@ class Author(db.Model):
 
     author_id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     author_name = db.Column(db.String(750), nullable=False)
-    author_openlibrary_id = db.Column(
-        db.String(250), nullable=True, unique=True
-    )
+    author_ol_id = db.Column(db.String(250), nullable=True, unique=True)
 
     books = db.relationship(
         "Book",
@@ -168,7 +165,6 @@ class Post(db.Model):
 
     post_id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     post_slug = db.Column(db.String(250), nullable=False, unique=True)
-    post_source_path = db.Column(db.Text, nullable=False, unique=True)
     book_id = db.Column(
         db.Integer, db.ForeignKey("book.book_id"), nullable=True
     )

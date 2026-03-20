@@ -2,11 +2,15 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 from content.markdown_posts import (
-    extract_tags,
     parse_markdown_with_frontmatter,
     render_markdown_to_safe_html,
+    MarkdownPost,
 )
+
+from content.extract_quotes import Quote
 
 
 def test_parse_markdown_with_frontmatter_extracts_metadata_and_body(
@@ -15,17 +19,17 @@ def test_parse_markdown_with_frontmatter_extracts_metadata_and_body(
     p = tmp_path / "post.md"
     p.write_text(
         """---
-title: "Hello"
-author: "Aya"
-tags:
-  - "One"
-  - "Two"
----
+        title: "Hello"
+        author: "Aya"
+        tags:
+        - "One"
+        - "Two"
+        ---
 
-## Body
+        ## Body
 
-Text
-""",
+        Text
+        """,
         encoding="utf-8",
     )
 
@@ -48,8 +52,9 @@ def test_parse_markdown_with_frontmatter_without_frontmatter_keeps_body(
 def test_slug_defaults_to_filename_stem(tmp_path: Path):
     p = tmp_path / "my-post.md"
     p.write_text("---\n---\nbody\n", encoding="utf-8")
-    parsed = parse_markdown_with_frontmatter(p)
-    assert parsed.slug == "my-post"
+    with pytest.raises(TypeError) as err:
+        parse_markdown_with_frontmatter(p)
+        assert err.value == "Must supply a string-type slug."
 
 
 def test_slug_uses_frontmatter_slug_when_present(tmp_path: Path):
@@ -59,14 +64,29 @@ def test_slug_uses_frontmatter_slug_when_present(tmp_path: Path):
     assert parsed.slug == "custom-slug"
 
 
-def test_extract_tags_normalizes_dedupes_preserves_order():
-    meta = {"tags": ["  Sci  Fi ", "sci fi", "Non-Fiction", "", "NON-FICTION"]}
-    assert extract_tags(meta) == ["sci fi", "non-fiction"]
+@pytest.fixture
+def fake_markdown_post():
+    return MarkdownPost(
+        metadata={"tags": [], "slug": "fake_slug"},
+        body_markdown="#fake",
+        quotes=[Quote("quote")],
+    )
 
 
-def test_extract_tags_accepts_string():
-    meta = {"tags": "Fantasy"}
-    assert extract_tags(meta) == ["fantasy"]
+def test_extract_tags_normalizes_dedupes(fake_markdown_post):
+    fake_markdown_post.tags = [
+        "  Sci  Fi ",
+        "sci fi",
+        "Non-Fiction",
+        "",
+        "NON-FICTION",
+    ]
+    assert set(fake_markdown_post.tags) == set(["sci fi", "non-fiction"])
+
+
+def test_reassigning_slug_incorrectly_raises_error(fake_markdown_post):
+    with pytest.raises(AttributeError):
+        fake_markdown_post.slug = None
 
 
 def test_render_markdown_to_safe_html_sanitizes_script_tags():
