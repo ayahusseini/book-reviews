@@ -37,7 +37,6 @@ shell:
 
 setup:
 	rm -f site/instance/site.db
-	$(MAKE) migration m="initial"
 	$(MAKE) migrate
 	$(MAKE) sync
 
