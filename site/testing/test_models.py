@@ -27,7 +27,6 @@ def test_book_rating_is_none_with_no_review_posts(app, db):
         book = Book(book_ol_key="OL1W", book_title="Book 1")
         post = Post(
             post_slug="essay-1",
-            post_source_path="essay-1.md",
             post_title="An Essay",
             post_body_markdown="body",
             post_author="Aya",
@@ -45,7 +44,6 @@ def test_book_rating_averages_review_post_ratings(app, db):
         book = Book(book_ol_key="OL1W", book_title="Book 1")
         post_a = Post(
             post_slug="review-1",
-            post_source_path="review-1.md",
             post_title="Review 1",
             post_body_markdown="body",
             post_author="Aya",
@@ -55,7 +53,6 @@ def test_book_rating_averages_review_post_ratings(app, db):
         )
         post_b = Post(
             post_slug="review-2",
-            post_source_path="review-2.md",
             post_title="Review 2",
             post_body_markdown="body",
             post_author="Aya",
@@ -73,7 +70,6 @@ def test_book_rating_ignores_reviews_without_rating(app, db):
         book = Book(book_ol_key="OL1W", book_title="Book 1")
         post_a = Post(
             post_slug="review-1",
-            post_source_path="review-1.md",
             post_title="Review 1",
             post_body_markdown="body",
             post_author="Aya",
@@ -83,7 +79,6 @@ def test_book_rating_ignores_reviews_without_rating(app, db):
         )
         post_b = Post(
             post_slug="review-2",
-            post_source_path="review-2.md",
             post_title="Review 2",
             post_body_markdown="body",
             post_author="Aya",
