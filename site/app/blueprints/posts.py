@@ -11,6 +11,8 @@ from app.extensions import cache
 
 posts_bp = Blueprint("posts", __name__)
 
+SHOWN_IN_POSTS = {"review", "essay", "standalone", "note"}
+
 
 @posts_bp.route("/", methods=["GET"])
 @cache.cached()
@@ -23,7 +25,10 @@ def post_list():
 @cache.cached()
 def misc_post_list():
     posts = (
-        Post.query.filter(Post.book_id.is_(None))
+        Post.query.filter(
+            Post.book_id.is_(None),
+            Post.post_type.in_(SHOWN_IN_POSTS),
+        )
         .order_by(Post.post_created_at.desc())
         .all()
     )
