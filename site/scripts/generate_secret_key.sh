@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-python -c "
+python3 -c "
 import secrets, re, pathlib, sys
 env = pathlib.Path('.env')
 text = env.read_text() if env.exists() else ''
