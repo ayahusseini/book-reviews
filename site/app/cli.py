@@ -19,6 +19,7 @@ from app.database.upserts import (
     upsert_books,
     upsert_post,
     upsert_single_book,
+    upsert_tags,
 )
 from app.open_library import fetch_book_data
 from app.extensions import cache, db
@@ -26,11 +27,6 @@ from app.extensions import cache, db
 DEFAULT_SEED_PATH = (
     Path(__file__).parents[1] / "content" / "seeds" / "book_seed.json"
 )
-
-
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
 
 
 def resolve_book(parsed: MarkdownPost) -> Book | None:
@@ -83,11 +79,6 @@ def sync_quotes(
     return created, updated
 
 
-# ---------------------------------------------------------------------------
-# Post importer
-# ---------------------------------------------------------------------------
-
-
 def import_post_file(path: Path) -> bool:
     """Parse and upsert a single markdown post file.
 
@@ -127,11 +118,6 @@ def import_post_file(path: Path) -> bool:
     sync_quotes(quotes=parsed.quotes, author=parsed.author, book=book)
 
     return is_new
-
-
-# ---------------------------------------------------------------------------
-# CLI commands
-# ---------------------------------------------------------------------------
 
 
 @click.command("import-posts")
@@ -262,7 +248,74 @@ def seed_books_command(path_str: str, refresh: bool) -> None:
     )
 
 
+@click.command("manage-tags")
+@click.option(
+    "--book",
+    "ol_key",
+    required=True,
+    help="Open Library works key of the book to modify (e.g. OL42549900W).",
+)
+@click.option(
+    "--add",
+    "add_tags",
+    multiple=True,
+    help="Tag name(s) to add to the book. Repeatable: --add foo --add bar.",
+)
+@click.option(
+    "--remove",
+    "remove_tags",
+    multiple=True,
+    help="Tag name(s) to remove from the book. Repeatable.",
+)
+@with_appcontext
+def manage_tags_command(
+    ol_key: str,
+    add_tags: tuple[str, ...],
+    remove_tags: tuple[str, ...],
+) -> None:
+    """Add, remove, rename, delete, or list tags."""
+    made_changes = False
+
+    if add_tags or remove_tags:
+        if not ol_key:
+            raise click.ClickException(
+                "--book is required when using --add or --remove."
+            )
+        book = Book.query.filter_by(book_ol_key=ol_key.strip()).first()
+        if not book:
+            click.echo("Book not found")
+            return
+
+        for raw in add_tags:
+            name = raw.strip().lower()
+            if any(t.tag_name == name for t in book.tags):
+                click.echo(f"  (already present) {name!r}")
+            else:
+                book.tags.append(upsert_tags([name]))
+                click.echo(f"  Added {name!r} to {book.book_title!r}.")
+                made_changes = True
+
+        for raw in remove_tags:
+            name = raw.strip().lower()
+            match = next((t for t in book.tags if t.tag_name == name), None)
+            if match is None:
+                click.echo(f"  (not present) {name!r} — skipped.")
+            else:
+                book.tags.remove(match)
+                click.echo(f"  Removed {name!r} from {book.book_title!r}.")
+                made_changes = True
+
+        if made_changes:
+            db.session.commit()
+            cache.clear()
+            click.echo("Changes committed and cache cleared.")
+        else:
+            click.echo("No changes made.")
+        return
+
+
 def init_app(app) -> None:
     """Register CLI commands with the Flask app."""
     app.cli.add_command(import_posts_command)
     app.cli.add_command(seed_books_command)
+    app.cli.add_command(manage_tags_command)

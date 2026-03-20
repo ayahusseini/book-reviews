@@ -4,7 +4,7 @@ MIGRATIONS = site/migrations
 POSTS   = site/content/posts
 SEEDS   = site/content/seeds/book_seed.json
 
-.PHONY: dev seed seed-refresh posts sync test migrate migration shell setup
+.PHONY: dev seed seed-refresh posts sync test migrate migration shell setup tags deploy-db
 
 dev:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) run --debug
@@ -40,3 +40,20 @@ setup:
 	$(MAKE) migration m="initial"
 	$(MAKE) migrate
 	$(MAKE) sync
+
+# Copy the local SQLite database to production and restart Gunicorn.
+# Set DEPLOY_HOST=user@host in your environment or pass it on the command line:
+#   make deploy-db DEPLOY_HOST=root@1.2.3.4
+deploy-db:
+	@if [ -z "$(DEPLOY_HOST)" ]; then \
+		echo "ERROR: DEPLOY_HOST is not set."; \
+		echo "  Usage:  make deploy-db DEPLOY_HOST=root@your_server_ip"; \
+		echo "  Or:     export DEPLOY_HOST=root@your_server_ip"; \
+		exit 1; \
+	fi
+	./site/scripts/deploy-db.sh $(DEPLOY_HOST)
+ 
+# Shorthand for flask manage-tags. Pass options via ARGS:
+#   make tags ARGS="--book OL42549900W --add fiction --remove 2025"
+tags:
+	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) manage-tags $(ARGS)
