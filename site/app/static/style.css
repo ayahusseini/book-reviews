@@ -218,6 +218,10 @@ h3 {
   margin-bottom: 0.65rem;
 }
 
+.markdown-body {
+  font-family: var(--body-font);
+}
+
 /* Markdown article headings */
 .markdown-body h2 {
   font-size: 1.3rem;
@@ -567,3 +571,13 @@ p {
   margin: 0;
 }
  
+.poem-body {
+  font-family: var(--mono-font);
+  white-space: pre-wrap;
+  line-height: 2;
+  max-width: 55ch;
+}
+
+.poem-body p {
+  white-space: pre-wrap;
+}
