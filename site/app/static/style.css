@@ -435,60 +435,79 @@ a:hover   { color: var(--link-hover); }
 
 /* ─── Responsive ─────────────────────────────────── */
 
-/* Tablet: hide sidebar, shrink nav */
-@media (max-width: 960px) {
-  .site-sidebar-left { display: none; }
-  nav h1 { font-size: 1.9rem; }
-  nav .nav-links { padding-left: 0; }
+/* Make the main content fluid instead of fixed-width */
+.site-wrapper {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: var(--content-width);
 }
 
-/* Mobile: single column, comfortable spacing */
-@media (max-width: 600px) {
-  .page-shell {
-    padding: 1rem 0.75rem;
-    gap: 0;
-  }
+.page-shell {
+  padding: 2rem clamp(0.75rem, 4vw, 2rem);
+}
 
-  .site-wrapper {
-    flex: 1 1 100%;
-    min-width: 0;
-    padding: 0;
-  }
+/* Nav title shrinks fluidly */
+nav h1 {
+  font-size: clamp(1.4rem, 4vw, 2.4rem);
+}
 
-  /* Nav */
-  nav h1 {
-    font-size: 1.5rem;
-  }
+.nav-logo {
+  width: clamp(32px, 5vw, 48px);
+  height: clamp(32px, 5vw, 48px);
+}
 
-  .nav-logo {
-    width: 36px;
-    height: 36px;
-  }
+nav .nav-links {
+  padding-left: clamp(0px, 5vw, 56px);
+}
 
-  nav .nav-links {
-    padding-left: 0;
-    gap: 0;
+/* Headings */
+h2 {
+  font-size: clamp(1.3rem, 3.5vw, 1.7rem);
+}
+
+.book-header__title {
+  font-size: clamp(1.4rem, 4vw, 2.1rem);
+}
+
+/* Prose width scales with container */
+p {
+  max-width: min(65ch, 100%);
+}
+
+/* Book list items wrap gracefully */
+.book-list__item {
+  flex-wrap: wrap;
+}
+
+/* Sidebar hides below 960px as before */
+@media (max-width: 960px) {
+  .site-sidebar-left { display: none; }
+  nav .nav-links { padding-left: 0; }
+
+  /* Reflow sidebar meta inline since sidebar is hidden */
+  .sidebar-meta {
+    display: flex;
     flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .sidebar-meta p { margin: 0; }
+}
+
+/* Narrow screens: tighten spacing */
+@media (max-width: 480px) {
+  .page-shell {
+    padding: 1rem clamp(0.5rem, 3vw, 1rem);
   }
 
   nav a {
-    font-size: 0.78rem;
-    padding: 0.15rem 0.4rem;
+    font-size: 0.75rem;
+    padding: 0.1rem 0.3rem;
   }
 
-  /* Headings */
-  h2 {
-    font-size: 1.4rem;
-  }
-
-  .book-header__title {
-    font-size: 1.6rem;
-  }
-
-  /* Book list items stack vertically */
   .book-list__item {
     flex-direction: column;
-    gap: 0.2rem;
+    gap: 0.15rem;
     padding: 0.5rem 0;
   }
 
@@ -496,33 +515,33 @@ a:hover   { color: var(--link-hover); }
     margin-left: 0;
     padding-left: 0;
   }
+}
 
-  /* Prose */
-  p {
-    max-width: 100%;
-  }
+/* Mobile quote — hidden on desktop, shown when sidebar disappears */
+.mobile-quote {
+  display: none;
+  background: var(--bg-quote);
+  padding: 0.9rem 1rem;
+  border-radius: 6px;
+  font-family: var(--mono-font);
+  font-size: 0.75rem;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
 
-  /* Markdown body */
-  .markdown-body h2 { font-size: 1.15rem; }
-  .markdown-body h3 { font-size: 0.95rem; }
+.mobile-quote blockquote {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-family: var(--mono-font);
+  font-size: 0.75rem;
+  color: var(--text);
+  border-radius: 0;
+}
 
-  /* Under construction */
-  .under-construction__emoji {
-    font-size: 4rem;
-  }
-
-  /* Sidebar meta on book detail (visible when sidebar is hidden) */
-  .sidebar-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 1.5rem;
-    padding-top: 0;
-    margin-bottom: 1rem;
-  }
-
-  .sidebar-meta p {
-    margin: 0;
-  }
+@media (max-width: 960px) {
+  .mobile-quote { display: block; }
 }
 
 /* ─── Under construction ─────────────────────────── */
