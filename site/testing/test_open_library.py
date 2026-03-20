@@ -1,18 +1,17 @@
 """Tests app/open_library.py
 
 Run with:
-    pytest test_openlibrary.py -v
+    pytest site/testing/test_open_library.py -v
 """
 
 from __future__ import annotations
 
-
 import pytest
 import requests
 
-from seed_database.open_library import (
-    Author,
-    Book,
+from app.open_library import (
+    AuthorData,
+    BookData,
     build_author_url,
     build_editions_url,
     build_works_url,
@@ -164,7 +163,6 @@ class TestExtractDescription:
         assert extract_description({}) is None
 
     def test_dict_missing_value_key(self):
-        # dict without "value" → returns None
         assert (
             extract_description({"description": {"type": "/type/text"}})
             is None
@@ -196,11 +194,6 @@ class TestExtractAuthorKeys:
         assert extract_author_keys(data) == ["/authors/OL1A", "/authors/OL2A"]
 
 
-# ---------------------------------------------------------------------------
-# extract_isbn
-# ---------------------------------------------------------------------------
-
-
 class TestExtractIsbn:
     def test_prefers_isbn13(self, editions_payload):
         assert extract_isbn(editions_payload) == "9780142410349"
@@ -209,27 +202,19 @@ class TestExtractIsbn:
         data = {"entries": [{"isbn_10": ["0140328726"]}]}
         assert extract_isbn(data) == "0140328726"
 
-    def test_no_isbn_raises(self):
-        with pytest.raises(ValueError, match="No ISBN"):
-            extract_isbn({"entries": []})
+    def test_no_isbn_returns_none(self):
+        assert extract_isbn({"entries": []}) is None
 
     def test_skips_empty_entries(self):
         data = {"entries": [{}, {"isbn_13": ["9781234567890"]}]}
         assert extract_isbn(data) == "9781234567890"
 
-    def test_absent_entries_raises(self):
-        with pytest.raises(ValueError):
-            extract_isbn({})
-
-
-# ---------------------------------------------------------------------------
-# extract_publication_year
-# ---------------------------------------------------------------------------
+    def test_absent_entries_returns_none(self):
+        assert extract_isbn({}) is None
 
 
 class TestExtractPublicationYear:
     def test_returns_earliest(self, editions_payload):
-        # 2007 and 1996 present; expects 1996
         assert extract_publication_year(editions_payload) == 1996
 
     def test_four_digit_year_only(self):
@@ -251,11 +236,6 @@ class TestExtractPublicationYear:
         assert extract_publication_year(data) is None
 
 
-# ---------------------------------------------------------------------------
-# extract_page_count
-# ---------------------------------------------------------------------------
-
-
 class TestExtractPageCount:
     def test_returns_first_nonzero(self, editions_payload):
         assert extract_page_count(editions_payload) == 96
@@ -270,11 +250,6 @@ class TestExtractPageCount:
     def test_string_pages_coerced(self):
         data = {"entries": [{"number_of_pages": "320"}]}
         assert extract_page_count(data) == 320
-
-
-# ---------------------------------------------------------------------------
-# extract_author_id
-# ---------------------------------------------------------------------------
 
 
 class TestExtractAuthorId:
@@ -303,6 +278,35 @@ class TestExtractAuthorName:
 class TestParseAuthor:
     def test_returns_author_data(self, author_payload):
         result = parse_author("/authors/OL34184A", author_payload)
-        assert isinstance(result, Author)
-        assert result.author_name == "Roald Dahl"
-        assert result.author_openlibrary_id == "OL34184A"
+        assert isinstance(result, AuthorData)
+        assert result.name == "Roald Dahl"
+        assert result.ol_id == "OL34184A"
+
+
+class TestFetchBookData:
+    def test_returns_book_data_type(self, works_payload, editions_payload):
+        """fetch_book_data returns a BookData, not a Book ORM model."""
+        from unittest.mock import patch
+
+        with (
+            patch(
+                "app.open_library.fetch_works_data",
+                return_value=works_payload,
+            ),
+            patch(
+                "app.open_library.fetch_editions_data",
+                return_value=editions_payload,
+            ),
+            patch(
+                "app.open_library.fetch_all_authors",
+                return_value=[],
+            ),
+        ):
+            from app.open_library import fetch_book_data
+
+            result = fetch_book_data("OL12345W")
+
+        assert isinstance(result, BookData)
+        assert result.ol_key == "OL12345W"
+        assert result.title == "Fantastic Mr Fox"
+        assert result.isbn == "9780142410349"

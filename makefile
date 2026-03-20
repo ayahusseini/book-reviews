@@ -2,14 +2,18 @@ APP     = site/app
 PYPATH  = site
 MIGRATIONS = site/migrations
 POSTS   = site/content/posts
+SEEDS   = site/content/seeds/book_seed.json
 
-.PHONY: dev seed posts sync test migrate migration shell setup
+.PHONY: dev seed seed-refresh posts sync test migrate migration shell setup
 
 dev:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) run --debug
 
 seed:
-	PYTHONPATH=$(PYPATH) uv run python -m seed_database.convertor
+	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) seed-books --path $(SEEDS)
+
+seed-refresh:
+	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) seed-books --path $(SEEDS) --refresh
 
 posts:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) import-posts --path $(POSTS)
@@ -18,6 +22,7 @@ sync: seed posts restart
 
 restart:
 	touch site/app/__init__.py
+
 test:
 	uv run pytest -v
 
@@ -32,7 +37,6 @@ shell:
 
 setup:
 	rm -f site/instance/site.db
-	PYTHONPATH=$(PYPATH) uv run python site/scripts/create_db.py
-	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) db stamp head --directory $(MIGRATIONS)
+	$(MAKE) migration m="initial"
 	$(MAKE) migrate
 	$(MAKE) sync

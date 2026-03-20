@@ -1,23 +1,48 @@
-"""Open Library API client for fetching book and author metadata."""
+"""Open Library API client for fetching book and author metadata.
+
+Pure HTTP client — no Flask, no SQLAlchemy imports.
+Returns plain dataclasses only.
+"""
+
+from __future__ import annotations
 
 import logging
 import re
+from dataclasses import dataclass, field
 from typing import Optional
 
 import requests
 
-from app.database.models import Author, Book
-
 logger = logging.getLogger(__name__)
 
 BASE_URL = "https://openlibrary.org"
-COVER_URL = "https://covers.openlibrary.org/b/id/{cover_id}-L.jpg"
 DEFAULT_TIMEOUT = 10
 
 
 class OpenLibraryError(requests.HTTPError):
     """Raised when Open Library is unreachable or
     returns an unexpected response."""
+
+
+@dataclass
+class AuthorData:
+    """Plain data container for an author fetched from Open Library."""
+
+    ol_id: str
+    name: str
+
+
+@dataclass
+class BookData:
+    """Plain data container for a book fetched from Open Library."""
+
+    ol_key: str
+    title: str
+    isbn: str | None
+    description: str | None
+    publication_year: int | None
+    page_count: int | None
+    authors: list[AuthorData] = field(default_factory=list)
 
 
 def validate_response(response: requests.Response) -> None:
@@ -95,12 +120,9 @@ def fetch_editions_data(
     return response.json()
 
 
-def extract_isbn(editions_data: dict) -> str:
+def extract_isbn(editions_data: dict) -> Optional[str]:
     """Return the first available ISBN (preferring ISBN-13)
-    across all editions.
-
-    Raises ValueError if no ISBN is found.
-    """
+    across all editions, or None if not found."""
     for edition in editions_data.get("entries", []):
         for isbn in edition.get("isbn_13", []):
             if isbn:
@@ -108,7 +130,7 @@ def extract_isbn(editions_data: dict) -> str:
         for isbn in edition.get("isbn_10", []):
             if isbn:
                 return isbn
-    raise ValueError("No ISBN found in any edition.")
+    return None
 
 
 def extract_publication_year(editions_data: dict) -> Optional[int]:
@@ -162,17 +184,17 @@ def extract_author_name(author_data: dict) -> str:
     return author_data["personal_name"]
 
 
-def parse_author(author_key: str, author_data: dict) -> Author:
-    """Build an Author instance from a raw key and author payload."""
-    return Author(
-        author_name=extract_author_name(author_data),
-        author_openlibrary_id=extract_author_id(author_key),
+def parse_author(author_key: str, author_data: dict) -> AuthorData:
+    """Build an AuthorData instance from a raw key and author payload."""
+    return AuthorData(
+        name=extract_author_name(author_data),
+        ol_id=extract_author_id(author_key),
     )
 
 
-def fetch_all_authors(author_keys: list[str]) -> list[Author]:
+def fetch_all_authors(author_keys: list[str]) -> list[AuthorData]:
     """Fetch and parse every author in author_keys, skipping failures."""
-    authors: list[Author] = []
+    authors: list[AuthorData] = []
     for key in author_keys:
         try:
             data = fetch_author_data(key)
@@ -182,19 +204,19 @@ def fetch_all_authors(author_keys: list[str]) -> list[Author]:
     return authors
 
 
-def fetch_book_data(ol_works_key: str) -> Book:
-    """Fetch all data for a works key and return a populated Book instance."""
+def fetch_book_data(ol_works_key: str) -> BookData:
+    """Fetch all data for a works key and return a populated BookData."""
     works = fetch_works_data(ol_works_key)
     editions = fetch_editions_data(ol_works_key)
     author_keys = extract_author_keys(works)
     authors = fetch_all_authors(author_keys)
 
-    return Book(
-        book_title=extract_title(works),
-        book_isbn=extract_isbn(editions),
-        book_ol_key=ol_works_key,
-        book_description=extract_description(works),
-        book_publication_year=extract_publication_year(editions),
-        book_page_count=extract_page_count(editions),
+    return BookData(
+        ol_key=ol_works_key,
+        title=extract_title(works),
+        isbn=extract_isbn(editions),
+        description=extract_description(works),
+        publication_year=extract_publication_year(editions),
+        page_count=extract_page_count(editions),
         authors=authors,
     )

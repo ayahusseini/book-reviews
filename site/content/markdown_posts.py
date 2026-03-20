@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -11,60 +10,111 @@ import bleach
 import markdown
 import yaml
 
+from content.extract_quotes import (
+    Quote,
+    extract_ad_quotes,
+    replace_ad_quotes_with_blockquotes,
+)
 
-@dataclass(frozen=True)
+VALID_POST_TYPES = {"review", "essay", "standalone", "note", "quotes", "poem"}
+
+
+@dataclass
 class MarkdownPost:
     """A parsed markdown post with frontmatter metadata and body text."""
 
     source_path: Path
     metadata: dict[str, Any]
     body_markdown: str
-    quotes: list[str] = field(default_factory=list)
+    quotes: list[Quote] = field(default_factory=list)
+
+    def __post_init__(self):
+        self._err = f"MarkdownPost for {self.source_path}: "
+        if "title" not in self.metadata:
+            raise ValueError(self._err + "missing frontmatter 'title'")
+        if "author" not in self.metadata:
+            raise ValueError(self._err + "missing frontmatter 'author'")
+        if self.metadata.get("type") not in VALID_POST_TYPES:
+            raise ValueError(
+                self._err
+                + f"invalid type {self.metadata.get('type')!r}, "
+                + f"must be one of {sorted(VALID_POST_TYPES)}"
+            )
+
+    @property
+    def title(self) -> str:
+        return self.metadata["title"].strip()
+
+    @property
+    def author(self) -> str:
+        return self.metadata["author"].strip()
+
+    @property
+    def post_type(self) -> str:
+        return self.metadata["type"]
 
     @property
     def slug(self) -> str:
-        """Return frontmatter slug if set, otherwise the filename stem."""
+        """Return frontmatter slug if set, otherwise fall back to
+        the filename stem."""
         slug = self.metadata.get("slug")
         if isinstance(slug, str) and slug.strip():
             return slug.strip()
         return self.source_path.stem
 
+    @property
+    def rating(self) -> float | None:
+        """Return validated rating, or None.
 
-# Matches ```ad-quote ... ``` blocks (non-greedy, dotall)
-_AD_QUOTE_RE = re.compile(
-    r"```ad-quote\n(.*?)```",
-    re.DOTALL,
-)
+        Rating is only meaningful on review posts — callers are responsible
+        for ignoring it on other post types.
+        """
+        r = self.metadata.get("rating")
+        if r is None:
+            return None
+        if not isinstance(r, (int, float)):
+            raise TypeError(
+                self._err + f"'rating' must be a number, got {type(r)}"
+            )
+        if not 0 <= r <= 5:
+            raise ValueError(
+                self._err + f"'rating' must be between 0 and 5, got {r}"
+            )
+        return float(r)
 
+    @property
+    def tags(self) -> list[str]:
+        """Return normalised, deduplicated tags from frontmatter."""
+        tag_vals = self.metadata.get("tags", [])
+        if isinstance(tag_vals, str):
+            tag_vals = [tag_vals]
+        if not isinstance(tag_vals, list):
+            raise TypeError(self._err + "tags must be a list")
+        return list(
+            {
+                self._normalize_tag(t)
+                for t in tag_vals
+                if isinstance(t, str) and t.strip()
+            }
+        )
 
-def extract_ad_quotes(body: str) -> list[str]:
-    """Return the text content of every ```ad-quote block in body."""
-    return [m.group(1).strip() for m in _AD_QUOTE_RE.finditer(body)]
+    @property
+    def book_ol_key(self) -> str | None:
+        return self.metadata.get("book_ol_key")
 
-
-def replace_ad_quotes_with_blockquotes(body: str) -> str:
-    """Replace ```ad-quote blocks with Markdown blockquote syntax."""
-
-    def _to_blockquote(m: re.Match) -> str:
-        text = m.group(1).strip()
-        # Prefix every line with "> " so markdown renders it as a blockquote
-        quoted = "\n".join(f"> {line}" for line in text.splitlines())
-        return quoted
-
-    return _AD_QUOTE_RE.sub(_to_blockquote, body)
-
-
-def normalize_tag(tag: str) -> str:
-    """Lowercase and collapse internal whitespace in a tag string."""
-    return " ".join(tag.strip().split()).lower()
+    @staticmethod
+    def _normalize_tag(tag: str) -> str:
+        return " ".join(tag.strip().split()).lower()
 
 
 def parse_markdown_with_frontmatter(path: Path) -> MarkdownPost:
-    """Parse a markdown file and return its frontmatter metadata and body.
+    """Parse a markdown file and return a MarkdownPost.
 
     Any ```ad-quote blocks found in the body are:
     - extracted into the returned ``quotes`` list
     - replaced in the body with standard Markdown blockquote syntax
+
+    Raises ValueError if required frontmatter fields are missing or invalid.
     """
     text = path.read_text(encoding="utf-8")
 
@@ -95,28 +145,6 @@ def parse_markdown_with_frontmatter(path: Path) -> MarkdownPost:
         body_markdown=clean_body,
         quotes=quotes,
     )
-
-
-def extract_tags(metadata: dict[str, Any]) -> list[str]:
-    """Return a normalised, deduplicated, order-preserving list of tags."""
-    tags_val = metadata.get("tags", [])
-
-    if isinstance(tags_val, str):
-        tags_val = [tags_val]
-
-    if not isinstance(tags_val, list):
-        return []
-
-    seen: set[str] = set()
-    out: list[str] = []
-    for item in tags_val:
-        if not isinstance(item, str):
-            continue
-        norm = normalize_tag(item)
-        if norm and norm not in seen:
-            seen.add(norm)
-            out.append(norm)
-    return out
 
 
 def render_markdown_to_safe_html(text: str) -> str:

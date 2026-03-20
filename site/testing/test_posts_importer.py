@@ -14,6 +14,7 @@ def write_post(
     posts_dir: Path,
     filename: str,
     *,
+    slug: str,
     title: str = "T",
     author: str = "A",
     post_type: str | None = "review",
@@ -21,13 +22,14 @@ def write_post(
     rating: float | None = None,
     tags: list[str] | None = None,
     body: str = "Hello",
-    slug: str | None = None,
 ) -> Path:
-    """Write a markdown post file with frontmatter to posts_dir."""
+    """Write a markdown post file with frontmatter to posts_dir.
+
+    slug is required — all posts must declare it explicitly.
+    """
     tags = tags or []
     lines: list[str] = ["---"]
-    if slug is not None:
-        lines.append(f"slug: {slug}")
+    lines.append(f"slug: {slug}")
     lines.append(f'title: "{title}"')
     lines.append(f'author: "{author}"')
     if post_type is not None:
@@ -64,6 +66,7 @@ def test_import_creates_post_and_attaches_tags(app, db, tmp_path):
         write_post(
             posts_dir,
             "first.md",
+            slug="my-post",
             title="My Post",
             author="Aya",
             book_ol_key="OL1W",
@@ -77,7 +80,7 @@ def test_import_creates_post_and_attaches_tags(app, db, tmp_path):
         post = Post.query.one()
         assert post.post_title == "My Post"
         assert post.post_author == "Aya"
-        assert post.post_source_path == "first.md"
+        assert post.post_slug == "my-post"
         assert post.book_id == book.book_id
         assert {t.tag_name for t in Tag.query.all()} == {
             "non-fiction",
@@ -97,6 +100,7 @@ def test_import_sets_rating_on_review_post(app, db, tmp_path):
         write_post(
             posts_dir,
             "review.md",
+            slug="my-review",
             post_type="review",
             book_ol_key="OL1W",
             rating=4.5,
@@ -120,6 +124,7 @@ def test_import_ignores_rating_on_non_review_post(app, db, tmp_path):
         write_post(
             posts_dir,
             "essay.md",
+            slug="my-essay",
             post_type="essay",
             book_ol_key="OL1W",
             rating=4.5,
@@ -139,6 +144,7 @@ def test_import_creates_standalone_post_without_book(app, db, tmp_path):
         write_post(
             posts_dir,
             "standalone.md",
+            slug="my-standalone",
             post_type="standalone",
             book_ol_key=None,
         )
@@ -158,15 +164,26 @@ def test_import_fetches_missing_book_from_open_library(app, db, tmp_path):
         write_post(
             posts_dir,
             "review.md",
+            slug="fetched-book-review",
             post_type="review",
             book_ol_key="OL999W",
             rating=3.0,
         )
 
-        fake_book = Book(book_ol_key="OL999W", book_title="Fetched Book")
+        from app.open_library import BookData
+
+        fake_book_data = BookData(
+            ol_key="OL999W",
+            title="Fetched Book",
+            isbn=None,
+            description=None,
+            publication_year=None,
+            page_count=None,
+            authors=[],
+        )
 
         with patch(
-            "app.cli.fetch_book_data", return_value=fake_book
+            "app.open_library.fetch_book_data", return_value=fake_book_data
         ) as mock_fetch:
             result = run_import(app, posts_dir)
 
@@ -180,9 +197,7 @@ def test_import_fetches_missing_book_from_open_library(app, db, tmp_path):
         assert post.book_id == book.book_id
 
 
-def test_import_is_idempotent_updates_existing_by_source_path(
-    app, db, tmp_path
-):
+def test_import_is_idempotent_updates_existing_by_slug(app, db, tmp_path):
     with app.app_context():
         db.session.add(Book(book_ol_key="OL1W", book_title="Book 1"))
         db.session.commit()
@@ -193,6 +208,7 @@ def test_import_is_idempotent_updates_existing_by_source_path(
         write_post(
             posts_dir,
             "same.md",
+            slug="stable-slug",
             title="V1",
             author="Aya",
             book_ol_key="OL1W",
@@ -208,6 +224,7 @@ def test_import_is_idempotent_updates_existing_by_source_path(
         write_post(
             posts_dir,
             "same.md",
+            slug="stable-slug",
             title="V2",
             author="Aya",
             book_ol_key="OL1W",
@@ -222,6 +239,7 @@ def test_import_is_idempotent_updates_existing_by_source_path(
         post = Post.query.one()
         assert post.post_title == "V2"
         assert "Body v2" in post.post_body_markdown
+        assert post.post_slug == "stable-slug"
 
         book = Book.query.filter_by(book_ol_key="OL1W").one()
         assert {t.tag_name for t in book.tags} == {"tag-a", "tag-b"}
@@ -231,7 +249,12 @@ def test_import_fails_on_invalid_post_type(app, db, tmp_path):
     with app.app_context():
         posts_dir = tmp_path / "posts"
         posts_dir.mkdir()
-        write_post(posts_dir, "bad-type.md", post_type="invalid_type")
+        write_post(
+            posts_dir,
+            "bad-type.md",
+            slug="bad-type-post",
+            post_type="invalid_type",
+        )
 
         result = run_import(app, posts_dir)
         assert result.exit_code != 0
@@ -245,6 +268,7 @@ def test_import_fails_on_rating_out_of_range(app, db, tmp_path):
         write_post(
             posts_dir,
             "bad-rating.md",
+            slug="bad-rating-post",
             post_type="review",
             rating=6.0,
         )
@@ -259,7 +283,8 @@ def test_import_requires_title(app, db, tmp_path):
         posts_dir = tmp_path / "posts"
         posts_dir.mkdir()
         (posts_dir / "bad.md").write_text(
-            '---\nauthor: "Aya"\n---\nBody\n', encoding="utf-8"
+            '---\nslug: "no-title"\nauthor: "Aya"\n---\nBody\n',
+            encoding="utf-8",
         )
 
         result = run_import(app, posts_dir)
@@ -272,12 +297,27 @@ def test_import_requires_author(app, db, tmp_path):
         posts_dir = tmp_path / "posts"
         posts_dir.mkdir()
         (posts_dir / "bad.md").write_text(
-            '---\ntitle: "A Post"\n---\nBody\n', encoding="utf-8"
+            '---\nslug: "no-author"\ntitle: "A Post"\n---\nBody\n',
+            encoding="utf-8",
         )
 
         result = run_import(app, posts_dir)
         assert result.exit_code != 0
         assert "missing frontmatter 'author'" in result.output
+
+
+def test_import_requires_slug(app, db, tmp_path):
+    with app.app_context():
+        posts_dir = tmp_path / "posts"
+        posts_dir.mkdir()
+        (posts_dir / "bad.md").write_text(
+            '---\ntitle: "A Post"\nauthor: "Aya"\n---\nBody\n',
+            encoding="utf-8",
+        )
+
+        result = run_import(app, posts_dir)
+        assert result.exit_code != 0
+        assert "slug" in result.output
 
 
 def test_import_warns_when_review_has_no_book_ol_key(app, db, tmp_path):
@@ -287,6 +327,7 @@ def test_import_warns_when_review_has_no_book_ol_key(app, db, tmp_path):
         write_post(
             posts_dir,
             "review-no-book.md",
+            slug="review-no-book",
             post_type="review",
             book_ol_key=None,
         )

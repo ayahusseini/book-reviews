@@ -98,7 +98,7 @@ def test_book_rating_ignores_reviews_without_rating(app, db):
 
 def test_author_repr(app, db):
     with app.app_context():
-        author = Author(author_name="Aya", author_openlibrary_id="OL1A")
+        author = Author(author_name="Aya", author_ol_id="OL1A")
         db.session.add(author)
         db.session.commit()
         assert "Aya" in repr(author)
