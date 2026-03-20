@@ -74,10 +74,12 @@ def create_app():
     from .blueprints.books import books_bp
     from .blueprints.main import main_bp
     from .blueprints.posts import posts_bp
+    from .blueprints.poems import poems_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(books_bp, url_prefix="/books")
     app.register_blueprint(posts_bp, url_prefix="/posts")
+    app.register_blueprint(poems_bp, url_prefix="/poems")
 
     db.init_app(app)
     cache.init_app(

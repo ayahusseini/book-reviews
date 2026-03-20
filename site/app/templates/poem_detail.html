@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block header %}
+<h2>{{ poem.post_title }}</h2>
+{% endblock %}
+{% block main_content %}
+<p><small>{{ poem.post_author }}</small></p>
+
+<article class="poem-body">
+  {{ poem_html | safe }}
+</article>
+
+{% if comments_html %}
+  <article class="markdown-body">
+    {{ comments_html | safe }}
+  </article>
+{% endif %}
+
+<p><a href="{{ url_for('poems.poem_list') }}">← Back to poems</a></p>
+{% endblock %}

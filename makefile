@@ -32,7 +32,7 @@ shell:
 
 setup:
 	rm -f site/instance/site.db
-	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) shell -c "from app.extensions import db; db.create_all()"
+	PYTHONPATH=$(PYPATH) uv run python site/scripts/create_db.py
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) db stamp head --directory $(MIGRATIONS)
 	$(MAKE) migrate
 	$(MAKE) sync
