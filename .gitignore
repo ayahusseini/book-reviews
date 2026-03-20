@@ -19,3 +19,4 @@ htmlcov/
 
 instance/
 **/posts/**
+**/unpromoted_posts/**

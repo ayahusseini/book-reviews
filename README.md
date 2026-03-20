@@ -16,6 +16,27 @@ Install [pre-commit hooks](https://pre-commit.com/) if you plan to commit change
 
 ```sh
 uv run pre-commit install
+
+```
+One-off setup of the database:
+
+```sh
+PYTHONPATH=site uv run flask --app site/app shell
+```
+
+Inside the shell:
+
+```python
+from app.extensions import db
+db.create_all()
+exit()
+```
+
+Then stamp and migrate:
+
+```sh
+PYTHONPATH=site uv run flask --app site/app db stamp head --directory site/migrations
+make migrate
 ```
 
 ## Development workflow
@@ -138,13 +159,213 @@ chmod +x site/scripts/generate_secret_key.sh
 ./site/scripts/generate_secret_key.sh
 ```
 
-This appends `SECRET_KEY=...` to `.env`.
+This writes `SECRET_KEY=...` to `.env`. The script will error if a key already exists — delete the existing line manually if you genuinely need to regenerate it (note: this will invalidate active user sessions).
 
 ## Running tests
 
 ```sh
 make test
 ```
+
+---
+
+## Production setup (one-off)
+
+This section documents the full steps to deploy the app on a fresh Ubuntu VPS (e.g. Vultr, Hetzner, DigitalOcean).
+
+### 1. Provision the VPS and SSH in
+
+Rent a VPS running Ubuntu. SSH in as root:
+
+```sh
+ssh root@your_server_ip
+```
+
+### 2. Update the system and install dependencies
+
+```sh
+sudo apt update && sudo apt upgrade -y
+sudo apt install nginx git python3-certbot-nginx -y
+```
+
+Install uv:
+
+```sh
+curl -LsSf https://astral.sh/uv/install.sh | sh
+source $HOME/.cargo/env
+```
+
+### 3. Clone the repo
+
+```sh
+sudo mkdir -p /var/www/book_reviews
+sudo chown $USER:$USER /var/www/book_reviews
+git clone https://github.com/ayahusseini/book-reviews.git /var/www/book_reviews
+cd /var/www/book_reviews
+```
+
+### 4. Install Python dependencies
+
+```sh
+uv sync
+```
+
+### 5. Set up environment variables
+
+Generate a secret key and set the Flask environment:
+
+```sh
+python3 site/scripts/generate_secret_key.sh
+echo "FLASK_ENV=production" >> .env
+```
+
+Verify `.env` looks correct:
+
+```sh
+cat .env
+```
+
+You should see exactly two lines: `SECRET_KEY=...` and `FLASK_ENV=production`.
+
+### 6. Set up the database
+
+Create the base schema, stamp it, then run migrations:
+
+```sh
+PYTHONPATH=site uv run flask --app site/app shell
+```
+
+Inside the shell:
+
+```python
+from app.extensions import db
+db.create_all()
+exit()
+```
+
+Then stamp and migrate:
+
+```sh
+PYTHONPATH=site uv run flask --app site/app db stamp head --directory site/migrations
+make migrate
+```
+
+### 7. Seed the database
+
+```sh
+make seed
+make posts
+```
+
+### 8. Set up Gunicorn as a systemd service
+
+Create the service file:
+
+```sh
+sudo nano /etc/systemd/system/gunicorn.service
+```
+
+Paste in:
+
+```ini
+[Unit]
+Description=HusseiniReads Gunicorn
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/var/www/book_reviews/site
+ExecStart=/var/www/book_reviews/.venv/bin/gunicorn "app:create_app()" --bind 127.0.0.1:8000 --workers 3
+Restart=always
+Environment="PYTHONPATH=/var/www/book_reviews/site"
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Enable and start it:
+
+```sh
+sudo systemctl daemon-reload
+sudo systemctl enable gunicorn
+sudo systemctl start gunicorn
+sudo systemctl status gunicorn
+```
+
+You should see `active (running)`.
+
+### 9. Configure Nginx
+
+Create the config:
+
+```sh
+sudo nano /etc/nginx/sites-available/book_reviews
+```
+and configure nginx. Enable it and restart:
+
+```sh
+sudo ln -s /etc/nginx/sites-available/book_reviews /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
+```
+
+### 10. Set up SSL with certbot
+
+Open the firewall ports and run certbot:
+
+```sh
+ufw allow 80
+ufw allow 443
+certbot --nginx
+```
+
+Follow the prompts. Certbot will automatically update your Nginx config to handle HTTPS and set up certificate renewal.
+
+---
+
+## Updating the site
+
+### Pushing new posts
+
+Since `content/posts/` is gitignored, posts must be copied to the server manually via `scp`. From your laptop:
+
+```sh
+scp -r site/content/posts root@the_server_id:/var/www/book_reviews/site/content/posts/
+```
+
+Then on the VPS:
+
+```sh
+cd /var/www/book_reviews
+make posts
+```
+
+Note: if this is the first time copying posts to a fresh server, you may need to create the directory first:
+
+```sh
+mkdir -p /var/www/book_reviews/site/content/posts
+```
+
+### Pushing code changes
+
+```sh
+cd /var/www/book_reviews
+git pull
+sudo systemctl restart gunicorn
+```
+
+### Pushing model changes
+
+If you changed `models.py`, generate and apply a migration locally first, commit it, then on the VPS:
+
+```sh
+cd /var/www/book_reviews
+git pull
+make migrate
+sudo systemctl restart gunicorn
+```
+
+---
 
 ## Further reading
 
