@@ -319,39 +319,56 @@ certbot --nginx
 ---
 
 ## Updating the site
-
-### Pushing new posts
-
-Posts are gitignored and must be copied to the server manually:
-
-```sh
-scp -r site/content/posts root@your_server_ip:/var/www/book_reviews/site/content/posts/
-```
-
-Then on the VPS:
-
-```sh
-cd /var/www/book_reviews && make posts
-```
-
+ 
+### Pushing new posts (recommended workflow)
+ 
+1. Write your markdown posts under `site/content/posts/`.
+2. Run `make posts` locally to import them into the local database.
+3. Optionally tweak tags: `flask manage-tags --book OL123W --add "mytag"`.
+4. Deploy the database to production:
+ 
+   ```sh
+   make deploy-db
+   ```
+ 
+No need to `scp` individual post files or touch the server's filesystem.
+ 
 ### Pushing code changes
-
+ 
 ```sh
 cd /var/www/book_reviews
 git pull
 sudo systemctl restart gunicorn
 ```
-
-### Pushing model changes
-
+ 
+### Pushing model/schema changes
+ 
+If you changed `models.py`, generate and apply a migration locally first, commit it, then on the VPS:
+ 
 ```sh
 cd /var/www/book_reviews
 git pull
-make migration m="describe change"
 make migrate
 sudo systemctl restart gunicorn
 ```
-
+ 
+---
+ 
+## Makefile reference
+ 
+```
+make dev        start the development server
+make seed       seed books from seed_database/book_seed.json
+make posts      import markdown posts from site/content/posts/
+make sync       seed + posts in one step
+make deploy-db  copy local DB to production and restart Gunicorn
+make tags       shorthand for flask manage-tags (pass ARGS="...")
+make test       run the test suite
+make migrate    apply pending database migrations
+make migration  generate a new migration (pass m="description")
+make shell      open a Flask shell with DB access
+make setup      one-off database initialisation
+```
 ---
 
 ## Further reading
