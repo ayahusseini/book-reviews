@@ -18,11 +18,20 @@ Install [pre-commit hooks](https://pre-commit.com/) if you plan to commit change
 
 ```sh
 uv run pre-commit install
-
 ```
+
 One-off setup of the database:
 
 ```sh
+make setup
+```
+
+This initialises the migrations directory, generates an initial migration from the current models, applies it, and seeds books and posts.
+
+If the migrations directory is missing (e.g. after cloning fresh), initialise it first:
+
+```sh
+PYTHONPATH=site uv run flask --app site/app db init --directory site/migrations
 make setup
 ```
 
@@ -31,14 +40,16 @@ make setup
 All common tasks are available from the repo root via `make`:
 
 ```sh
-make dev      # start the development server
-make seed     # seed books from seed_database/book_seed.json
-make posts    # import markdown posts from content/posts/
-make sync     # seed books then import posts (seed + posts)
-make test     # run the test suite
-make migrate  # apply pending database migrations
-make shell    # open a Flask shell with DB access
-make setup.   # one-off database setup 
+make dev          # start the development server
+make seed         # seed books from site/content/seeds/book_seed.json
+make seed-refresh # re-fetch all book metadata from Open Library and reseed
+make posts        # import markdown posts from site/content/posts/
+make sync         # seed books then import posts
+make test         # run the test suite
+make migrate      # apply pending database migrations
+make migration m="describe change"  # autogenerate a new migration
+make shell        # open a Flask shell with DB access
+make setup        # one-off database setup (wipes and recreates)
 ```
 
 ## Project structure
@@ -46,31 +57,30 @@ make setup.   # one-off database setup
 ```
 book_reviews/
 ├── Makefile
-├── content/
-│   └── posts/          ← markdown post files live here
-├── docs/
-└── site/
-    ├── app/
-    │   ├── blueprints/ ← books, posts, main route handlers
-    │   ├── content/
-    │   │   └── markdown_posts.py  ← parser and HTML renderer
-    │   ├── database/
-    │   │   ├── models.py          ← SQLAlchemy models
-    │   │   └── open_library.py    ← Open Library API client
-    │   ├── templates/
-    │   ├── static/
-    │   ├── cli.py      ← import-posts command
-    │   └── config.py
-    ├── migrations/
-    ├── seed_database/
-    │   ├── convertor.py    ← seeds books from book_seed.json
-    │   └── book_seed.json
-    └── testing/
+├── site/
+│   ├── app/
+│   │   ├── blueprints/         ← books, posts, main route handlers
+│   │   ├── database/
+│   │   │   ├── models.py       ← SQLAlchemy models
+│   │   │   └── upserts.py      ← batch upsert helpers
+│   │   ├── templates/
+│   │   ├── static/
+│   │   ├── open_library.py     ← Open Library API client (pure, no Flask deps)
+│   │   ├── cli.py              ← import-posts and seed-books commands
+│   │   └── config.py
+│   ├── content/
+│   │   ├── posts/              ← markdown post files live here (gitignored)
+│   │   ├── seeds/
+│   │   │   └── book_seed.json  ← book seed data
+│   │   ├── markdown_posts.py   ← markdown parser and MarkdownPost dataclass
+│   │   └── extract_quotes.py   ← ad-quote block extraction
+│   ├── migrations/
+│   └── testing/
 ```
 
 ## Adding posts
 
-Posts are markdown files with YAML frontmatter. Add them to `content/posts/` and run `make posts` to import into the database.
+Posts are markdown files with YAML frontmatter. Add them to `site/content/posts/` and run `make posts` to import into the database.
 
 ### Frontmatter reference
 
@@ -78,7 +88,7 @@ Posts are markdown files with YAML frontmatter. Add them to `content/posts/` and
 ---
 title: "My Review"           # required
 author: "Aya"                # required
-type: "review"               # required: review | essay | standalone | note | quotes
+type: "review"               # required: review | essay | standalone | note | quotes | poem
 book_ol_key: "OL42549900W"   # required for review and essay posts
 rating: 4.5                  # only used when type is review, must be 0–5
 slug: "my-review"            # optional, defaults to the filename stem
@@ -90,19 +100,32 @@ tags:
 Post body in Markdown...
 ```
 
-- `review` and `essay` posts must reference a book via `book_ol_key`. If the book is not already in the database it will be fetched automatically from Open Library.
-- `standalone` and `note` posts have no book link — omit `book_ol_key`.
+- `review` and `essay` posts should reference a book via `book_ol_key`. If the book is not already in the database it will be fetched automatically from Open Library. Omitting `book_ol_key` on these types produces a warning but the post will still be created as standalone.
+- `standalone`, `note`, and `poem` posts have no book link — omit `book_ol_key`.
 - `rating` is only meaningful on `review` posts and is ignored on all other types.
 - Tags are normalised to lowercase and attached to the referenced book. New tags are created automatically.
-- Re-running `make posts` is safe — existing posts are updated by source path.
+- `slug` defaults to the filename stem if not set. The slug is the unique identifier for a post — changing it creates a new post.
+- Re-running `make posts` is safe — existing posts are matched by slug and updated in place.
+
+### Inline quotes
+
+Wrap quote blocks with ` ```ad-quote ` fences in the post body:
+
+````markdown
+```ad-quote
+Some memorable passage from the book.
+```
+````
+
+Each block is extracted as a separate `quotes`-type post and rendered as a blockquote in the parent post. Quote slugs are generated deterministically from the content — editing quote text will create a new quote post and delete the old one.
 
 ### Book ratings
 
-A book's rating is computed as the average `rating` across all of its `review`-type posts. There is no manually set rating on books. To rate a book, write a review post with a `rating` field.
+A book's rating is the average `rating` across all of its `review`-type posts. There is no manually set rating on books.
 
-## Adding books manually
+## Adding books
 
-Books are seeded from `site/seed_database/book_seed.json`:
+Books are seeded from `site/content/seeds/book_seed.json`:
 
 ```json
 [
@@ -110,11 +133,19 @@ Books are seeded from `site/seed_database/book_seed.json`:
     "olid": "OL42549900W",
     "comment": "Flesh",
     "tags": ["2026"]
+  },
+  {
+    "olid": "OL166482W",
+    "description": "A custom description override."
   }
 ]
 ```
 
-Run `make seed` to fetch metadata from Open Library and write to the database. Re-running is safe — existing books are updated.
+Each entry requires `olid`. Optional fields:
+- `tags` — attached to the book after seeding
+- `description` — overrides the Open Library description
+
+Run `make seed` to upsert from the seed file. Books already in the DB are not re-fetched from Open Library unless you run `make seed-refresh`.
 
 ## Configs
 
@@ -135,8 +166,7 @@ FLASK_ENV=production make dev
 When you change `site/app/database/models.py`, generate and apply a migration:
 
 ```sh
-cd site
-uv run flask --app app db migrate -m "describe change"
+make migration m="describe change"
 make migrate
 ```
 
@@ -147,7 +177,7 @@ chmod +x site/scripts/generate_secret_key.sh
 ./site/scripts/generate_secret_key.sh
 ```
 
-This writes `SECRET_KEY=...` to `.env`. The script will error if a key already exists — delete the existing line manually if you genuinely need to regenerate it (note: this will invalidate active user sessions).
+This writes `SECRET_KEY=...` to `.env`. The script errors if a key already exists — delete the existing line manually if you genuinely need to regenerate it (this will invalidate active user sessions).
 
 ## Running tests
 
@@ -159,11 +189,9 @@ make test
 
 ## Production setup (one-off)
 
-This section documents the full steps to deploy the app on a fresh Ubuntu VPS (e.g. Vultr, Hetzner, DigitalOcean).
+This section documents the full steps to deploy the app on a fresh Ubuntu VPS.
 
 ### 1. Provision the VPS and SSH in
-
-Rent a VPS running Ubuntu. SSH in as root:
 
 ```sh
 ssh root@your_server_ip
@@ -174,11 +202,6 @@ ssh root@your_server_ip
 ```sh
 sudo apt update && sudo apt upgrade -y
 sudo apt install nginx git python3-certbot-nginx -y
-```
-
-Install uv:
-
-```sh
 curl -LsSf https://astral.sh/uv/install.sh | sh
 source $HOME/.cargo/env
 ```
@@ -190,55 +213,28 @@ sudo mkdir -p /var/www/book_reviews
 sudo chown $USER:$USER /var/www/book_reviews
 git clone https://github.com/ayahusseini/book-reviews.git /var/www/book_reviews
 cd /var/www/book_reviews
-```
-
-### 4. Install Python dependencies
-
-```sh
 uv sync
 ```
 
-### 5. Set up environment variables
-
-Generate a secret key and set the Flask environment:
+### 4. Set up environment variables
 
 ```sh
 python3 site/scripts/generate_secret_key.sh
 echo "FLASK_ENV=production" >> .env
 ```
 
-Verify `.env` looks correct:
+### 5. Initialise and seed the database
 
 ```sh
-cat .env
-```
-
-You should see exactly two lines: `SECRET_KEY=...` and `FLASK_ENV=production`.
-
-### 6. Set up the database
-
-Create the base schema, stamp it, then run migrations:
-
-```sh
+PYTHONPATH=site uv run flask --app site/app db init --directory site/migrations
 make setup
 ```
 
-### 7. Seed the database
-
-```sh
-make seed
-make posts
-```
-
-### 8. Set up Gunicorn as a systemd service
-
-Create the service file:
+### 6. Set up Gunicorn as a systemd service
 
 ```sh
 sudo nano /etc/systemd/system/gunicorn.service
 ```
-
-Paste in:
 
 ```ini
 [Unit]
@@ -256,43 +252,21 @@ Environment="PYTHONPATH=/var/www/book_reviews/site"
 WantedBy=multi-user.target
 ```
 
-Enable and start it:
-
 ```sh
 sudo systemctl daemon-reload
 sudo systemctl enable gunicorn
 sudo systemctl start gunicorn
-sudo systemctl status gunicorn
 ```
 
-You should see `active (running)`.
-
-### 9. Configure Nginx
-
-Create the config:
+### 7. Configure Nginx and SSL
 
 ```sh
 sudo nano /etc/nginx/sites-available/book_reviews
-```
-and configure nginx. Enable it and restart:
-
-```sh
 sudo ln -s /etc/nginx/sites-available/book_reviews /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl restart nginx
-```
-
-### 10. Set up SSL with certbot
-
-Open the firewall ports and run certbot:
-
-```sh
-ufw allow 80
-ufw allow 443
+sudo nginx -t && sudo systemctl restart nginx
+ufw allow 80 && ufw allow 443
 certbot --nginx
 ```
-
-Follow the prompts. Certbot will automatically update your Nginx config to handle HTTPS and set up certificate renewal.
 
 ---
 
@@ -300,23 +274,16 @@ Follow the prompts. Certbot will automatically update your Nginx config to handl
 
 ### Pushing new posts
 
-Since `content/posts/` is gitignored, posts must be copied to the server manually via `scp`. From your laptop:
+Posts are gitignored and must be copied to the server manually:
 
 ```sh
-scp -r site/content/posts root@the_server_id:/var/www/book_reviews/site/content/posts/
+scp -r site/content/posts root@your_server_ip:/var/www/book_reviews/site/content/posts/
 ```
 
 Then on the VPS:
 
 ```sh
-cd /var/www/book_reviews
-make posts
-```
-
-Note: if this is the first time copying posts to a fresh server, you may need to create the directory first:
-
-```sh
-mkdir -p /var/www/book_reviews/site/content/posts
+cd /var/www/book_reviews && make posts
 ```
 
 ### Pushing code changes
@@ -329,11 +296,10 @@ sudo systemctl restart gunicorn
 
 ### Pushing model changes
 
-If you changed `models.py`, generate and apply a migration locally first, commit it, then on the VPS:
-
 ```sh
 cd /var/www/book_reviews
 git pull
+make migration m="describe change"
 make migrate
 sudo systemctl restart gunicorn
 ```
