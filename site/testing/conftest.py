@@ -1,12 +1,14 @@
 """Pytest configuration and shared fixtures."""
 
 import logging
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 import pytest
 
 from app import create_app
-from app.extensions import db as _db
+from app.extensions import db as flask_db
+
+from sqlalchemy.orm import scoped_session, sessionmaker
 
 
 @pytest.fixture(scope="session")
@@ -22,10 +24,10 @@ def app():
 def db(app):
     """Provide a clean database schema for each test function."""
     with app.app_context():
-        _db.create_all()
-        yield _db
-        _db.session.remove()
-        _db.drop_all()
+        flask_db.create_all()
+        yield flask_db
+        flask_db.session.remove()
+        flask_db.drop_all()
 
 
 @pytest.fixture(autouse=True)
@@ -34,3 +36,27 @@ def cleanup_loggers(app):
     yield
     logging.getLogger().handlers.clear()
     app.logger.handlers.clear()
+
+
+@pytest.fixture
+def session(db):
+    connection = db.engine.connect()
+    transaction = connection.begin()
+
+    factory = sessionmaker(bind=connection)
+    scoped = scoped_session(factory)
+
+    db.session = scoped
+
+    yield scoped
+
+    scoped.remove()
+    transaction.rollback()
+    connection.close()
+
+
+@pytest.fixture
+def execute_spy(session, monkeypatch):
+    spy = MagicMock(wraps=session.execute)
+    monkeypatch.setattr(session, "execute", spy)
+    return spy
