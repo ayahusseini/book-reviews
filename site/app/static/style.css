@@ -572,12 +572,15 @@ p {
 }
  
 .poem-body {
-  font-family: var(--mono-font);
-  white-space: pre-wrap;
+  font-family: var(--mono-font); /* monospaced font for spacing */
+  white-space: pre;             /* preserves spaces and line breaks exactly */
   line-height: 2;
-  max-width: 55ch;
+  font-size: clamp(0.7rem, 3vw, 1rem); /* min 12px, max 1rem, scales with viewport width */
+  
+  max-width: 100%;
 }
 
 .poem-body p {
-  white-space: pre-wrap;
+  white-space: pre;       /* same for <p> tags */
+  margin: 0;              /* optional: remove default paragraph spacing */
 }
