@@ -574,10 +574,10 @@ p {
 .poem-body {
   font-family: var(--mono-font); /* monospaced font for spacing */
   white-space: pre;             /* preserves spaces and line breaks exactly */
-  line-height: 2;
-  font-size: clamp(0.7rem, 3vw, 1rem); /* min 12px, max 1rem, scales with viewport width */
-  
+  line-height: 1.5;
+  font-size: clamp(0.5rem, 3vw, 1rem);
   max-width: 100%;
+  overflow-x: auto; 
 }
 
 .poem-body p {
