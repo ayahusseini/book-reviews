@@ -572,15 +572,17 @@ p {
 }
  
 .poem-body {
-  font-family: var(--mono-font); /* monospaced font for spacing */
-  white-space: pre !important;             /* preserves spaces and line breaks exactly */
+  font-family: var(--mono-font);
+  white-space: pre !important;
   line-height: 1.5;
-  font-size: clamp(0.5rem, 3vw, 1rem);
+  font-size: clamp(1rem, 1vw, 1.3rem) !important; /* fixed min size */
   max-width: 100%;
-  overflow-x: auto !important; 
+  overflow-x: auto; /* scroll when text too long */
+  scrollbar-width: thin;         
+  scrollbar-color: var(--bg) var(--bg-soft); 
 }
 
 .poem-body p {
-  white-space: pre;       /* same for <p> tags */
-  margin: 0;              /* optional: remove default paragraph spacing */
+  white-space: pre; 
+  margin: 0;
 }
