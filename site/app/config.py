@@ -18,6 +18,7 @@ class DevelopmentConfig(Config):
     """Development config."""
 
     DEBUG = True
+    TESTING = False
     SECRET_KEY = "dev"
     SQLALCHEMY_DATABASE_URI = (
         f"sqlite:///{os.path.join(Config.BASE_DIR, 'instance', 'site.db')}"
@@ -35,6 +36,7 @@ class ProductionConfig(Config):
     DEBUG = False
     SECRET_KEY = os.getenv("SECRET_KEY")
     PROXY_FIX = True
+    TESTING = False
     SQLALCHEMY_DATABASE_URI = (
         f"sqlite:///{os.path.join(Config.BASE_DIR, 'instance', 'site.db')}"
     )
