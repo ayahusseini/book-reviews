@@ -80,9 +80,7 @@ def create_app():
     app.register_blueprint(poems_bp, url_prefix="/poems")
 
     db.init_app(app)
-    cache.init_app(
-        app, config={"CACHE_TYPE": "SimpleCache", "CACHE_DEFAULT_TIMEOUT": 0}
-    )
+    cache.init_app(app)
     migrate.init_app(app, db)
 
     from . import cli as cli_module

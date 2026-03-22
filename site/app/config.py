@@ -29,6 +29,8 @@ class Config:
     PROXY_FIX = False
     BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     SECRET_KEY = get_secret_key()
+    CACHE_TYPE = "SimpleCache"
+    CACHE_DEFAULT_TIMEOUT = 300  # 5 minutes
 
 
 class DevelopmentConfig(Config):
@@ -47,6 +49,7 @@ class TestingConfig(Config):
     TESTING = True
     PROXY_FIX = False
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
+    CACHE_TYPE = "NullCache"  # Disable Cache in tests
 
 
 class ProductionConfig(Config):
