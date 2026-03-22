@@ -11,25 +11,21 @@ from app.config import (
     DevelopmentConfig,
     ProductionConfig,
     TestingConfig,
+    check_config_safety,
 )
 from app.database import models as models
 from app.extensions import db, migrate, cache
 from app.setup_logging import setup_logging
 from werkzeug.middleware.proxy_fix import ProxyFix
 
+load_dotenv()
 
-def read_config_setting(default: str = "development") -> str:
-    """Read the config setting from the environment, defaulting to default."""
-    load_dotenv()
 
-    if not isinstance(default, str):
-        raise TypeError(
-            "The default must be a string"
-            + "Instead, got"
-            + f"default={default} ({type(default)})"
-        )
-
-    config = os.getenv("FLASK_ENV", default)
+def read_config_setting() -> str:
+    """Read the config setting from the environment"""
+    config = os.getenv("FLASK_ENV")
+    if config is None:
+        raise ValueError("Config must be set in the environment.")
     return config
 
 
@@ -54,20 +50,19 @@ def get_config_obj(config_str: str) -> Config:
 
 def create_app():
     """Create and configure the Flask application."""
-    config = read_config_setting(default="development")
-
+    config_name = read_config_setting()
+    config_obj = get_config_obj(config_name)
+    check_config_safety(config_obj)
     app = Flask(__name__, instance_relative_config=True)
+    app.config.from_object(config_obj)
 
-    # Tell Flask to trust 1 hop of proxy headers
     if app.config.get("PROXY_FIX", False):
         app.wsgi_app = ProxyFix(
             app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
         )
 
     setup_logging()
-
-    app.config.from_object(get_config_obj(config))
-    app.logger.info(f"Starting app with config: {config}")
+    app.logger.info(f"Starting app with config: {config_obj}")
 
     os.makedirs(app.instance_path, exist_ok=True)
 
