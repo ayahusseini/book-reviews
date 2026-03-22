@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
+
 from pathlib import Path
 from typing import Any
 
@@ -105,6 +107,24 @@ class MarkdownPost:
     @staticmethod
     def _normalize_tag(tag: str) -> str:
         return " ".join(tag.strip().split()).lower()
+
+    @property
+    def date(self) -> datetime | None:
+        raw = self.metadata.get("date")
+        if raw is None:
+            return None
+        if isinstance(raw, datetime):
+            return (
+                raw.replace(tzinfo=timezone.utc) if raw.tzinfo is None else raw
+            )
+        try:
+            return datetime.strptime(str(raw), "%Y-%m-%d").replace(
+                tzinfo=timezone.utc
+            )
+        except ValueError:
+            raise ValueError(
+                self._err + f"'date' must be in YYYY-MM-DD format, got {raw!r}"
+            )
 
 
 def parse_markdown_with_frontmatter(path: Path) -> MarkdownPost:

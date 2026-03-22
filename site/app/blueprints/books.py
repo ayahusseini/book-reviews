@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from flask import Blueprint, abort, render_template
-from sqlalchemy import distinct
+from sqlalchemy import distinct, func, desc
+
 
 from app.database.models import Book, Post, Tag
 from app.extensions import db, cache
@@ -28,20 +29,34 @@ def _book_ids_with_posts() -> set[int]:
 @books_bp.route("/", methods=["GET"])
 @cache.cached()
 def book_list():
-    """Render the full book list,
-    split into current year and previous reads."""
+    # Subquery: most recent non-quote post date per book
+    latest_post = (
+        db.session.query(
+            Post.book_id, func.max(Post.post_created_at).label("latest")
+        )
+        .filter(Post.post_type != "quotes")
+        .group_by(Post.book_id)
+        .subquery()
+    )
+
     tag_2026 = Tag.query.filter_by(tag_name="2026").first()
     books_2026 = []
     if tag_2026:
         books_2026 = (
             Book.query.filter(Book.tags.any(Tag.tag_id == tag_2026.tag_id))
-            .order_by(Book.book_title.asc())
+            .outerjoin(latest_post, Book.book_id == latest_post.c.book_id)
+            .order_by(
+                desc(latest_post.c.latest).nulls_last(), Book.book_title.asc()
+            )
             .all()
         )
 
     books_previous = (
         Book.query.filter(~Book.tags.any(Tag.tag_name == "2026"))
-        .order_by(Book.book_title.asc())
+        .outerjoin(latest_post, Book.book_id == latest_post.c.book_id)
+        .order_by(
+            desc(latest_post.c.latest).nulls_last(), Book.book_title.asc()
+        )
         .all()
     )
 

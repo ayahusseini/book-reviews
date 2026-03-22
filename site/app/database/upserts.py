@@ -10,6 +10,7 @@ rather than ORM add/append, which would emit one statement per row.
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from sqlalchemy import update
 from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 
@@ -310,6 +311,7 @@ def upsert_post(
     post_type: str | None,
     post_rating: float | None,
     book: Book | None,
+    created_at: datetime | None = None,
 ) -> tuple[Post, bool]:
     """Update an existing post (looked up by slug) or create a new one.
 
@@ -327,6 +329,7 @@ def upsert_post(
             post_author=author,
             post_rating=post_rating,
             book=book,
+            post_created_at=created_at or datetime.now(timezone.utc),
         )
         db.session.add(post)
     else:
@@ -336,6 +339,7 @@ def upsert_post(
         post.post_author = author
         post.post_rating = post_rating
         post.book = book
+        # deliberately never update post_created_at on re-import
 
     return post, is_new
 
