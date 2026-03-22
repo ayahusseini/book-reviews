@@ -137,7 +137,6 @@ def parse_markdown_with_frontmatter(path: Path) -> MarkdownPost:
             body = "\n".join(lines[end_idx + 1 :]).lstrip("\n")
 
     quotes = extract_ad_quotes(body)
-    print(f"for post {metadata.get('title')}, the quotes are \n{quotes}")
     clean_body = replace_ad_quotes_with_blockquotes(body)
 
     return MarkdownPost(
