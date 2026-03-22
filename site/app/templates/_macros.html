@@ -1,0 +1,37 @@
+{% macro star_rating(rating, uid="") %}
+  {% if rating is not none %}
+    {% set rounded = (rating * 2) | round / 2 %}
+    {% set full = rounded | int %}
+    {% set half = (rounded - full) == 0.5 %}
+    {% set empty = 5 - full - (1 if half else 0) %}
+
+    <span class="star-rating" title="{{ rating }}/5">
+      {% for _ in range(full) %}
+        <span class="star full">
+          <svg viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.848 1.48 8.246L12 18.896l-7.416 4.504 1.48-8.246L0 9.306l8.332-1.151z"/></svg>
+        </span>
+      {% endfor %}
+
+      {% if half %}
+        {% set grad_id = "half-grad-" ~ uid ~ "-" ~ rating %}
+        <span class="star half">
+          <svg viewBox="0 0 24 24">
+            <defs>
+              <linearGradient id="{{ grad_id }}">
+                <stop offset="50%" stop-color="var(--gold)"/>
+                <stop offset="50%" stop-color="oklch(0.14 0.13 268)"/>
+              </linearGradient>
+            </defs>
+            <path fill="url(#{{ grad_id }})" d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.848 1.48 8.246L12 18.896l-7.416 4.504 1.48-8.246L0 9.306l8.332-1.151z"/>
+          </svg>
+        </span>
+      {% endif %}
+
+      {% for _ in range(empty) %}
+        <span class="star empty">
+          <svg viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.848 1.48 8.246L12 18.896l-7.416 4.504 1.48-8.246L0 9.306l8.332-1.151z"/></svg>
+        </span>
+      {% endfor %}
+    </span>
+  {% endif %}
+{% endmacro %}
