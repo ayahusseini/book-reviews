@@ -11,6 +11,7 @@ from app.config import (
     DevelopmentConfig,
     ProductionConfig,
     TestingConfig,
+    check_config_safety,
 )
 from app.database import models as models
 from app.extensions import db, migrate, cache
@@ -47,37 +48,13 @@ def get_config_obj(config_str: str) -> Config:
     return configs[config_str]
 
 
-def check_config_safety(config: Config) -> None:
-    """Raise if a development or testing config is used behind a proxy.
-
-    PROXY_FIX=True is only set in ProductionConfig and indicates the app
-    is running behind nginx on the VPS. DEBUG or TESTING being True in
-    that context is a misconfiguration that must be refused immediately.
-    """
-    if not config.PROXY_FIX:
-        return
-
-    if config.DEBUG:
-        raise RuntimeError(
-            "DEBUG=True is not allowed when PROXY_FIX is set."
-            "The app appears to be running on the VPS"
-            + "with a development config."
-            "Set FLASK_ENV=production in your environment."
-        )
-
-    if config.TESTING:
-        raise RuntimeError(
-            "TESTING=True is not allowed when PROXY_FIX is set."
-            "The app appears to be running on the VPS with a testing config."
-            "Set FLASK_ENV=production in your environment."
-        )
-
-
 def create_app():
     """Create and configure the Flask application."""
-    config = read_config_setting(default="development")
-
+    config_name = read_config_setting()
+    config_obj = get_config_obj(config_name)
+    check_config_safety(config_obj)
     app = Flask(__name__, instance_relative_config=True)
+    app.config.from_object(config_obj)
 
     if app.config.get("PROXY_FIX", False):
         app.wsgi_app = ProxyFix(
@@ -85,9 +62,7 @@ def create_app():
         )
 
     setup_logging()
-
-    app.config.from_object(get_config_obj(config))
-    app.logger.info(f"Starting app with config: {config}")
+    app.logger.info(f"Starting app with config: {config_obj}")
 
     os.makedirs(app.instance_path, exist_ok=True)
 
