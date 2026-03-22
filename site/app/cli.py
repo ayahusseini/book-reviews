@@ -83,14 +83,6 @@ def sync_quotes(
 
 
 def import_post_file(path: Path) -> bool:
-    """Parse and upsert a single markdown post file.
-
-    Validation is handled by MarkdownPost.__post_init__ and its properties —
-    ValueError/TypeError raised there are caught and re-raised as
-    ClickException so the CLI reports them cleanly.
-
-    Returns True if the post was newly created, False if updated.
-    """
     try:
         parsed = parse_markdown_with_frontmatter(path)
         post_rating = parsed.rating if parsed.post_type == "review" else None
@@ -113,6 +105,7 @@ def import_post_file(path: Path) -> bool:
         post_type=parsed.post_type,
         post_rating=post_rating,
         book=book,
+        created_at=parsed.date,  # default now()
     )
 
     if book is not None:
