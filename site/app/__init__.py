@@ -17,19 +17,14 @@ from app.extensions import db, migrate, cache
 from app.setup_logging import setup_logging
 from werkzeug.middleware.proxy_fix import ProxyFix
 
+load_dotenv()
 
-def read_config_setting(default: str = "development") -> str:
-    """Read the config setting from the environment, defaulting to default."""
-    load_dotenv()
 
-    if not isinstance(default, str):
-        raise TypeError(
-            "The default must be a string"
-            + "Instead, got"
-            + f"default={default} ({type(default)})"
-        )
-
-    config = os.getenv("FLASK_ENV", default)
+def read_config_setting() -> str:
+    """Read the config setting from the environment"""
+    config = os.getenv("FLASK_ENV")
+    if config is None:
+        raise ValueError("Config must be set in the environment.")
     return config
 
 
@@ -52,13 +47,38 @@ def get_config_obj(config_str: str) -> Config:
     return configs[config_str]
 
 
+def check_config_safety(config: Config) -> None:
+    """Raise if a development or testing config is used behind a proxy.
+
+    PROXY_FIX=True is only set in ProductionConfig and indicates the app
+    is running behind nginx on the VPS. DEBUG or TESTING being True in
+    that context is a misconfiguration that must be refused immediately.
+    """
+    if not config.PROXY_FIX:
+        return
+
+    if config.DEBUG:
+        raise RuntimeError(
+            "DEBUG=True is not allowed when PROXY_FIX is set."
+            "The app appears to be running on the VPS"
+            + "with a development config."
+            "Set FLASK_ENV=production in your environment."
+        )
+
+    if config.TESTING:
+        raise RuntimeError(
+            "TESTING=True is not allowed when PROXY_FIX is set."
+            "The app appears to be running on the VPS with a testing config."
+            "Set FLASK_ENV=production in your environment."
+        )
+
+
 def create_app():
     """Create and configure the Flask application."""
     config = read_config_setting(default="development")
 
     app = Flask(__name__, instance_relative_config=True)
 
-    # Tell Flask to trust 1 hop of proxy headers
     if app.config.get("PROXY_FIX", False):
         app.wsgi_app = ProxyFix(
             app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
