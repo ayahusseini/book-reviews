@@ -43,11 +43,6 @@ def sync_quotes(
     author: str,
     book: Book | None,
 ) -> tuple[int, int]:
-    """Upsert quote posts from a parsed markdown file.
-
-    Quotes whose slug is no longer present in the current set are deleted.
-    Returns (created_count, updated_count).
-    """
     current_slugs: set[str] = set()
     created = updated = 0
 
@@ -68,11 +63,19 @@ def sync_quotes(
             updated += 1
 
     if current_slugs:
-        stale = Post.query.filter(
+        # Scope deletion to this specific book to avoid wiping quotes
+        # that were added earlier in the same import run for other books.
+        stale_query = Post.query.filter(
             Post.post_type == "quotes",
             Post.post_slug.like("quote-%"),
             Post.post_slug.notin_(current_slugs),
-        ).all()
+        )
+        if book is not None:
+            stale_query = stale_query.filter(Post.book_id == book.book_id)
+        else:
+            stale_query = stale_query.filter(Post.book_id.is_(None))
+
+        stale = stale_query.all()
         for post in stale:
             db.session.delete(post)
 
