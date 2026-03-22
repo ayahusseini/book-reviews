@@ -61,8 +61,11 @@ def create_app():
             app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
         )
 
-    setup_logging()
+    setup_logging(app)
+    app.logger.info(f"Starting app with config: {config_name}")
+
     app.logger.info(f"Starting app with config: {config_obj}")
+    app.logger.info(f"Starting app with config: {config_name}")
 
     os.makedirs(app.instance_path, exist_ok=True)
 

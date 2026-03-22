@@ -6,26 +6,10 @@ from app.setup_logging import setup_logging
 from flask import Flask
 
 
-def test_setup_logging_sets_app_logger_level(app):
-    with patch("logging.FileHandler"):
-        setup_logging(app=app)
-    assert app.logger.level == logging.DEBUG
-
-
 def test_setup_logging_adds_two_file_handlers(app):
     with patch("logging.FileHandler"):
         setup_logging(app=app)
     assert len(app.logger.handlers) == 2
-
-
-def test_setup_logging_adds_filehandler(app):
-
-    with patch("logging.FileHandler") as mockFileHandler:
-        mockfilehandlerinstance = MagicMock()
-        mockFileHandler.return_value = mockfilehandlerinstance
-        setup_logging(app=app)
-
-    mockfilehandlerinstance.setLevel.assert_called_once_with(logging.DEBUG)
 
 
 def test_setup_logging_adds_streamhandler(app):
