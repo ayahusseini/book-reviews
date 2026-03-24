@@ -5,22 +5,23 @@
 {% endblock %}
 
 {% block main_content %}
-<p>I've been working on writing up notes on the process of building and designing 
-    this website. I favour first-principles, so this is unfortunately going to be 
+<p> I like the idea of having the design documents in the same place as the product itself.
+    I favour first-principles, so this is unfortunately going to be 
     a series of pretty long-winded posts, starting with how the internet actually works
     and where this website fits in.
 </p>
-{% endblock %}
+
 
 {% if docs %}
 <ul>
   {% for doc in docs %}
     <li>
-    <a href="{{ url_for('design.design_doc_detail', slug=doc.post_slug) }}">{{ doc.post_title }}</a>
+    <a href="{{ url_for('posts.post_detail', slug=doc.post_slug) }}">{{ doc.post_title }}</a>
     </li>
   {% endfor %}
 </ul>
 {% else %}
 {% include "under_construction.html" %}
 {% endif %}
+
 {% endblock %}
