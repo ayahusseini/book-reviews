@@ -23,17 +23,3 @@ def design_doc_list():
         .all()
     )
     return render_template("designdocs.html", docs=posts)
-
-
-@design_bp.route("/<string:slug>", methods=["GET"])
-@cache.cached()
-def design_doc_detail():
-    posts = (
-        Post.query.filter(
-            Post.book_id.is_(None),
-            Post.post_type.in_({"designdoc"}),
-        )
-        .order_by(Post.post_created_at.desc())
-        .all()
-    )
-    return render_template("designdocs.html", docs=posts)
