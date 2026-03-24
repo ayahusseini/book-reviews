@@ -10,7 +10,15 @@ from datetime import datetime, timezone
 from sqlalchemy import CheckConstraint
 from app.extensions import db
 
-VALID_POST_TYPES = {"review", "essay", "standalone", "note", "quotes", "poem"}
+VALID_POST_TYPES = {
+    "review",
+    "essay",
+    "standalone",
+    "note",
+    "quotes",
+    "poem",
+    "designdoc",
+}
 
 
 def get_registered_models(database=db) -> list[str]:

@@ -18,7 +18,15 @@ from content.extract_quotes import (
     replace_ad_quotes_with_blockquotes,
 )
 
-VALID_POST_TYPES = {"review", "essay", "standalone", "note", "quotes", "poem"}
+VALID_POST_TYPES = {
+    "review",
+    "essay",
+    "standalone",
+    "note",
+    "quotes",
+    "poem",
+    "designdoc",
+}
 
 
 @dataclass
