@@ -184,7 +184,21 @@ def render_markdown_to_safe_html(text: str) -> str:
     stripping unsafe tags and attributes."""
     html = markdown.markdown(
         text,
-        extensions=["fenced_code", "tables", "toc", "smarty"],
+        extensions=[
+            "fenced_code",
+            "tables",
+            "toc",
+            "smarty",
+            "pymdownx.highlight",
+            "pymdownx.superfences",
+            "codehilite",
+        ],
+        extension_configs={
+            "pymdownx.highlight": {
+                "linenums": False,  # line numbers on/off
+                "guess_lang": True,  # detect language if missing
+            }
+        },
         output_format="html5",
     )
 
