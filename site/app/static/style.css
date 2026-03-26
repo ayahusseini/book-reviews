@@ -167,7 +167,7 @@ nav .nav-text {
 }
 
 nav h1 {
-  font-size: clamp(2.4rem, 2.5vw, 3rem); /* prevents shrinking too small */
+  font-size: clamp(1.6rem, 2.5vw, 2.4rem);
   line-height: 1.1;
   margin: 0;
 }
@@ -546,15 +546,12 @@ p {
 }
 
 .under-construction__image {
-  height: auto;
   display: block;
-  
-  /* Optional: Control the size */
-  max-width: 50%; /* or specific pixel value like 800px */
-  margin: 0 auto;
-  /* Remove any default image styling */
+  width: clamp(150px, 25vw, 400px); /* never smaller than 150px, scales, never bigger than 400px */
+  height: auto;
   border: none;
   outline: none;
+  margin: 0 auto; /* center horizontally */
 }
  
 .poem-body {
