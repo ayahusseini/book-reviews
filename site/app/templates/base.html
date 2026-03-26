@@ -34,21 +34,21 @@
     <!-- MAIN CONTENT -->
     <div class="site-wrapper">
 
-    <nav class="nav-container">
-    <!-- Logo -->
-    <!-- Title + Links -->
-    <div class="nav-text">
-        <h1>    <img src="{{ url_for('static', filename='logo2.png') }}" alt="HusseiniReads logo" class="nav-logo">
-HusseiniReads</h1>
-        <div class="nav-links">
-        <a href="{{ url_for('books.book_list') }}">Books</a> ·
-        <a href="{{ url_for('posts.misc_post_list') }}">Posts</a> ·
-        <a href="{{ url_for('homepage.about') }}">About</a> ·
-        <a href="{{ url_for('poems.poem_list') }}">Poems</a> ·
-        <a href="{{ url_for('design.design_doc_list') }}">Design Docs</a>
+        <nav>
+        <div class="nav-container">
+            <img src="{{ url_for('static', filename='logo2.png') }}" alt="HusseiniReads logo" class="nav-logo">
+            <div class="nav-text">
+            <h1>HusseiniReads</h1>
+            <div class="nav-links">
+                <a href="{{ url_for('books.book_list') }}">Books</a> ·
+                <a href="{{ url_for('posts.misc_post_list') }}">Posts</a> ·
+                <a href="{{ url_for('homepage.about') }}">About</a> ·
+                <a href="{{ url_for('poems.poem_list') }}">Poems</a> ·
+                <a href="{{ url_for('design.design_doc_list') }}">Design Docs</a>
+            </div>
+            </div>
         </div>
-    </div>
-    </nav>
+        </nav>
 
         <!-- Mobile-only quote, hidden on wider screens -->
         {% if random_quote %}
