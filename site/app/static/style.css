@@ -20,7 +20,7 @@
 
   /* Star gold */
   --gold:          oklch(0.88 0.18 88);
-  --gold-dim:      oklch(0.65 0.14 85);
+  --gold-dim:      oklch(69.156% 0.14127 100.462);
 
   /* Links = starlight — warm white-gold */
   --link:          oklch(0.90 0.10 80);
@@ -236,7 +236,7 @@ h3 {
   font-weight: 700;
   text-transform: none;
   letter-spacing: 0;
-  color: var(--gold-dim);
+  color: var(--orange);
   margin-top: 1.1rem;
   margin-bottom: 0.3rem;
 }
@@ -570,3 +570,33 @@ p {
   white-space: pre; 
   margin: 0;
 }
+
+/* Base pre/code styling */
+/* Space above and below code blocks */
+pre, pre code {
+    display: block;         /* ensure block behavior */
+    margin: 1em 0;        /* vertical spacing */
+    padding: 0.5rem;          /* internal padding */
+    border-radius: 10px;
+    overflow-x: auto;
+    background-color: var(--bg-quote);
+    color: var(--orange-bright);
+    font-family: var(--mono-font);
+    line-height: 1.5;
+    font-size: 0.9em;
+}
+
+p code {
+    background-color:  var(--bg-quote);;
+    padding: 0.2em 0.4em;
+    border-radius: 6px;
+    color: var(--orange-bright);
+    font-family: var(--mono-font);
+    font-size: 0.9em;
+}
+
+/* Pygments token colors */
+.codehilite .w { color: #e2e8f0; }     /* whitespace (optional) */
+.codehilite .p { color: #ff7f50; }     /* punctuation */
+.codehilite .nv { color: #9cdcfe; }    /* variable names */
+.codehilite .o { color: #d4d4d4; }     /* operators */
