@@ -5,7 +5,6 @@ from __future__ import annotations
 from flask import Blueprint, abort, render_template
 from sqlalchemy import distinct, func, desc
 
-
 from app.database.models import Book, Post, Tag
 from app.extensions import db, cache
 from content.markdown_posts import render_markdown_to_safe_html

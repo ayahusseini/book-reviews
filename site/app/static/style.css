@@ -32,7 +32,7 @@
 
   --heading-font: 'Libre Baskerville', serif;
   --body-font:    'Libre Baskerville', serif;
-  --mono-font:    'Courier Prime', monospace;
+  --mono-font:    'Roboto Mono', monospace;
 }
 
 /* ─── Reset ──────────────────────────────────────── */
@@ -102,11 +102,10 @@ body {
 }
 
 .sidebar-heading {
-  font-family: var(--mono-font);
-  font-size: 0.58rem;
-  text-transform: uppercase;
+  font-family: var(--body-font);
+  font-size: 0.6rem;
   letter-spacing: 0.14em;
-  color: var(--orange-dim);
+  color: var(--orange-bright);
   margin-bottom: 0.6rem;
 }
 
@@ -572,7 +571,8 @@ p {
 }
  
 .poem-body {
-  font-family: var(--mono-font);
+  font-family: var(--body);
+  color: var(--link);
   white-space: pre !important;
   line-height: 1.5;
   font-size: clamp(1rem, 1vw, 1.3rem) !important; /* fixed min size */
