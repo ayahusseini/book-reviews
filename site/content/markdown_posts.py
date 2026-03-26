@@ -18,7 +18,15 @@ from content.extract_quotes import (
     replace_ad_quotes_with_blockquotes,
 )
 
-VALID_POST_TYPES = {"review", "essay", "standalone", "note", "quotes", "poem"}
+VALID_POST_TYPES = {
+    "review",
+    "essay",
+    "standalone",
+    "note",
+    "quotes",
+    "poem",
+    "designdoc",
+}
 
 
 @dataclass
@@ -53,7 +61,11 @@ class MarkdownPost:
 
     @property
     def post_type(self) -> str:
-        return self.metadata["type"]
+        return self.metadata["type"].strip()
+
+    @property
+    def parent_slug(self) -> str:
+        return self.metadata.get("parent_slug", "")
 
     @property
     def slug(self) -> str:

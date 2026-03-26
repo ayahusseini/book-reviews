@@ -10,7 +10,15 @@ from datetime import datetime, timezone
 from sqlalchemy import CheckConstraint
 from app.extensions import db
 
-VALID_POST_TYPES = {"review", "essay", "standalone", "note", "quotes", "poem"}
+VALID_POST_TYPES = {
+    "review",
+    "essay",
+    "standalone",
+    "note",
+    "quotes",
+    "poem",
+    "designdoc",
+}
 
 
 def get_registered_models(database=db) -> list[str]:
@@ -164,6 +172,13 @@ class Post(db.Model):
     )
 
     post_id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+
+    parent_id = db.Column(
+        db.Integer,
+        db.ForeignKey("post.post_id", name="fk_post_parent_id"),
+        nullable=True,
+    )
+
     post_slug = db.Column(db.String(250), nullable=False, unique=True)
     book_id = db.Column(
         db.Integer, db.ForeignKey("book.book_id"), nullable=True
@@ -187,6 +202,8 @@ class Post(db.Model):
     )
 
     book = db.relationship("Book", back_populates="posts")
+
+    parent = db.relationship("Post", remote_side=[post_id], backref="children")
 
     def __repr__(self):
         return (

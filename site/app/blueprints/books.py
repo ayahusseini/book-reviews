@@ -5,7 +5,6 @@ from __future__ import annotations
 from flask import Blueprint, abort, render_template
 from sqlalchemy import distinct, func, desc
 
-
 from app.database.models import Book, Post, Tag
 from app.extensions import db, cache
 from content.markdown_posts import render_markdown_to_safe_html
@@ -32,7 +31,7 @@ def book_list():
     # Subquery: most recent non-quote post date per book
     latest_post = (
         db.session.query(
-            Post.book_id, func.max(Post.post_created_at).label("latest")
+            Post.book_id, func.max(Post.post_updated_at).label("latest")
         )
         .filter(Post.post_type != "quotes")
         .group_by(Post.book_id)
@@ -83,7 +82,7 @@ def book_detail(book_id: int):
     posts = (
         Post.query.filter_by(book_id=book.book_id)
         .filter(Post.post_type != "quotes")
-        .order_by(Post.post_created_at.desc())
+        .order_by(Post.post_updated_at.desc())
         .all()
     )
 

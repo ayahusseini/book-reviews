@@ -46,8 +46,7 @@ make seed-refresh # re-fetch all book metadata from Open Library and reseed
 make posts        # import markdown posts from site/content/posts/
 make sync         # seed books then import posts
 make test         # run the test suite
-make migrate      # apply pending database migrations
-make migration m="describe change"  # autogenerate a new migration
+make migrate m="describe change" #  autogenerate a new migration and apply it
 make shell        # open a Flask shell with DB access
 make setup        # one-off database setup (wipes and recreates)
 ```
@@ -166,8 +165,7 @@ FLASK_ENV=production make dev
 When you change `site/app/database/models.py`, generate and apply a migration:
 
 ```sh
-make migration m="describe change"
-make migrate
+make migrate m="describe change" #  autogenerate a new migration and apply it
 ```
 
 ## Managing tags
@@ -352,23 +350,6 @@ make migrate
 sudo systemctl restart gunicorn
 ```
  
----
- 
-## Makefile reference
- 
-```
-make dev        start the development server
-make seed       seed books from seed_database/book_seed.json
-make posts      import markdown posts from site/content/posts/
-make sync       seed + posts in one step
-make deploy-db  copy local DB to production and restart Gunicorn
-make tags       shorthand for flask manage-tags (pass ARGS="...")
-make test       run the test suite
-make migrate    apply pending database migrations
-make migration  generate a new migration (pass m="description")
-make shell      open a Flask shell with DB access
-make setup      one-off database initialisation
-```
 ---
 
 ## Further reading

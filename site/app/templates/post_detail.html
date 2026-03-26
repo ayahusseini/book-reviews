@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block main_content %}
-<p><small>By {{ post.post_author }}{% if post.post_type %} · {{ post.post_type }}{% endif %}</small></p>
+<p><small>By {{ post.post_author }}{% if post.post_type %} · {{ post.post_type }}{% endif %} - Created: {{ post.post_created_at.strftime('%Y-%m-%d') }} </small></p>
 {% if post.book %}
   <p><small>Book: <a href="{{ url_for('books.book_detail', book_id=post.book.book_id) }}">{{ post.book.book_title }}</a></small></p>
 {% endif %}
