@@ -340,7 +340,7 @@ def upsert_post(
             post_created_at=post_date,
         )
         if post_parent:
-            post.parent_id = post_parent
+            post.parent_id = post_parent.post_id
         db.session.add(post)
     else:
         post.post_title = title
@@ -350,11 +350,11 @@ def upsert_post(
         post.post_author = author
         post.post_rating = post_rating
         post.book = book
-        post.post_updated_at = post_date
+        if created_at:
+            post.post_updated_at = post_date
         if post_parent:
-            post.parent_id = post_parent
+            post.parent_id = post_parent.post_id
 
-    db.session.commit()
     return post, is_new
 
 

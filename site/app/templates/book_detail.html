@@ -60,7 +60,7 @@
           {{ star_rating(post.post_rating, uid=post.post_id) }}
       {% endif %}
   </h3>
-  <p style="margin-bottom: 0.75rem;"><small class="text-muted">{{ post.post_type }} - Created: {{ post.post_created_at.strftime('%Y-%m-%d') }} - Updated: {{ post.post_updated_at.strftime('%Y-%m-%d') }}</small></p>
+  <p style="margin-bottom: 0.75rem;"><small class="text-muted">{{ post.post_type }} - Created: {{ post.post_created_at.strftime('%Y-%m-%d') }} </small></p>
 
     {% if post_html and post_html | trim %}
       {{ post_html | safe }}

@@ -1,7 +1,6 @@
 """Instantiate the Flask application."""
 
 import os
-import random
 
 from dotenv import load_dotenv
 from flask import Flask
@@ -91,25 +90,20 @@ def create_app():
 
     @app.context_processor
     def inject_random_quote():
-        """
-        Injects a random quote into the app's context
-        (the return value is merged into the template context for
-        every render_template call)
-        """
-        from app.database.models import Post
-        from content.markdown_posts import render_markdown_to_safe_html
+        from .blueprints.main import get_random_quote_data
 
-        quotes = Post.query.filter_by(post_type="quotes").all()
-        if quotes:
-            random_quote = random.choice(quotes)
-            rendered_quote = render_markdown_to_safe_html(
-                random_quote.post_body_markdown
-            )
+        random_quote, quote_html, source_html = get_random_quote_data()
+        if random_quote:
             return {
                 "random_quote": random_quote,
-                "random_quote_html": rendered_quote,
+                "random_quote_html": quote_html,
+                "random_quote_source": source_html,
             }
-        return {"random_quote": None, "random_quote_html": None}
+        return {
+            "random_quote": None,
+            "random_quote_html": None,
+            "random_quote_source": None,
+        }
 
     if app.config.get("TESTING", False):
         with app.app_context():

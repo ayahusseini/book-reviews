@@ -60,6 +60,7 @@ def sync_quotes(
             post_rating=None,
             book=book,
         )
+
         if is_new:
             created += 1
         else:
