@@ -174,7 +174,9 @@ class Post(db.Model):
     post_id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
 
     parent_id = db.Column(
-        db.Integer, db.ForeignKey("post.post_id"), nullable=True
+        db.Integer,
+        db.ForeignKey("post.post_id", name="fk_post_parent_id"),
+        nullable=True,
     )
 
     post_slug = db.Column(db.String(250), nullable=False, unique=True)
