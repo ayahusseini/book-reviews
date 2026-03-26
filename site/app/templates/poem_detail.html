@@ -3,7 +3,7 @@
 <h2>{{ poem.post_title }}</h2>
 {% endblock %}
 {% block main_content %}
-<p class="markdown-body">By {{ poem.post_author }}</p>
+<p class="markdown-body">By {{ poem.post_author }} - Created: {{ poem.post_created_at.strftime('%Y-%m-%d') }} - Updated: {{ poem.post_updated_at.strftime('%Y-%m-%d') }}</p>
 <article class="poem-body">
   {{ poem_html | safe }}
 </article>

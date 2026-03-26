@@ -7,7 +7,7 @@
   {% for poem in poems %}
     <li>
       <a href="{{ url_for('poems.poem_detail', slug=poem.post_slug) }}">{{ poem.post_title }}</a>
-      <small>— {{ poem.post_author }}</small>
+      <small>— {{ poem.post_author }} - Created: {{ poem.post_created_at.strftime('%Y-%m-%d') }} - Updated: {{ poem.post_updated_at.strftime('%Y-%m-%d') }}</small>
     </li>
   {% endfor %}
 </ul>

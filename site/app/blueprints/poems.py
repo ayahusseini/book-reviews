@@ -12,7 +12,7 @@ poems_bp = Blueprint("poems", __name__)
 def poem_list():
     poems = (
         Post.query.filter_by(post_type="poem")
-        .order_by(Post.post_created_at.desc())
+        .order_by(Post.post_updated_at.desc())
         .all()
     )
     return render_template("poems.html", poems=poems)
