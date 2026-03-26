@@ -153,7 +153,7 @@ nav .nav-container {
 
 nav .nav-logo {
   flex-shrink: 0;
-  width: clamp(50px, 8vw, 75px);;          
+  width: clamp(70px, 8vw, 75px);;          
   height: auto;
 }
 
