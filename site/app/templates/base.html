@@ -23,15 +23,7 @@
                 {{ random_quote_html | safe }}
             </blockquote>
             <div class="sidebar-quote-source" id="quote-source">
-                {% if random_quote.book %}
-                — From book: <a href="{{ url_for('books.book_detail', book_id=random_quote.book.book_id) }}">
-                    {{ random_quote.book.book_title }}
-                </a>
-                {% elif random_quote.post_type == 'poem' %}
-                - From post: <a href="{{ url_for('poems.poem_detail', post_id=random_quote.post_id) }}"></a>
-                {% else%}
-                - From post: <a href="{{ url_for('posts.post_detail', post_id=random_quote.post_id) }}"></a>
-                {% end %}
+                {{ random_quote_source | safe }}
             </div>
         </div>
         {% endif %}
@@ -42,23 +34,21 @@
     <!-- MAIN CONTENT -->
     <div class="site-wrapper">
 
-        <nav>
-            <div class="nav-title">
-                <img
-                  src="{{ url_for('static', filename='logo.png') }}"
-                  alt="HusseiniReads logo"
-                  class="nav-logo"
-                >
-                <h1>HusseiniReads</h1>
-            </div>
-            <div class="nav-links">
-                <a href="{{ url_for('books.book_list') }}">Books</a> ·
-                <a href="{{ url_for('posts.misc_post_list') }}">Posts</a> ·
-                <a href="{{ url_for('homepage.about') }}">About</a>
-                <a href="{{ url_for('poems.poem_list') }}">Poems</a> ·
-                <a href="{{ url_for('design.design_doc_list') }}">Design Docs</a> ·
-            </div>
-        </nav>
+    <nav class="nav-container">
+    <!-- Logo -->
+    <!-- Title + Links -->
+    <div class="nav-text">
+        <h1>    <img src="{{ url_for('static', filename='logo2.png') }}" alt="HusseiniReads logo" class="nav-logo">
+HusseiniReads</h1>
+        <div class="nav-links">
+        <a href="{{ url_for('books.book_list') }}">Books</a> ·
+        <a href="{{ url_for('posts.misc_post_list') }}">Posts</a> ·
+        <a href="{{ url_for('homepage.about') }}">About</a> ·
+        <a href="{{ url_for('poems.poem_list') }}">Poems</a> ·
+        <a href="{{ url_for('design.design_doc_list') }}">Design Docs</a>
+        </div>
+    </div>
+    </nav>
 
         <!-- Mobile-only quote, hidden on wider screens -->
         {% if random_quote %}

@@ -65,7 +65,7 @@ class MarkdownPost:
 
     @property
     def parent_slug(self) -> str:
-        return self.metadata["parent_slug"]
+        return self.metadata.get("parent_slug", "")
 
     @property
     def slug(self) -> str:

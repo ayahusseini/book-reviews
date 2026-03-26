@@ -26,16 +26,20 @@ restart:
 test:
 	uv run pytest -v
 
+# Only run migrations manually when you want to generate them
 migrate:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) db migrate --directory $(MIGRATIONS) -m "$(m)"
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) db upgrade --directory $(MIGRATIONS)
 
+# Launch a Flask shell
 shell:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) shell
 
+# Setup for a fresh database
 setup:
 	rm -f site/instance/site.db
-	$(MAKE) migrate
+	# On a fresh DB, skip migrate and just upgrade
+	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) db upgrade --directory $(MIGRATIONS)
 	$(MAKE) sync
 
 # Copy the local SQLite database to production and restart Gunicorn.
