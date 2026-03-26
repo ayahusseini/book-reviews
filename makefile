@@ -4,7 +4,7 @@ MIGRATIONS = site/migrations
 POSTS   = site/content/posts
 SEEDS   = site/content/seeds/book_seed.json
 
-.PHONY: dev seed seed-refresh posts sync test migrate migration shell setup tags deploy-db
+.PHONY: dev seed seed-refresh posts sync test migrate shell setup tags deploy-db
 
 dev:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) run --debug
@@ -27,10 +27,8 @@ test:
 	uv run pytest -v
 
 migrate:
-	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) db upgrade --directory $(MIGRATIONS)
-
-migration:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) db migrate --directory $(MIGRATIONS) -m "$(m)"
+	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) db upgrade --directory $(MIGRATIONS)
 
 shell:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) shell
