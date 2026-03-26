@@ -95,15 +95,21 @@ def create_app():
         Injects a random quote into the app's context
         (the return value is merged into the template context for
         every render_template call)
-        If the cache already has a list of all_quotes, a random one
-        is returned. Otherwise, the list is generated, cached, and
-        then returned.
         """
         from app.database.models import Post
+        from content.markdown_posts import render_markdown_to_safe_html
 
         quotes = Post.query.filter_by(post_type="quotes").all()
-
-        return {"random_quote": random.choice(quotes) if quotes else None}
+        if quotes:
+            random_quote = random.choice(quotes)
+            rendered_quote = render_markdown_to_safe_html(
+                random_quote.post_body_markdown
+            )
+            return {
+                "random_quote": random_quote,
+                "random_quote_html": rendered_quote,
+            }
+        return {"random_quote": None, "random_quote_html": None}
 
     if app.config.get("TESTING", False):
         with app.app_context():

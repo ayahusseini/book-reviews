@@ -15,17 +15,24 @@
 
         {% if random_quote %}
         <div class="sidebar-widget sidebar-widget--quote">
-            <div class="sidebar-heading">Random quote</div>
-            <blockquote class="sidebar-quote">
-                {{ random_quote.post_body_markdown }}
+            <div class="sidebar-heading">
+                Random Quote
+                <button id="refresh-quote" style="background: none; border: none; color: var(--orange); cursor: pointer; font-size: 0.8em;">🔄</button>
+            </div>
+            <blockquote class="sidebar-quote" id="quote-content">
+                {{ random_quote_html | safe }}
             </blockquote>
-            {% if random_quote.book %}
-            <div class="sidebar-quote-source">
-                — <a href="{{ url_for('books.book_detail', book_id=random_quote.book.book_id) }}">
+            <div class="sidebar-quote-source" id="quote-source">
+                {% if random_quote.book %}
+                — From book: <a href="{{ url_for('books.book_detail', book_id=random_quote.book.book_id) }}">
                     {{ random_quote.book.book_title }}
                 </a>
+                {% elif random_quote.post_type == 'poem' %}
+                - From post: <a href="{{ url_for('poems.poem_detail', post_id=random_quote.post_id) }}"></a>
+                {% else%}
+                - From post: <a href="{{ url_for('posts.post_detail', post_id=random_quote.post_id) }}"></a>
+                {% end %}
             </div>
-            {% endif %}
         </div>
         {% endif %}
 
@@ -81,6 +88,17 @@
     </div>
 
 </div>
+
+<script>
+document.getElementById('refresh-quote').addEventListener('click', function() {
+    fetch('/random-quote')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('quote-content').innerHTML = data.quote_html;
+            document.getElementById('quote-source').innerHTML = data.source;
+        });
+});
+</script>
 
 </body>
 </html>

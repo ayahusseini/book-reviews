@@ -308,6 +308,7 @@ def upsert_post(
     title: str,
     author: str,
     body: str,
+    post_parent_slug: str | None,
     post_type: str | None,
     post_rating: float | None,
     book: Book | None,
@@ -318,7 +319,10 @@ def upsert_post(
     Returns (post, is_new). Does not commit.
     """
     post = Post.query.filter_by(post_slug=slug).first()
+    post_parent = Post.query.filter_by(post_slug=post_parent_slug).first()
+
     is_new = post is None
+
     if created_at:
         post_date = created_at
     else:
@@ -335,17 +339,22 @@ def upsert_post(
             book=book,
             post_created_at=post_date,
         )
+        if post_parent:
+            post.parent_id = post_parent
         db.session.add(post)
     else:
         post.post_title = title
+        post.post_parent = post_parent
         post.post_body_markdown = body
         post.post_type = post_type
         post.post_author = author
         post.post_rating = post_rating
         post.book = book
         post.post_updated_at = post_date
-        # deliberately never update post_created_at on re-import
+        if post_parent:
+            post.parent_id = post_parent
 
+    db.session.commit()
     return post, is_new
 
 
