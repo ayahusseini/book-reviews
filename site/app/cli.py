@@ -13,7 +13,7 @@ from content.markdown_posts import (
     parse_markdown_with_frontmatter,
 )
 from content.extract_quotes import Quote
-from app.database.models import Book, Post
+from app.database.models import Book
 from app.database.upserts import (
     attach_tags,
     upsert_books,
@@ -42,7 +42,9 @@ def sync_quotes(
     quotes: list[Quote],
     author: str,
     book: Book | None,
+    parent_slug: str | None,
 ) -> tuple[int, int]:
+
     current_slugs: set[str] = set()
     created = updated = 0
 
@@ -53,39 +55,24 @@ def sync_quotes(
             title=f"Quote ({quote.quote_slug})",
             author=author,
             body=quote.quote_text,
+            post_parent_slug=parent_slug,
             post_type="quotes",
             post_rating=None,
             book=book,
         )
+
         if is_new:
             created += 1
         else:
             updated += 1
 
-    if current_slugs:
-        # Scope deletion to this specific book to avoid wiping quotes
-        # that were added earlier in the same import run for other books.
-        stale_query = Post.query.filter(
-            Post.post_type == "quotes",
-            Post.post_slug.like("quote-%"),
-            Post.post_slug.notin_(current_slugs),
-        )
-        if book is not None:
-            stale_query = stale_query.filter(Post.book_id == book.book_id)
-        else:
-            stale_query = stale_query.filter(Post.book_id.is_(None))
-
-        stale = stale_query.all()
-        for post in stale:
-            db.session.delete(post)
-
     return created, updated
 
 
 def import_post_file(path: Path) -> bool:
+    """Attempt to Updae/Insert all post files"""
     try:
         parsed = parse_markdown_with_frontmatter(path)
-        post_rating = parsed.rating if parsed.post_type == "review" else None
     except (ValueError, TypeError) as exc:
         raise click.ClickException(str(exc))
 
@@ -101,9 +88,10 @@ def import_post_file(path: Path) -> bool:
         slug=parsed.slug,
         title=parsed.title,
         author=parsed.author,
+        post_parent_slug=parsed.parent_slug,
         body=parsed.body_markdown,
         post_type=parsed.post_type,
-        post_rating=post_rating,
+        post_rating=parsed.rating,
         book=book,
         created_at=parsed.date,  # default now()
     )
@@ -111,7 +99,12 @@ def import_post_file(path: Path) -> bool:
     if book is not None:
         attach_tags(book, parsed.tags)
 
-    sync_quotes(quotes=parsed.quotes, author=parsed.author, book=book)
+    sync_quotes(
+        quotes=parsed.quotes,
+        author=parsed.author,
+        book=book,
+        parent_slug=parsed.slug,
+    )
 
     return is_new
 

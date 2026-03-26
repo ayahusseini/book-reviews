@@ -1,7 +1,6 @@
 """Instantiate the Flask application."""
 
 import os
-import random
 
 from dotenv import load_dotenv
 from flask import Flask
@@ -73,9 +72,11 @@ def create_app():
     from .blueprints.main import main_bp
     from .blueprints.posts import posts_bp
     from .blueprints.poems import poems_bp
+    from .blueprints.design import design_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(books_bp, url_prefix="/books")
+    app.register_blueprint(design_bp, url_prefix="/design")
     app.register_blueprint(posts_bp, url_prefix="/posts")
     app.register_blueprint(poems_bp, url_prefix="/poems")
 
@@ -89,19 +90,20 @@ def create_app():
 
     @app.context_processor
     def inject_random_quote():
-        """
-        Injects a random quote into the app's context
-        (the return value is merged into the template context for
-        every render_template call)
-        If the cache already has a list of all_quotes, a random one
-        is returned. Otherwise, the list is generated, cached, and
-        then returned.
-        """
-        from app.database.models import Post
+        from .blueprints.main import get_random_quote_data
 
-        quotes = Post.query.filter_by(post_type="quotes").all()
-
-        return {"random_quote": random.choice(quotes) if quotes else None}
+        random_quote, quote_html, source_html = get_random_quote_data()
+        if random_quote:
+            return {
+                "random_quote": random_quote,
+                "random_quote_html": quote_html,
+                "random_quote_source": source_html,
+            }
+        return {
+            "random_quote": None,
+            "random_quote_html": None,
+            "random_quote_source": None,
+        }
 
     if app.config.get("TESTING", False):
         with app.app_context():

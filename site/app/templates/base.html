@@ -15,17 +15,16 @@
 
         {% if random_quote %}
         <div class="sidebar-widget sidebar-widget--quote">
-            <div class="sidebar-heading">Random quote</div>
-            <blockquote class="sidebar-quote">
-                {{ random_quote.post_body_markdown }}
-            </blockquote>
-            {% if random_quote.book %}
-            <div class="sidebar-quote-source">
-                — <a href="{{ url_for('books.book_detail', book_id=random_quote.book.book_id) }}">
-                    {{ random_quote.book.book_title }}
-                </a>
+            <div class="sidebar-heading">
+                Random Quote
+                <button id="refresh-quote" style="background: none; border: none; color: var(--orange); cursor: pointer; font-size: 0.8em;">🔄</button>
             </div>
-            {% endif %}
+            <blockquote class="sidebar-quote" id="quote-content">
+                {{ random_quote_html | safe }}
+            </blockquote>
+            <div class="sidebar-quote-source" id="quote-source">
+                {{ random_quote_source | safe }}
+            </div>
         </div>
         {% endif %}
 
@@ -35,22 +34,21 @@
     <!-- MAIN CONTENT -->
     <div class="site-wrapper">
 
-        <nav>
-            <div class="nav-title">
-                <img
-                  src="{{ url_for('static', filename='logo.png') }}"
-                  alt="HusseiniReads logo"
-                  class="nav-logo"
-                >
-                <h1>HusseiniReads</h1>
-            </div>
-            <div class="nav-links">
-                <a href="{{ url_for('books.book_list') }}">Books</a> ·
-                <a href="{{ url_for('posts.misc_post_list') }}">Posts</a> ·
-                <a href="{{ url_for('homepage.about') }}">About</a>
-                <a href="{{ url_for('poems.poem_list') }}">Poems</a> ·
-            </div>
-        </nav>
+    <nav class="nav-container">
+    <!-- Logo -->
+    <!-- Title + Links -->
+    <div class="nav-text">
+        <h1>    <img src="{{ url_for('static', filename='logo2.png') }}" alt="HusseiniReads logo" class="nav-logo">
+HusseiniReads</h1>
+        <div class="nav-links">
+        <a href="{{ url_for('books.book_list') }}">Books</a> ·
+        <a href="{{ url_for('posts.misc_post_list') }}">Posts</a> ·
+        <a href="{{ url_for('homepage.about') }}">About</a> ·
+        <a href="{{ url_for('poems.poem_list') }}">Poems</a> ·
+        <a href="{{ url_for('design.design_doc_list') }}">Design Docs</a>
+        </div>
+    </div>
+    </nav>
 
         <!-- Mobile-only quote, hidden on wider screens -->
         {% if random_quote %}
@@ -80,6 +78,17 @@
     </div>
 
 </div>
+
+<script>
+document.getElementById('refresh-quote').addEventListener('click', function() {
+    fetch('/random-quote')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('quote-content').innerHTML = data.quote_html;
+            document.getElementById('quote-source').innerHTML = data.source;
+        });
+});
+</script>
 
 </body>
 </html>
