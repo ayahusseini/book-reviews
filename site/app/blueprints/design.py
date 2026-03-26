@@ -16,7 +16,6 @@ design_bp = Blueprint("design", __name__)
 def design_doc_list():
     posts = (
         Post.query.filter(
-            Post.book_id.is_(None),
             Post.post_type.in_({"designdoc"}),
         )
         .order_by(Post.post_created_at.desc())

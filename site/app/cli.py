@@ -83,9 +83,9 @@ def sync_quotes(
 
 
 def import_post_file(path: Path) -> bool:
+    """Attempt to Updae/Insert all post files"""
     try:
         parsed = parse_markdown_with_frontmatter(path)
-        post_rating = parsed.rating if parsed.post_type == "review" else None
     except (ValueError, TypeError) as exc:
         raise click.ClickException(str(exc))
 
@@ -103,7 +103,7 @@ def import_post_file(path: Path) -> bool:
         author=parsed.author,
         body=parsed.body_markdown,
         post_type=parsed.post_type,
-        post_rating=post_rating,
+        post_rating=parsed.rating,
         book=book,
         created_at=parsed.date,  # default now()
     )

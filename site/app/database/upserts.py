@@ -319,6 +319,10 @@ def upsert_post(
     """
     post = Post.query.filter_by(post_slug=slug).first()
     is_new = post is None
+    if created_at:
+        post_date = created_at
+    else:
+        post_date = datetime.now(timezone.utc)
 
     if is_new:
         post = Post(
@@ -329,7 +333,7 @@ def upsert_post(
             post_author=author,
             post_rating=post_rating,
             book=book,
-            post_created_at=created_at or datetime.now(timezone.utc),
+            post_created_at=post_date,
         )
         db.session.add(post)
     else:
@@ -339,6 +343,7 @@ def upsert_post(
         post.post_author = author
         post.post_rating = post_rating
         post.book = book
+        post.post_updated_at = post_date
         # deliberately never update post_created_at on re-import
 
     return post, is_new
