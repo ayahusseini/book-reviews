@@ -202,31 +202,32 @@ def render_markdown_to_safe_html(text: str) -> str:
         output_format="html5",
     )
 
-    allowed_tags = sorted(
-        set(bleach.sanitizer.ALLOWED_TAGS).union(
-            {
-                "p",
-                "pre",
-                "code",
-                "blockquote",
-                "hr",
-                "br",
-                "h1",
-                "h2",
-                "h3",
-                "h4",
-                "h5",
-                "h6",
-                "table",
-                "thead",
-                "tbody",
-                "tr",
-                "th",
-                "td",
-                "span",
-                "div",
-            }
-        )
+    allowed_tags = set(bleach.sanitizer.ALLOWED_TAGS).union(
+        {
+            "p",
+            "pre",
+            "code",
+            "blockquote",
+            "hr",
+            "br",
+            "h1",
+            "h2",
+            "h3",
+            "h4",
+            "h5",
+            "h6",
+            "table",
+            "thead",
+            "tbody",
+            "tr",
+            "th",
+            "td",
+            "span",
+            "div",
+            "ul",
+            "ol",
+            "li",
+        }
     )
     allowed_attrs = {
         **bleach.sanitizer.ALLOWED_ATTRIBUTES,
