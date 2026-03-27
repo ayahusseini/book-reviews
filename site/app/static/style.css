@@ -362,7 +362,7 @@ ul li::marker, ol li::marker {
 .star svg        { width: 11px; height: 11px; }
 .star.full svg   { fill: var(--gold); }
 .star.half svg   { fill: var(--gold); }
-.star.empty svg  { fill: oklch(0.22 0.10 268); }
+.star.empty svg  { fill: oklch(35.959% 0.08497 274.361); }
 
 /* ─── Blockquotes ────────────────────────────────── */
 blockquote {
