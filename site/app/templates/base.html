@@ -16,8 +16,9 @@
         {% if random_quote %}
         <div class="sidebar-widget sidebar-widget--quote">
             <div class="sidebar-heading">
-                Random Quote
-                <button id="refresh-quote" style="background: none; border: none; color: var(--orange); cursor: pointer; font-size: 0.8em;">🔄</button>
+                <button id="refresh-quote">
+                    <img src="{{ url_for('static', filename='randomise.png') }}" alt="Randomise" class="randomise-icon">
+                </button>
             </div>
             <blockquote class="sidebar-quote" id="quote-content">
                 {{ random_quote_html | safe }}
