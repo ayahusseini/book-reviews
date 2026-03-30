@@ -191,12 +191,14 @@ def render_markdown_to_safe_html(text: str) -> str:
             "smarty",
             "pymdownx.highlight",
             "pymdownx.superfences",
-            "codehilite",
         ],
         extension_configs={
             "pymdownx.highlight": {
-                "linenums": False,  # line numbers on/off
-                "guess_lang": True,  # detect language if missing
+                "linenums": False,
+                "guess_lang": True,
+                "use_pygments": True,
+                "pygments_style": "dracula",
+                "noclasses": False,
             }
         },
         output_format="html5",
@@ -230,12 +232,15 @@ def render_markdown_to_safe_html(text: str) -> str:
         }
     )
     allowed_attrs = {
-        **bleach.sanitizer.ALLOWED_ATTRIBUTES,
+        "*": ["class"],
         "a": ["href", "title", "rel"],
         "span": ["class"],
         "div": ["class"],
         "code": ["class"],
         "pre": ["class"],
+        "table": ["class"],
+        "td": ["class"],
+        "th": ["class"],
     }
     cleaned = bleach.clean(
         html,
