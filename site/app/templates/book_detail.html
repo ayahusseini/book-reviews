@@ -3,72 +3,72 @@
 
 {% block sidebar_left %}
 
-{% if book.book_description %}
-<div class="sidebar-description-wrap">
-  <p class="sidebar-description sidebar-description--collapsed" id="book-desc">
-    {{ book.book_description }}
-  </p>
-  <button class="desc-toggle" id="desc-toggle">...</button>
-</div>
-{% endif %}
-
-
-<div class="sidebar-meta">
-  <p><strong>Published:</strong> {{ book.book_publication_year or 'Unknown' }}</p>
-  <p><strong>Pages:</strong> {{ book.book_page_count or 'Unknown' }}</p>
-  {% if book.book_rating %}
-  <p><strong>Avg. Rating:</strong> {{ star_rating(book.book_rating, uid=book.book_id) }}</p>
+  {% if book.book_description %}
+    <div class="sidebar-description-wrap">
+      <p class="sidebar-description sidebar-description--collapsed" id="book-desc">
+        {{ book.book_description }}
+      </p>
+      <button class="desc-toggle" id="desc-toggle">...</button>
+    </div>
   {% endif %}
-</div>
 
-<script>
-(function() {
-  var desc = document.getElementById('book-desc');
-  var btn = document.getElementById('desc-toggle');
-  if (!desc || !btn) return;
-  btn.onclick = function() {
-    desc.classList.toggle('sidebar-description--collapsed');
-    btn.textContent = desc.classList.contains('sidebar-description--collapsed') ? '...' : 'less';
-  };
-})();
-</script>
+
+  <div class="sidebar-meta">
+    <p><strong>Published:</strong> {{ book.book_publication_year or 'Unknown' }}</p>
+    <p><strong>Pages:</strong> {{ book.book_page_count or 'Unknown' }}</p>
+    {% if book.book_rating %}
+      <p><strong>Avg. Rating:</strong> {{ star_rating(book.book_rating, uid=book.book_id) }}</p>
+    {% endif %}
+  </div>
+
+  <script>
+    (function() {
+      var desc = document.getElementById('book-desc');
+      var btn = document.getElementById('desc-toggle');
+      if (!desc || !btn) return;
+      btn.onclick = function() {
+        desc.classList.toggle('sidebar-description--collapsed');
+        btn.textContent = desc.classList.contains('sidebar-description--collapsed') ? '...' : 'less';
+      };
+    })();
+  </script>
 
 {% endblock %}
 
 {% block header %}
-<div class="book-header__title-row">
-  <span class="book-header__title">{{ book.book_title }}</span>
-  {% if book.authors %}
-  <span class="book-header__author">— {{ book.authors[0].author_name }}</span>
+  <div class="book-header__title-row">
+    <span class="book-header__title">{{ book.book_title }}</span>
+    {% if book.authors %}
+      <span class="book-header__author">— {{ book.authors[0].author_name }}</span>
+    {% endif %}
+  </div>
+  {% if book.tags %}
+    <div class="book-header__tags">
+      {% for tag in book.tags %}
+        <span class="tag">{{ tag.tag_name }}</span>
+      {% endfor %}
+    </div>
   {% endif %}
-</div>
-{% if book.tags %}
-<div class="book-header__tags">
-  {% for tag in book.tags %}
-    <span class="tag">{{ tag.tag_name }}</span>
-  {% endfor %}
-</div>
-{% endif %}
 {% endblock %}
 
 {% block main_content %}
-{% for post, post_html in rendered_posts %}
-  <article class="markdown-body" style="margin-bottom: 2.5rem;">
-  <h3 class="post-title">
-      {{ post.post_title }}
-      {% if post.post_type == "review" and post.post_rating is not none %}
+  {% for post, post_html in rendered_posts %}
+    <article class="markdown-body" style="margin-bottom: 2.5rem;">
+      <h3 class="post-title">
+        {{ post.post_title }}
+        {% if post.post_type == "review" and post.post_rating is not none %}
           {{ star_rating(post.post_rating, uid=post.post_id) }}
+        {% endif %}
+      </h3>
+      <p style="margin-bottom: 0.75rem;"><small class="text-muted">{{ post.post_type }} - Created: {{ post.post_created_at.strftime('%Y-%m-%d') }} </small></p>
+
+      {% if post_html and post_html | trim %}
+        {{ post_html | safe }}
+      {% else %}
+        {% include "under_construction.html" %}
       {% endif %}
-  </h3>
-  <p style="margin-bottom: 0.75rem;"><small class="text-muted">{{ post.post_type }} - Created: {{ post.post_created_at.strftime('%Y-%m-%d') }} </small></p>
+    </article>
+  {% endfor %}
 
-    {% if post_html and post_html | trim %}
-      {{ post_html | safe }}
-    {% else %}
-      {% include "under_construction.html" %}
-    {% endif %}
-  </article>
-{% endfor %}
-
-<p><a href="{{ url_for('books.book_list') }}">← Back to books</a></p>
+  <p><a href="{{ url_for('books.book_list') }}">← Back to books</a></p>
 {% endblock %}

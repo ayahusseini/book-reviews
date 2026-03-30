@@ -1,95 +1,106 @@
 <!doctype html>
 <html lang="en">
-<head>
-    <title>📖HusseiniReads</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+    <head>
+        <title>📖HusseiniReads</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--KaTeX stylesheet-->
+        <link rel="stylesheet"
+              href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <!--CSS stylesheet-->
+        <link rel="stylesheet"
+              href="{{ url_for('static', filename='style/style.css') }}">
+    </head>
+    <body>
 
-<div class="page-shell">
+        <div class="page-shell">
 
     <!-- LEFT SIDEBAR -->
-    <aside class="site-sidebar-left">
+            <aside class="site-sidebar-left">
 
-        {% if random_quote %}
-        <div class="sidebar-widget sidebar-widget--quote">
-            <div class="sidebar-heading">
-                <button id="refresh-quote">
-                    <img src="{{ url_for('static', filename='randomise.png') }}" alt="Randomise" class="randomise-icon">
-                </button>
-            </div>
-            <blockquote class="sidebar-quote" id="quote-content">
-                {{ random_quote_html | safe }}
-            </blockquote>
-            <div class="sidebar-quote-source" id="quote-source">
-                {{ random_quote_source | safe }}
-            </div>
-        </div>
-        {% endif %}
+                {% if random_quote %}
+                    <div class="sidebar-widget sidebar-widget--quote">
+                        <div class="sidebar-heading">
+                            <button id="refresh-quote">
+                                <img src="{{ url_for('static', filename='img/randomise.png') }}" alt="Randomise" class="randomise-icon">
+                            </button>
+                        </div>
+                        <blockquote class="sidebar-quote" id="quote-content">
+                            {{ random_quote_html | safe }}
+                        </blockquote>
+                        <div class="sidebar-quote-source" id="quote-source">
+                            {{ random_quote_source | safe }}
+                        </div>
+                    </div>
+                {% endif %}
 
-        {% block sidebar_left %}{% endblock %}
-    </aside>
+                {% block sidebar_left %}{% endblock %}
+            </aside>
 
     <!-- MAIN CONTENT -->
-    <div class="site-wrapper">
+            <div class="site-wrapper">
 
-        <nav>
-        <div class="nav-container">
-            <img src="{{ url_for('static', filename='logo2.png') }}" alt="HusseiniReads logo" class="nav-logo">
-            <div class="nav-text">
-            <h1>HusseiniReads</h1>
-            <div class="nav-links">
-                <a href="{{ url_for('books.book_list') }}">Books</a> ·
-                <a href="{{ url_for('posts.misc_post_list') }}">Posts</a> ·
-                <a href="{{ url_for('homepage.about') }}">About</a> ·
-                <a href="{{ url_for('poems.poem_list') }}">Poems</a> ·
-                <a href="{{ url_for('design.design_doc_list') }}">Design Docs</a>
-            </div>
-            </div>
-        </div>
-        </nav>
+                <nav>
+                    <div class="nav-container">
+                        <img src="{{ url_for('static', filename='img/logo2.png') }}" alt="HusseiniReads logo" class="nav-logo">
+                        <div class="nav-text">
+                            <h1>HusseiniReads</h1>
+                            <div class="nav-links">
+                                <a href="{{ url_for('books.book_list') }}">Books</a> ·
+                                <a href="{{ url_for('posts.misc_post_list') }}">Posts</a> ·
+                                <a href="{{ url_for('homepage.about') }}">About</a> ·
+                                <a href="{{ url_for('poems.poem_list') }}">Poems</a> ·
+                                <a href="{{ url_for('design.design_doc_list') }}">Design Docs</a>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
 
         <!-- Mobile-only quote, hidden on wider screens -->
-        {% if random_quote %}
-        <div class="mobile-quote">
-            <div class="sidebar-heading">Random quote</div>
-            <blockquote class="sidebar-quote">
-                {{ random_quote.post_body_markdown }}
-            </blockquote>
-            {% if random_quote.book %}
-            <div class="sidebar-quote-source">
-                — <a href="{{ url_for('books.book_detail', book_id=random_quote.book.book_id) }}">
-                    {{ random_quote.book.book_title }}
-                </a>
+                {% if random_quote %}
+                    <div class="mobile-quote">
+                        <div class="sidebar-heading">Random quote</div>
+                        <blockquote class="sidebar-quote">
+                            {{ random_quote.post_body_markdown }}
+                        </blockquote>
+                        {% if random_quote.book %}
+                            <div class="sidebar-quote-source">
+                                — <a href="{{ url_for('books.book_detail', book_id=random_quote.book.book_id) }}">
+                                    {{ random_quote.book.book_title }}
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                <header>
+                    {% block header %}{% endblock %}
+                </header>
+
+                <main>
+                    {% block main_content %}{% endblock %}
+                </main>
+
             </div>
-            {% endif %}
+
         </div>
-        {% endif %}
 
-        <header>
-            {% block header %}{% endblock %}
-        </header>
+        <script defer
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js">
+        </script>
 
-        <main>
-            {% block main_content %}{% endblock %}
-        </main>
+    <!-- auto-render extension -->
+        <script defer
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js">
+        </script>
 
-    </div>
+    <!-- your init script -->
+        <script defer
+                src="{{ url_for('static', filename='js/katex-init.js') }}">
+        </script>
 
-</div>
-
-<script>
-document.getElementById('refresh-quote').addEventListener('click', function() {
-    fetch('/random-quote')
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('quote-content').innerHTML = data.quote_html;
-            document.getElementById('quote-source').innerHTML = data.source;
-        });
-});
-</script>
-
-</body>
+        <script defer
+                src="{{ url_for('static', filename='js/main.js') }}">
+        </script>
+    </body>
 </html>
