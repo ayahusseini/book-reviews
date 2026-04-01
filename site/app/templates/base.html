@@ -59,7 +59,11 @@
         <!-- Mobile-only quote, hidden on wider screens -->
                 {% if random_quote %}
                     <div class="mobile-quote">
-                        <div class="sidebar-heading">Random quote</div>
+                        <div class="sidebar-heading">
+                            <button id="refresh-quote-mobile">
+                                <img src="{{ url_for('static', filename='img/randomise.png') }}" alt="Randomise" class="randomise-icon-mobile">
+                            </button>
+                        </div>
                         <blockquote class="sidebar-quote">
                             {{ random_quote.post_body_markdown }}
                         </blockquote>
