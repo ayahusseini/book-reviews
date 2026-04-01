@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
 
 :root {
   /* Single flat dark blue — no layered panels */
@@ -8,7 +9,7 @@
   --bg-quote:      oklch(0.11 0.11 268);   /* slightly darker for quote inset */
 
   --text:          oklch(0.95 0.02 80);    /* warm near-white, faint orange tint */
-  --text-muted:    rgba(135, 133, 138);
+  --text-muted:    oklch(0.53 0.02 265);
   --text-quote:    oklch(89.497% 0.04513 101.758);
 
   /* Warm orange — the pixel book glow */
@@ -82,12 +83,13 @@ body {
 
 .sidebar-widget { background: none; border: none; padding: 0; }
 
-/* Quote — slightly sunken dark inset, no border */
+/* Quote — shared config with the mobile quote */
+.mobile-quote,
 .sidebar-widget--quote {
   background: var(--bg-quote);
   padding: 0.9rem 1rem;
   border-radius: 6px;
-  font-family: var(--body-font);
+  font-family: var(--mono-font);
   font-size: 0.75rem;
   line-height: 1.7;
   color: var(--text);
@@ -123,8 +125,27 @@ body {
     display: block;
 }
 
+#refresh-quote-mobile {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    line-height: 0;
+    width: 100%;          
+    display: block;
+}
+
 .randomise-icon {
     width: 40%;
+    height: auto;
+    display: block;
+    margin: 0 auto;       /* now centres within the full-width button */
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.randomise-icon-mobile {
+    width: 10%;
     height: auto;
     display: block;
     margin: 0 auto;       /* now centres within the full-width button */
@@ -180,7 +201,7 @@ nav .nav-container {
 
 nav .nav-logo {
   flex-shrink: 0;
-  width: clamp(70px, 8vw, 75px);;          
+  width: clamp(70px, 8vw, 75px);      
   height: auto;
 }
 
@@ -508,10 +529,14 @@ p {
   flex-wrap: wrap;
 }
 
-/* Sidebar hides below 960px as before */
+
 @media (max-width: 960px) {
-  .site-sidebar-left { display: none; }
-  nav .nav-links { padding-left: 0; }
+  .mobile-quote { display: block; }
+
+  #refresh-quote { display: none; }
+     .site-sidebar-left { display: none; }
+  
+     nav .nav-links { padding-left: 0; }
 
   /* Reflow sidebar meta inline since sidebar is hidden */
   .sidebar-meta {
@@ -521,10 +546,7 @@ p {
     margin-bottom: 1rem;
   }
   .sidebar-meta p { margin: 0; }
-}
 
-/* Narrow screens: tighten spacing */
-@media (max-width: 480px) {
   .page-shell {
     padding: 1rem clamp(0.5rem, 3vw, 1rem);
   }
@@ -544,33 +566,6 @@ p {
     margin-left: 0;
     padding-left: 0;
   }
-}
-
-/* Mobile quote — hidden on desktop, shown when sidebar disappears */
-.mobile-quote {
-  display: none;
-  background: var(--bg-quote);
-  padding: 0.9rem 1rem;
-  border-radius: 6px;
-  font-family: var(--mono-font);
-  font-size: 0.75rem;
-  line-height: 1.7;
-  margin-bottom: 1.5rem;
-}
-
-.mobile-quote blockquote {
-  background: none;
-  border: none;
-  padding: 0;
-  margin: 0;
-  font-family: var(--mono-font);
-  font-size: 0.75rem;
-  color: var(--text);
-  border-radius: 0;
-}
-
-@media (max-width: 960px) {
-  .mobile-quote { display: block; }
 }
 
 /* ─── Under construction ─────────────────────────── */
@@ -593,7 +588,7 @@ p {
 }
  
 .poem-body {
-  font-family: var(--body);
+  font-family: var(--body-font);
   color: var(--link);
   white-space: pre !important;
   line-height: 1.5;
@@ -630,15 +625,6 @@ p {
 /* Inline code  */
 p code {
     background-color: var(--bg-quote);
-    padding: 0.2em 0.4em;
-    border-radius: 6px;
-    color: var(--orange-bright);
-    font-family: var(--mono-font);
-    font-size: 0.9em;
-}
-
-p code {
-    background-color:  var(--bg-quote);;
     padding: 0.2em 0.4em;
     border-radius: 6px;
     color: var(--orange-bright);
