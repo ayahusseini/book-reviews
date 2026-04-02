@@ -60,3 +60,14 @@ def execute_spy(session, monkeypatch):
     spy = MagicMock(wraps=session.execute)
     monkeypatch.setattr(session, "execute", spy)
     return spy
+
+
+@pytest.fixture
+def client(app, session):
+    """Flask test client.
+
+    Depends on the session fixture so that routes share the same database
+    session as the test, meaning data added via session.add() + session.flush()
+    is immediately visible to route handlers without needing a commit.
+    """
+    return app.test_client()

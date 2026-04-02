@@ -3,6 +3,7 @@
 
 {% block header %}
   <h2>Books</h2>
+  <p>🌱 Reviews have been recently added.</p>
 {% endblock %}
 
 {% block main_content %}
@@ -11,7 +12,7 @@
     <h3>2026</h3>
     <ul class="book-list">
       {% for book in books_2026 %}
-        {{ book_item(book, has_posts) }}
+        {{ book_item(book, has_posts, new_book_ids) }}
       {% endfor %}
     </ul>
   {% endif %}
@@ -20,7 +21,7 @@
     <h3>Previously Read</h3>
     <ul class="book-list">
       {% for book in books_previous %}
-        {{ book_item(book, has_posts) }}
+        {{ book_item(book, has_posts, new_book_ids) }}
       {% endfor %}
     </ul>
   {% endif %}

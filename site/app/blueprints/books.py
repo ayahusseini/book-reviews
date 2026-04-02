@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timedelta, timezone
+
 from flask import Blueprint, render_template
 from sqlalchemy import func, desc
 
@@ -9,16 +11,31 @@ from app.database.models import Book, Post, Tag
 from app.extensions import db, cache
 from content.markdown_posts import render_markdown_to_safe_html
 
+NEW_REVIEW_DAYS = 30
+
 books_bp = Blueprint("books", __name__)
 
 
 def book_ids_with_posts() -> set[int]:
-    """Return the set of book_ids that have at least one review post."""
+    """Return book_ids that have at least one non-quote post."""
+    rows = (
+        db.session.query(Post.book_id)
+        .filter(Post.book_id.isnot(None), Post.post_type != "quotes")
+        .distinct()
+        .all()
+    )
+    return {row[0] for row in rows}
+
+
+def recently_reviewed_book_ids() -> set[int]:
+    """Return book_ids whose review post was created within NEW_REVIEW_DAYS."""
+    cutoff = datetime.now(timezone.utc) - timedelta(days=NEW_REVIEW_DAYS)
     rows = (
         db.session.query(Post.book_id)
         .filter(
             Post.book_id.isnot(None),
             Post.post_type == "review",
+            Post.post_created_at >= cutoff,
         )
         .distinct()
         .all()
@@ -60,25 +77,21 @@ def book_list():
         .all()
     )
 
-    has_posts = book_ids_with_posts()
-
     return render_template(
         "books.html",
         books_2026=books_2026,
         books_previous=books_previous,
-        has_posts=has_posts,
+        has_posts=book_ids_with_posts(),
+        new_book_ids=recently_reviewed_book_ids(),
     )
 
 
 @books_bp.route("/<int:book_id>", methods=["GET"])
 @cache.cached()
 def book_detail(book_id: int):
-    """Render the book detail page with all non-quote posts rendered to HTML.
-
-    Returns 404 if the book exists but has no non-quote posts — there is
-    nothing to show and the list page does not link here in that case.
-    """
-    book = Book.query.get_or_404(book_id)
+    """Render the book detail page with all non-quote posts
+    rendered to HTML."""
+    book = db.get_or_404(Book, book_id)
 
     posts = (
         Post.query.filter_by(book_id=book.book_id)

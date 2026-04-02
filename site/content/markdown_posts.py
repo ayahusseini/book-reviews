@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 
@@ -17,6 +18,10 @@ from content.extract_quotes import (
     extract_ad_quotes,
     replace_ad_quotes_with_blockquotes,
 )
+
+# Matches [[slug]] and [[slug|display text]]
+_WIKILINK_RE = re.compile(r"\[\[([^\]|]+?)(?:\|([^\]]+?))?\]\]")
+
 
 VALID_POST_TYPES = {
     "review",
@@ -179,9 +184,25 @@ def parse_markdown_with_frontmatter(path: Path) -> MarkdownPost:
     )
 
 
+def _expand_wikilinks(text: str) -> str:
+    """Replace [[slug]] and [[slug|display text]] with Markdown links.
+
+    [[my-post]] → [my-post](/posts/my-post)
+    [[my-post|Read this]] → [Read this](/posts/my-post)
+    """
+
+    def replace(m: re.Match) -> str:
+        slug = m.group(1).strip()
+        label = (m.group(2) or slug).strip()
+        return f"[{label}](/posts/{slug})"
+
+    return _WIKILINK_RE.sub(replace, text)
+
+
 def render_markdown_to_safe_html(text: str) -> str:
     """Render markdown to sanitised HTML,
     stripping unsafe tags and attributes."""
+    text = _expand_wikilinks(text)
     html = markdown.markdown(
         text,
         extensions=[

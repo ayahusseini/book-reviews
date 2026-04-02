@@ -1,34 +1,227 @@
-# Design
+# Architecture and data model
 
-The goal is to create a Flask application to display book reviews and personal writing, deploying as a website. The site is conceived as a personal reading journal - encompassing book reviews and general standalone posts. The application is built around the data model described below:
+## Table of contents
 
-## The data model
+1. [Overview](#overview)
+2. [Data model](#data-model)
+3. [Where to edit what](#where-to-edit-what)
+4. [Data flow: adding a book](#data-flow-adding-a-book)
+5. [Data flow: importing a post](#data-flow-importing-a-post)
+6. [Configuration environments](#configuration-environments)
+
+---
+
+## Overview
+
+The site is a Flask application backed by a single SQLite database. There is no API layer — all content is loaded from markdown files and a JSON seed file via CLI commands, then stored in the database. Flask serves read-only HTML pages from that database.
+
+```
+writing/posts/**/*.md   writing/book_seed.json
+      │                       │
+      ▼                       ▼
+ import-posts CLI         seed-books CLI
+      │                       │
+      └──────────┬────────────┘
+                 ▼
+           SQLite database
+                 │
+                 ▼
+         Flask blueprints
+                 │
+                 ▼
+           HTML responses
+```
+
+---
+
+## Data model
+
+### Schema
+
+```
+┌────────────────────┐        book_author_mapping        ┌──────────────────────────┐
+│       author       │ ◄──────────────────────────────── │          book            │
+├────────────────────┤                                   ├──────────────────────────┤
+│ author_id (PK)     │                                   │ book_id (PK)             │
+│ author_name        │                                   │ book_ol_key (unique)     │
+│ author_ol_id       │                                   │ book_title               │
+└────────────────────┘                                   │ book_description         │
+                                                         │ book_publication_year    │
+                                                         │ book_rating              │
+         book_to_tag_map                                 │ book_page_count          │
+┌─────────────────┐                                      └──────────────────────────┘
+│      tag        │ ◄────────────────────────────────────────────┘
+├─────────────────┤
+│ tag_id (PK)     │
+│ tag_name        │
+└─────────────────┘
 
 
-### The schema
+┌──────────────────────────┐
+│           post           │
+├──────────────────────────┤
+│ post_id (PK)             │
+│ parent_id (FK → post_id) │  ← quote posts point to their parent post
+│ book_id (FK → book, NULL)│
+│ post_slug (unique)       │
+│ post_title               │
+│ post_body_markdown       │
+│ post_type                │
+│ post_author              │
+│ post_created_at          │
+│ post_updated_at          │  ← only updated when content actually changes
+└──────────────────────────┘
+```
 
-![data model](/docs/img/data_model.png)
+### Valid post types
 
-Design decisions worth noting:
+| Type | Description |
+|---|---|
+| `review` | Book review. Must have a `book_ol_key`. Sets the book's rating. One per book. |
+| `essay` | Longer piece about a book. Should have a `book_ol_key`. |
+| `standalone` | Any post not linked to a book. |
+| `note` | Short post not linked to a book. |
+| `poem` | Poem. Displayed at `/poems/`. |
+| `designdoc` | Site design documentation. Displayed at `/design/`. |
+| `quotes` | Auto-generated child post for each `ad-quote` block. Never created manually. |
 
-- **Books and tags are many-to-many.** A book can have many tags; a tag can apply to many books. This is resolved via the `book_to_tag_map` junction table. In SQLAlchemy, this table is modelled as a simple association table (rather than a full ORM class) since no additional metadata is stored on the relationship — see the SQLAlchemy section for details.
-- **Books and authors are many-to-many.** This is also handled by a junction table.
-- **Book metadata can be populated via Open Library.** When adding a book by ISBN, the CLI can fetch the book's title, description, publication year, cover URL, page count automatically. Only tags and the ratings can be set manually.
-- **Posts don't need a `book_id`**. If the `book_id` is set to `NULL`, then posts are treated as standalone. 
+### Design decisions
 
+- **Books and authors are many-to-many.** A book can have multiple authors; an author can have multiple books. Resolved via `book_author_mapping`. Author data comes from Open Library.
+- **Books and tags are many-to-many.** Resolved via `book_to_tag_map`. Tags are created on the fly from `book_seed.json` and post frontmatter.
+- **Posts can exist without a book.** `book_id` is nullable — standalone posts, poems, and design docs have no book link.
+- **Quote posts are children of their parent post.** `parent_id` is a self-referential FK. The random quote widget uses `parent.post_slug` to link back to the source.
+- **`post_updated_at` only changes on real edits.** Re-running `make posts` without changing content does not touch this field.
+- **Book metadata comes entirely from Open Library** unless overridden in `book_seed.json`. The overrides (title, description, rating) are applied on every `make seed` without making HTTP requests.
 
-## The API 
+---
 
-The Flask blueprint `site/app/blueprints.api.py` handles the api endpoints:
-- `POST /api/books` adds a book and returns the `book_id`. An OpenLibrary 'works key' is required, and this errors if there is a duplicate or the key doesn't exist. 
-- `PATCH /api/books/<book_id>` updates book fields and errors if the book_id doesn't exist
-- `POST /api/posts` adds a post/review. Mapped to `book_id` or `isbn` (or `None` for either of these to have a stand-alone post)
+## Where to edit what
 
-These endpoints serve JSON rather than a HTML page. 
+### I want to add a book to the site
 
-## Tech stack
+→ Edit `writing/book_seed.json`, add an entry with the OL works key, then run `make seed`.
 
-An overview of everything used and a justification for why, how this will scale, and future improvements/alternatives
+### I want to write a review or post
 
-1. [Flask](/docs/flask.md)
-2. [SQLAlchemy](/docs/sqlalchemy.md)
+→ Create a `.md` file in `writing/posts/`, run `make posts`. See [writing-posts.md](writing-posts.md) for the full workflow.
+
+### I want to change how books are listed or sorted
+
+→ `site/app/blueprints/books.py` — `book_list()` builds the query and passes data to the template.
+
+### I want to change how a book's detail page looks
+
+→ `site/app/templates/book_detail.html` for layout, `site/app/blueprints/books.py:book_detail()` for the data query.
+
+### I want to change what posts appear on the posts page
+
+→ `site/app/blueprints/posts.py` — `SHOWN_IN_POSTS` controls which post types are shown on `/posts/misc_posts`. `post_list()` controls `/posts/`.
+
+### I want to change how the book list item looks (title, stars, tags)
+
+→ `site/app/templates/_macros.html` — the `book_item` macro.
+
+### I want to add a new post type
+
+→ Add it to `VALID_POST_TYPES` in both `site/app/database/models.py` and `site/content/markdown_posts.py`. Add a blueprint/template if it needs its own page.
+
+### I want to change Open Library fetch behaviour
+
+→ `site/app/open_library.py` — pure HTTP client, no Flask or SQLAlchemy imports. `fetch_book_data()` is the main entry point.
+
+### I want to change how posts are stored or upserted
+
+→ `site/app/database/upserts.py` — all write logic lives here. Functions never call `session.commit()` directly; callers (CLI commands) are responsible.
+
+### I want to change the database schema
+
+→ Edit `site/app/database/models.py`, then run `make migrate MSG="describe change"`.
+
+### I want to change site-wide config
+
+→ `site/app/config.py` — `DevelopmentConfig`, `TestingConfig`, `ProductionConfig`.
+
+---
+
+## Data flow: adding a book
+
+```
+1. Edit book_seed.json         { "olid": "OL123W", "tags": ["2026"] }
+        │
+        ▼
+2. make seed
+        │
+        ├─ Book already in DB? ──Yes──► apply overrides (title/desc/rating/tags) only
+        │                                                no HTTP request made
+        └─ Book not in DB? ──────────► fetch_book_data(olid)
+                                              │
+                                        Open Library API
+                                        /works/{id}.json
+                                        /works/{id}/editions.json
+                                        /authors/{id}.json  (per author)
+                                              │
+                                        upsert_books(...)
+                                              │
+                                        INSERT book, authors, tags, mappings
+```
+
+---
+
+## Data flow: importing a post
+
+```
+1. Create writing/posts/reviews/my-review.md
+        │
+        ▼
+2. make posts
+        │
+        ▼
+3. parse_markdown_with_frontmatter(path)
+        │
+        ├── extract YAML frontmatter (title, author, type, book_ol_key, ...)
+        ├── extract ```ad-quote blocks → Quote objects
+        └── replace ad-quote blocks with Markdown blockquotes
+        │
+        ▼
+4. resolve_book(parsed)
+        │
+        ├── book_ol_key not set? ──► return None
+        └── book_ol_key set?
+              ├── already in DB? ──► return existing Book
+              └── not in DB? ──────► fetch from Open Library + upsert
+        │
+        ▼
+5. upsert_post(...)
+        │
+        ├── new post? ──► INSERT
+        └── existing?  ──► UPDATE only if content changed
+                           post_updated_at set only on real changes
+        │
+        ▼
+6. attach_tags(book, parsed.tags)
+        │
+        ▼
+7. sync_quotes(parsed.quotes, ...)
+        │
+        └── upsert_post() for each Quote object (post_type="quotes")
+        │
+        ▼
+8. session.commit()  ← happens once per file in import_posts_command
+```
+
+---
+
+## Configuration environments
+
+Set `FLASK_ENV` before running to select a config:
+
+| Value | Class | Database | Notes |
+|---|---|---|---|
+| `development` (default) | `DevelopmentConfig` | `site/instance/site.db` | Debug on, verbose logs |
+| `testing` | `TestingConfig` | In-memory SQLite | Isolated per test, no caching |
+| `production` | `ProductionConfig` | `site/instance/site.db` | Debug off, `SECRET_KEY` from `.env`, ProxyFix enabled |
+
+```sh
+FLASK_ENV=production make dev
+```

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timedelta, timezone
+
 from flask import Blueprint, abort, render_template
 
 from content.markdown_posts import render_markdown_to_safe_html
@@ -12,13 +14,26 @@ from app.extensions import cache
 posts_bp = Blueprint("posts", __name__)
 
 SHOWN_IN_POSTS = {"review", "essay", "standalone", "note"}
+NEW_POST_DAYS = 4
+
+
+def _new_slugs(posts: list[Post]) -> set[str]:
+    cutoff = datetime.now(timezone.utc) - timedelta(days=NEW_POST_DAYS)
+    return {
+        p.post_slug
+        for p in posts
+        if p.post_created_at is not None
+        and p.post_created_at.replace(tzinfo=timezone.utc) >= cutoff
+    }
 
 
 @posts_bp.route("/", methods=["GET"])
 @cache.cached()
 def post_list():
     posts = Post.query.order_by(Post.post_updated_at.desc()).all()
-    return render_template("posts.html", posts=posts)
+    return render_template(
+        "posts.html", posts=posts, new_slugs=_new_slugs(posts)
+    )
 
 
 @posts_bp.route("/misc_posts", methods=["GET"])
@@ -32,7 +47,9 @@ def misc_post_list():
         .order_by(Post.post_updated_at.desc())
         .all()
     )
-    return render_template("posts.html", posts=posts)
+    return render_template(
+        "posts.html", posts=posts, new_slugs=_new_slugs(posts)
+    )
 
 
 @posts_bp.route("/<string:slug>", methods=["GET"])

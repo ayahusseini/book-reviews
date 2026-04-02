@@ -24,9 +24,7 @@ from app.database.upserts import (
 from app.open_library import fetch_book_data
 from app.extensions import cache, db
 
-DEFAULT_SEED_PATH = (
-    Path(__file__).parents[1] / "content" / "seeds" / "book_seed.json"
-)
+DEFAULT_SEED_PATH = Path(__file__).parents[3] / "writing" / "book_seed.json"
 
 
 def resolve_book(parsed: MarkdownPost) -> Book | None:
@@ -216,6 +214,7 @@ def seed_books_command(path_str: str, refresh: bool) -> None:
         tag_map=tag_map,
         rating_map=rating_map,
         description_overrides=description_overrides,
+        title_overrides=title_overrides,
     )
 
     # For books already in the DB (not re-fetched), still apply tag and
@@ -287,7 +286,7 @@ def manage_tags_command(
             if any(t.tag_name == name for t in book.tags):
                 click.echo(f"  (already present) {name!r}")
             else:
-                book.tags.append(upsert_tags([name]))
+                book.tags.append(upsert_tags([name])[name])
                 click.echo(f"  Added {name!r} to {book.book_title!r}.")
                 made_changes = True
 

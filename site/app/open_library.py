@@ -38,7 +38,6 @@ class BookData:
 
     ol_key: str
     title: str
-    isbn: str | None
     description: str | None
     publication_year: int | None
     page_count: int | None
@@ -77,6 +76,18 @@ def fetch_works_data(
 def extract_title(works_data: dict) -> str:
     """Extract the book title from a works payload."""
     return works_data["title"]
+
+
+def extract_english_title(works_data: dict, editions_data: dict) -> str:
+    """Return the title of the first English-language edition found,
+    falling back to the works title."""
+    for edition in editions_data.get("entries", []):
+        langs = edition.get("languages", [])
+        if any(lang.get("key") == "/languages/eng" for lang in langs):
+            title = edition.get("title")
+            if title:
+                return title
+    return extract_title(works_data)
 
 
 def extract_description(works_data: dict) -> Optional[str]:
@@ -118,19 +129,6 @@ def fetch_editions_data(
     response = requests.get(url, timeout=timeout)
     validate_response(response)
     return response.json()
-
-
-def extract_isbn(editions_data: dict) -> Optional[str]:
-    """Return the first available ISBN (preferring ISBN-13)
-    across all editions, or None if not found."""
-    for edition in editions_data.get("entries", []):
-        for isbn in edition.get("isbn_13", []):
-            if isbn:
-                return isbn
-        for isbn in edition.get("isbn_10", []):
-            if isbn:
-                return isbn
-    return None
 
 
 def extract_publication_year(editions_data: dict) -> Optional[int]:
@@ -210,11 +208,12 @@ def fetch_book_data(ol_works_key: str) -> BookData:
     editions = fetch_editions_data(ol_works_key)
     author_keys = extract_author_keys(works)
     authors = fetch_all_authors(author_keys)
+    if not authors:
+        logger.warning("No authors found for %r", extract_title(works))
 
     return BookData(
         ol_key=ol_works_key,
-        title=extract_title(works),
-        isbn=extract_isbn(editions),
+        title=extract_english_title(works, editions),
         description=extract_description(works),
         publication_year=extract_publication_year(editions),
         page_count=extract_page_count(editions),

@@ -36,7 +36,7 @@
   {% endif %}
 {% endmacro %}
 
-{% macro book_item(book, has_posts) %}
+{% macro book_item(book, has_posts, new_book_ids=none) %}
   <li class="book-list__item">
 
     {# Title + stars #}
@@ -49,6 +49,9 @@
         <span class="book-title--unlinked" title="No posts yet">
           {{ book.book_title }}
         </span>
+      {% endif %}
+      {% if new_book_ids is not none and book.book_id in new_book_ids %}
+        <span title="Recently reviewed">🌱</span>
       {% endif %}
 
       {% if book.book_rating is not none %}

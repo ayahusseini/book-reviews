@@ -1,10 +1,10 @@
 APP     = site/app
 PYPATH  = site
 MIGRATIONS = site/migrations
-POSTS   = site/content/posts
-SEEDS   = site/content/seeds/book_seed.json
+POSTS   = writing/posts
+SEEDS   = writing/book_seed.json
 
-.PHONY: dev seed seed-refresh posts sync test migrate shell setup tags deploy-db
+.PHONY: dev seed seed-refresh posts sync test migrate shell setup reset install tags deploy-db
 
 dev:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) run --debug
@@ -46,10 +46,20 @@ stamp:
 shell:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) shell
 
-# Setup for a fresh database
+install:
+	uv sync
+
+# Apply any pending migrations and sync content. Safe to run repeatedly —
+# skips OL fetches for books already in the DB.
 setup:
+	uv sync
+	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) db upgrade --directory $(MIGRATIONS)
+	$(MAKE) sync
+
+# Wipe the database and rebuild from scratch (re-fetches all OL data).
+reset:
+	uv sync
 	rm -f site/instance/site.db
-	# On a fresh DB, skip migrate and just upgrade
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) db upgrade --directory $(MIGRATIONS)
 	$(MAKE) sync
 
@@ -63,7 +73,7 @@ deploy-db:
 		echo "  Or:     export DEPLOY_HOST=root@your_server_ip"; \
 		exit 1; \
 	fi
-	./site/scripts/deploy-db.sh $(DEPLOY_HOST)
+	./site/scripts/deploy_db.sh $(DEPLOY_HOST)
  
 # Shorthand for flask manage-tags. Pass options via ARGS:
 #   make tags ARGS="--book OL42549900W --add fiction --remove 2025"
