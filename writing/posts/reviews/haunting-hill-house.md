@@ -3,7 +3,6 @@ title: Hill House is fantastic
 author: Aya
 type: review
 book_ol_key: OL3171069W
-rating: 4
 tags:
   - horror
   - fiction
