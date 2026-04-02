@@ -14,7 +14,7 @@ from app.extensions import cache
 posts_bp = Blueprint("posts", __name__)
 
 SHOWN_IN_POSTS = {"review", "essay", "standalone", "note"}
-NEW_POST_DAYS = 4
+NEW_POST_DAYS = 2
 
 
 def _new_slugs(posts: list[Post]) -> set[str]:
