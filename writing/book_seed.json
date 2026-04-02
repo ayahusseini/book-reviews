@@ -53,12 +53,12 @@
   {
     "olid": "OL498463W",
     "rating": 4,
-    "title": "The Trial",
-    "tags": ["fiction"]
+    "tags": ["fiction"],
+    "title": "The Trial"
   },
-  {
+  { 
     "olid": "OL3171069W",
-    "rating": 4,
+    "rating": 4  ,
     "title": "The Haunting of Hill House"
   }
 ]

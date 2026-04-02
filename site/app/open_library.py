@@ -78,18 +78,6 @@ def extract_title(works_data: dict) -> str:
     return works_data["title"]
 
 
-def extract_english_title(works_data: dict, editions_data: dict) -> str:
-    """Return the title of the first English-language edition found,
-    falling back to the works title."""
-    for edition in editions_data.get("entries", []):
-        langs = edition.get("languages", [])
-        if any(lang.get("key") == "/languages/eng" for lang in langs):
-            title = edition.get("title")
-            if title:
-                return title
-    return extract_title(works_data)
-
-
 def extract_description(works_data: dict) -> Optional[str]:
     """Extract a plain-text description from a works payload,
     or None if absent."""
@@ -213,7 +201,7 @@ def fetch_book_data(ol_works_key: str) -> BookData:
 
     return BookData(
         ol_key=ol_works_key,
-        title=extract_english_title(works, editions),
+        title=extract_title(works),
         description=extract_description(works),
         publication_year=extract_publication_year(editions),
         page_count=extract_page_count(editions),
