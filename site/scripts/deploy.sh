@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # deploy.sh — Deploy book-reviews to the production VPS.
-#
+
 # Usage:
 #   ./deploy.sh                  # pull latest code, import posts, restart
 #   ./deploy.sh --reset-database # wipe and rebuild DB, then sync everything
@@ -17,9 +17,6 @@
 set -euo pipefail
 
 # ── Load .env if present ────────────────────────────────────────────────────
-# Search order: next to the script, then walk up to the repo root.
-# The script lives at  <repo>/site/scripts/deploy.sh
-# so the repo root is  <repo>/  (two levels up).
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
@@ -82,35 +79,25 @@ run_ssh() {
     sshpass -e ssh "${SSH_OPTS[@]}" "${VPS_USER}@${VPS_HOST}" "$cmd"
 }
 
-# ── Step 1: Copy posts ───────────────────────────────────────────────────────
+
+
+# ── Step 1: Pull latest code ─────────────────────────────────────────────────
 echo
 echo "═══════════════════════════════════════════"
-echo " Step 1: Copying posts to VPS"
+echo " Step 1: Pulling latest code on VPS"
 echo "═══════════════════════════════════════════"
 
-REMOTE_POSTS_DIR="${VPS_REPO_DIR}/site/content/posts"
-
-# Ensure the remote posts directory exists
-run_ssh "mkdir -p ${REMOTE_POSTS_DIR}"
-
-echo "  → scp -r ${LOCAL_POSTS_DIR}/ ${VPS_USER}@${VPS_HOST}:${REMOTE_POSTS_DIR}/"
-sshpass -e scp "${SSH_OPTS[@]}" -r "${LOCAL_POSTS_DIR}/." "${VPS_USER}@${VPS_HOST}:${REMOTE_POSTS_DIR}/"
-echo "  ✓ Posts copied."
-
-# ── Step 2: Pull latest code ─────────────────────────────────────────────────
-echo
-echo "═══════════════════════════════════════════"
-echo " Step 2: Pulling latest code on VPS"
-echo "═══════════════════════════════════════════"
-
-run_ssh "cd ${VPS_REPO_DIR} && git fetch origin main && git reset --hard origin/main"
+run_ssh "cd ${VPS_REPO_DIR} && \
+git fetch origin main && \
+git reset --hard origin/main && \
+git clean -fd"
 echo "  ✓ Code updated."
 
-# ── Step 3: Database setup or sync ───────────────────────────────────────────
+# ── Step 2: Database setup or sync ───────────────────────────────────────────
 echo
 echo "═══════════════════════════════════════════"
 if [[ "$RESET_DATABASE" == true ]]; then
-    echo " Step 3: Resetting database and syncing"
+    echo " Step 2: Resetting database and syncing"
     echo "═══════════════════════════════════════════"
     echo "  ⚠ WARNING: This will wipe the production database!"
     read -rp "  Are you sure? Type 'yes' to continue: " confirm
@@ -118,7 +105,7 @@ if [[ "$RESET_DATABASE" == true ]]; then
         echo "  Aborted."
         exit 0
     fi
-    run_ssh "cd ${VPS_REPO_DIR} && make setup"
+    run_ssh "cd ${VPS_REPO_DIR} && make reset"
     echo "  ✓ Database reset."
 else
     echo " Step 3: Syncing books and posts"
@@ -128,10 +115,10 @@ fi
 run_ssh "cd ${VPS_REPO_DIR} && make sync"
 echo "  ✓ Sync complete."
 
-# ── Step 4: Restart Gunicorn ─────────────────────────────────────────────────
+# ── Step 3: Restart Gunicorn ─────────────────────────────────────────────────
 echo
 echo "═══════════════════════════════════════════"
-echo " Step 4: Restarting Gunicorn"
+echo " Step 3: Restarting Gunicorn"
 echo "═══════════════════════════════════════════"
 
 run_ssh "sudo systemctl restart gunicorn"
