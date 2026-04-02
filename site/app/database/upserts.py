@@ -126,7 +126,11 @@ def upsert_authors(author_datas: list[AuthorData]) -> dict[str, Author]:
 # ---------------------------------------------------------------------------
 
 
-def _book_to_row(b: BookData, description_overrides: dict[str, str]) -> dict:
+def _book_to_row(
+    b: BookData,
+    description_overrides: dict[str, str],
+    rating_map: dict[str, float],
+) -> dict:
     return {
         "book_ol_key": b.ol_key,
         "book_title": b.title,
@@ -134,34 +138,41 @@ def _book_to_row(b: BookData, description_overrides: dict[str, str]) -> dict:
         "book_description": description_overrides.get(b.ol_key, b.description),
         "book_publication_year": b.publication_year,
         "book_page_count": b.page_count,
+        "book_rating": rating_map.get(b.ol_key),
     }
 
 
-def _insert_books(
-    new_datas: list[BookData], description_overrides: dict[str, str]
-) -> dict[str, Book]:
-    db.session.execute(
-        sqlite_insert(Book),
-        [_book_to_row(b, description_overrides) for b in new_datas],
-    )
+def _insert_books(new_datas, description_overrides):
+    new_books = []
+    for data in new_datas:
+        book = Book(
+            book_ol_key=data.ol_key,
+            book_title=data.title,
+            book_description=description_overrides.get(
+                data.ol_key, data.description
+            ),
+        )
+        db.session.add(book)
+        new_books.append(book)
     db.session.flush()
-    return {
-        b.book_ol_key: b
-        for b in Book.query.filter(
-            Book.book_ol_key.in_([b.ol_key for b in new_datas])
-        ).all()
-    }
+    return {b.book_ol_key: b for b in new_books}
 
 
 def _update_books(
     update_datas: list[BookData],
     existing: dict[str, Book],
     description_overrides: dict[str, str],
+    rating_map: dict[str, float],
 ) -> None:
+
     db.session.execute(
         update(Book),
-        [_book_to_row(b, description_overrides) for b in update_datas],
+        [
+            _book_to_row(b, description_overrides, rating_map)
+            for b in update_datas
+        ],
     )
+
     for b in update_datas:
         book = existing[b.ol_key]
         row = _book_to_row(b, description_overrides)
@@ -247,6 +258,7 @@ def _attach_book_tags(
 def upsert_books(
     book_datas: list[BookData],
     tag_map: dict[str, list[str]] | None = None,
+    rating_map: dict[str, str] | None = None,
     description_overrides: dict[str, str] | None = None,
 ) -> dict[str, Book]:
     """Upsert a batch of books and their relationships.
@@ -257,22 +269,30 @@ def upsert_books(
         return {}
 
     tag_map = tag_map or {}
+    rating_map = rating_map or {}
     description_overrides = description_overrides or {}
 
     ol_keys = [b.ol_key for b in book_datas]
+
     existing = {
         b.book_ol_key: b
         for b in Book.query.filter(Book.book_ol_key.in_(ol_keys)).all()
     }
 
     new_datas = [b for b in book_datas if b.ol_key not in existing]
+
     update_datas = [b for b in book_datas if b.ol_key in existing]
 
     new_books = (
-        _insert_books(new_datas, description_overrides) if new_datas else {}
+        _insert_books(new_datas, description_overrides, rating_map)
+        if new_datas
+        else {}
     )
+
     if update_datas:
-        _update_books(update_datas, existing, description_overrides)
+        _update_books(
+            update_datas, existing, description_overrides, rating_map
+        )
 
     result = {**existing, **new_books}
 
@@ -314,19 +334,34 @@ def upsert_post(
     book: Book | None,
     created_at: datetime | None = None,
 ) -> tuple[Post, bool]:
-    """Update an existing post (looked up by slug) or create a new one.
 
-    Returns (post, is_new). Does not commit.
-    """
     post = Post.query.filter_by(post_slug=slug).first()
     post_parent = Post.query.filter_by(post_slug=post_parent_slug).first()
 
     is_new = post is None
+    post_date = created_at or datetime.now(timezone.utc)
 
-    if created_at:
-        post_date = created_at
-    else:
-        post_date = datetime.now(timezone.utc)
+    if post_type != "review" and post_rating is not None:
+        raise ValueError(f"Post '{slug}' has rating but is not a review")
+
+    if post_type == "review":
+        if book is None:
+            raise ValueError(f"Review post '{slug}' must have a book")
+
+        existing_review = (
+            Post.query.filter_by(book_id=book.book_id, post_type="review")
+            .filter(Post.post_slug != slug)
+            .first()
+        )
+
+        if existing_review:
+            raise ValueError(
+                f"Book '{book.book_title}' already has a review post "
+                f"('{existing_review.post_slug}')"
+            )
+
+        if post_rating is not None:
+            book.book_rating = post_rating
 
     if is_new:
         post = Post(
@@ -335,23 +370,26 @@ def upsert_post(
             post_body_markdown=body,
             post_type=post_type,
             post_author=author,
-            post_rating=post_rating,
             book=book,
             post_created_at=post_date,
         )
+
         if post_parent:
             post.parent_id = post_parent.post_id
+
         db.session.add(post)
+
     else:
         post.post_title = title
         post.post_parent = post_parent
         post.post_body_markdown = body
         post.post_type = post_type
         post.post_author = author
-        post.post_rating = post_rating
         post.book = book
+
         if created_at:
             post.post_updated_at = post_date
+
         if post_parent:
             post.parent_id = post_parent.post_id
 

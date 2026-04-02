@@ -1,8 +1,8 @@
-"""initial
+"""Add book_rating column.
 
-Revision ID: f9c8ab9e837f
+Revision ID: f53c90fe7bbc
 Revises:
-Create Date: 2026-03-20 16:37:32.120794
+Create Date: 2026-04-02 08:15:34.966378
 
 """
 
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = "f9c8ab9e837f"
+revision = "f53c90fe7bbc"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -36,9 +36,14 @@ def upgrade():
         sa.Column("book_title", sa.String(length=250), nullable=False),
         sa.Column("book_description", sa.Text(), nullable=True),
         sa.Column("book_publication_year", sa.Integer(), nullable=True),
+        sa.Column("book_rating", sa.Float(), nullable=True),
         sa.Column("book_rating_goodreads", sa.Float(), nullable=True),
         sa.Column("book_page_count", sa.Integer(), nullable=True),
         sa.Column("book_isbn", sa.Text(), nullable=True),
+        sa.CheckConstraint(
+            "book_rating IS NULL OR (book_rating >= 0 AND book_rating <= 5)",
+            name="ck_book_rating_0_5",
+        ),
         sa.PrimaryKeyConstraint("book_id"),
         sa.UniqueConstraint("book_ol_key"),
     )
@@ -93,22 +98,21 @@ def upgrade():
     op.create_table(
         "post",
         sa.Column("post_id", sa.Integer(), autoincrement=True, nullable=False),
+        sa.Column("parent_id", sa.Integer(), nullable=True),
         sa.Column("post_slug", sa.String(length=250), nullable=False),
         sa.Column("book_id", sa.Integer(), nullable=True),
         sa.Column("post_title", sa.Text(), nullable=False),
         sa.Column("post_body_markdown", sa.Text(), nullable=False),
         sa.Column("post_type", sa.String(), nullable=True),
         sa.Column("post_author", sa.String(), nullable=False),
-        sa.Column("post_rating", sa.Float(), nullable=True),
         sa.Column("post_updated_at", sa.DateTime(), nullable=False),
         sa.Column("post_created_at", sa.DateTime(), nullable=False),
-        sa.CheckConstraint(
-            "post_rating IS NULL OR (post_rating >= 0 AND post_rating <= 5)",
-            name="ck_post_rating_0_5",
-        ),
         sa.ForeignKeyConstraint(
             ["book_id"],
             ["book.book_id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["parent_id"], ["post.post_id"], name="fk_post_parent_id"
         ),
         sa.PrimaryKeyConstraint("post_id"),
         sa.UniqueConstraint("post_slug"),

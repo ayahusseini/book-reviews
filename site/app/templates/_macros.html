@@ -35,3 +35,44 @@
     </span>
   {% endif %}
 {% endmacro %}
+
+{% macro book_item(book, has_posts) %}
+  <li class="book-list__item">
+
+    {# Title + stars #}
+    <span class="book-list__title">
+      {% if book.book_id in has_posts %}
+        <a href="{{ url_for('books.book_detail', book_id=book.book_id) }}">
+          {{ book.book_title }}
+        </a>
+      {% else %}
+        <span class="book-title--unlinked" title="No posts yet">
+          {{ book.book_title }}
+        </span>
+      {% endif %}
+
+      {% if book.book_rating is not none %}
+        {{ star_rating(book.book_rating, uid=book.book_id) }}
+      {% endif %}
+    </span>
+
+    {# Author #}
+    <span class="book-list__author">
+      {{ book.authors[0].author_name if book.authors else 'Unknown' }}
+    </span>
+
+    {# Tags — exclude year tags #}
+    {% set display_tags = book.tags
+        | rejectattr('tag_name', 'in', ['2026', '2025', '2024', '2023'])
+        | list
+    %}
+    {% if display_tags %}
+      <span class="book-list__tags">
+        {% for tag in display_tags %}
+          <span class="tag">{{ tag.tag_name }}</span>
+        {% endfor %}
+      </span>
+    {% endif %}
+
+  </li>
+{% endmacro %}
