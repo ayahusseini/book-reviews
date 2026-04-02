@@ -92,12 +92,19 @@ class Book(db.Model):
     """Model containing book details."""
 
     __tablename__ = "book"
+    __table_args__ = (
+        CheckConstraint(
+            "book_rating IS NULL OR (book_rating >= 0 AND book_rating <= 5)",
+            name="ck_book_rating_0_5",
+        ),
+    )
 
     book_id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     book_ol_key = db.Column(db.String(250), nullable=False, unique=True)
     book_title = db.Column(db.String(250), nullable=False)
     book_description = db.Column(db.Text, nullable=True)
     book_publication_year = db.Column(db.Integer(), nullable=True)
+    book_rating = db.Column(db.Float(), nullable=True)
     book_rating_goodreads = db.Column(db.Float(), nullable=True)
     book_page_count = db.Column(db.Integer(), nullable=True)
     book_isbn = db.Column(db.Text(), nullable=True)
@@ -126,19 +133,6 @@ class Book(db.Model):
     def __repr__(self):
         return f"<Book id={self.book_id} title={self.book_title!r}>"
 
-    @property
-    def book_rating(self) -> float | None:
-        """Average rating across all review-type posts,
-        or None if no reviews."""
-        ratings = [
-            p.post_rating
-            for p in self.posts
-            if p.post_type == "review" and p.post_rating is not None
-        ]
-        if not ratings:
-            return None
-        return round(sum(ratings) / len(ratings), 2)
-
 
 class Tag(db.Model):
     """Model containing tag details."""
@@ -164,12 +158,6 @@ class Post(db.Model):
     """Model containing post details."""
 
     __tablename__ = "post"
-    __table_args__ = (
-        CheckConstraint(
-            "post_rating IS NULL OR (post_rating >= 0 AND post_rating <= 5)",
-            name="ck_post_rating_0_5",
-        ),
-    )
 
     post_id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
 
@@ -181,13 +169,15 @@ class Post(db.Model):
 
     post_slug = db.Column(db.String(250), nullable=False, unique=True)
     book_id = db.Column(
-        db.Integer, db.ForeignKey("book.book_id"), nullable=True
+        db.Integer,
+        db.ForeignKey("book.book_id"),
+        nullable=True,
     )
+
     post_title = db.Column(db.Text, nullable=False)
     post_body_markdown = db.Column(db.Text, nullable=False)
     post_type = db.Column(db.String, nullable=True)
     post_author = db.Column(db.String, nullable=False)
-    post_rating = db.Column(db.Float(), nullable=True)
 
     post_updated_at = db.Column(
         db.DateTime,

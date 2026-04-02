@@ -183,6 +183,8 @@ def seed_books_command(path_str: str, refresh: bool) -> None:
 
     ol_keys = [s["olid"] for s in seeds]
     tag_map = {s["olid"]: s.get("tags", []) for s in seeds}
+    rating_map = {s["olid"]: s.get("rating") for s in seeds}
+    title_overrides = {s["olid"]: s["title"] for s in seeds if "title" in s}
     description_overrides = {
         s["olid"]: s["description"] for s in seeds if "description" in s
     }
@@ -212,6 +214,7 @@ def seed_books_command(path_str: str, refresh: bool) -> None:
     upsert_books(
         book_datas,
         tag_map=tag_map,
+        rating_map=rating_map,
         description_overrides=description_overrides,
     )
 
@@ -224,9 +227,13 @@ def seed_books_command(path_str: str, refresh: bool) -> None:
                 Book.book_ol_key.in_(existing_keys)
             ).all()
         }
+
         for ol_key, book in existing_books.items():
             if ol_key in description_overrides:
                 book.book_description = description_overrides[ol_key]
+            book.book_rating = rating_map[ol_key]
+            if ol_key in title_overrides:
+                book.book_title = title_overrides[ol_key]
             attach_tags(book, tag_map.get(ol_key, []))
 
     db.session.commit()

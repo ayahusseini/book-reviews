@@ -19,16 +19,14 @@
             <aside class="site-sidebar-left">
 
                 {% if random_quote %}
-                    <div class="sidebar-widget sidebar-widget--quote">
-                        <div class="sidebar-heading">
-                            <button id="refresh-quote">
-                                <img src="{{ url_for('static', filename='img/randomise.png') }}" alt="Randomise" class="randomise-icon">
-                            </button>
-                        </div>
-                        <blockquote class="sidebar-quote" id="quote-content">
+                    <div class="quote-widget sidebar-widget sidebar-widget--quote">
+                        <button class="quote-refresh-btn" id="refresh-quote" aria-label="Refresh quote">
+                            <img src="{{ url_for('static', filename='img/randomise.png') }}" alt="Randomise" class="randomise-icon">
+                        </button>
+                        <blockquote class="quote-text" id="quote-content">
                             {{ random_quote_html | safe }}
                         </blockquote>
-                        <div class="sidebar-quote-source" id="quote-source">
+                        <div class="sidebar-quote-source quote-widget__source" id="quote-source">
                             {{ random_quote_source | safe }}
                         </div>
                     </div>
@@ -56,24 +54,20 @@
                     </div>
                 </nav>
 
-        <!-- Mobile-only quote, hidden on wider screens -->
+        <!-- Mobile quote slot: shown only on small screens -->
                 {% if random_quote %}
-                    <div class="mobile-quote">
-                        <div class="sidebar-heading">
-                            <button id="refresh-quote-mobile">
+                    <div class="quote-widget-mobile-slot">
+                        <div class="quote-widget quote-widget--mobile sidebar-widget--quote">
+                            <button class="quote-refresh-btn--mobile" id="refresh-quote-mobile" aria-label="Refresh quote">
                                 <img src="{{ url_for('static', filename='img/randomise.png') }}" alt="Randomise" class="randomise-icon-mobile">
                             </button>
-                        </div>
-                        <blockquote class="sidebar-quote">
-                            {{ random_quote.post_body_markdown }}
-                        </blockquote>
-                        {% if random_quote.book %}
-                            <div class="sidebar-quote-source">
-                                — <a href="{{ url_for('books.book_detail', book_id=random_quote.book.book_id) }}">
-                                    {{ random_quote.book.book_title }}
-                                </a>
+                            <blockquote class="quote-text" id="quote-content-mobile">
+                                {{ random_quote_html | safe }}
+                            </blockquote>
+                            <div class="sidebar-quote-source quote-widget__source" id="quote-source-mobile">
+                                {{ random_quote_source | safe }}
                             </div>
-                        {% endif %}
+                        </div>
                     </div>
                 {% endif %}
 
@@ -92,19 +86,14 @@
         <script defer
                 src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js">
         </script>
-
-    <!-- auto-render extension -->
         <script defer
                 src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js">
         </script>
-
-    <!-- your init script -->
         <script defer
                 src="{{ url_for('static', filename='js/katex-init.js') }}">
         </script>
-
         <script defer
-                src="{{ url_for('static', filename='js/main.js') }}">
+                src="{{ url_for('static', filename='js/refresh_quote.js') }}">
         </script>
     </body>
 </html>

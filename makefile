@@ -27,10 +27,21 @@ test:
 	uv run pytest -v
 
 # Only run migrations manually when you want to generate them
+# Usage: make migrate MSG="Add book_rating column"
 migrate:
-	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) db migrate --directory $(MIGRATIONS) -m "$(m)"
+ifndef MSG
+	$(error MSG is undefined. Use e.g. make migrate MSG="Add book_rating column")
+endif
+	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) db migrate --directory $(MIGRATIONS) -m "$(MSG)"
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) db upgrade --directory $(MIGRATIONS)
 
+# Quick upgrade without creating a new migration
+upgrade:
+	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) db upgrade --directory $(MIGRATIONS)
+
+# Stamp DB to current head (useful if DB is already manually correct)
+stamp:
+	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) db stamp head --directory $(MIGRATIONS)
 # Launch a Flask shell
 shell:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) shell

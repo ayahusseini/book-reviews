@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from flask import Blueprint, abort, render_template
-from sqlalchemy import distinct, func, desc
+from flask import Blueprint, render_template
+from sqlalchemy import func, desc
 
 from app.database.models import Book, Post, Tag
 from app.extensions import db, cache
@@ -12,14 +12,15 @@ from content.markdown_posts import render_markdown_to_safe_html
 books_bp = Blueprint("books", __name__)
 
 
-def _book_ids_with_posts() -> set[int]:
-    """Return the set of book_ids that have at least one non-quote post."""
+def book_ids_with_posts() -> set[int]:
+    """Return the set of book_ids that have at least one review post."""
     rows = (
-        db.session.query(distinct(Post.book_id))
+        db.session.query(Post.book_id)
         .filter(
             Post.book_id.isnot(None),
-            Post.post_type != "quotes",
+            Post.post_type == "review",
         )
+        .distinct()
         .all()
     )
     return {row[0] for row in rows}
@@ -59,7 +60,7 @@ def book_list():
         .all()
     )
 
-    has_posts = _book_ids_with_posts()
+    has_posts = book_ids_with_posts()
 
     return render_template(
         "books.html",
@@ -86,13 +87,11 @@ def book_detail(book_id: int):
         .all()
     )
 
-    if not posts:
-        abort(404)
-
     rendered_posts = [
         (post, render_markdown_to_safe_html(post.post_body_markdown))
         for post in posts
     ]
+
     return render_template(
         "book_detail.html", book=book, rendered_posts=rendered_posts
     )

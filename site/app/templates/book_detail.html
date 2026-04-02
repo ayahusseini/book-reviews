@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import star_rating %}
+{% from "_macros.html" import star_rating, book_item %}
 
 {% block sidebar_left %}
 
@@ -56,8 +56,8 @@
     <article class="markdown-body" style="margin-bottom: 2.5rem;">
       <h3 class="post-title">
         {{ post.post_title }}
-        {% if post.post_type == "review" and post.post_rating is not none %}
-          {{ star_rating(post.post_rating, uid=post.post_id) }}
+        {% if post.post_type == "review" and book.book_rating %}
+          {{ star_rating(book.book_rating, uid=book.book_id) }}
         {% endif %}
       </h3>
       <p style="margin-bottom: 0.75rem;"><small class="text-muted">{{ post.post_type }} - Created: {{ post.post_created_at.strftime('%Y-%m-%d') }} </small></p>
