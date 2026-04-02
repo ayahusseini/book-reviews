@@ -29,4 +29,4 @@ def test_setup_logging_format_is_applied():
         patch("logging.Formatter") as mock_formatter,
     ):
         setup_logging(app=None, format=custom_format)
-    mock_formatter.assert_called_once_with(custom_format)  # currently fails
+    mock_formatter.assert_called_once_with(custom_format)

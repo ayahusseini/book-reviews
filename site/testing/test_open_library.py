@@ -19,7 +19,6 @@ from app.open_library import (
     extract_author_keys,
     extract_author_name,
     extract_description,
-    extract_isbn,
     extract_page_count,
     extract_publication_year,
     extract_title,
@@ -194,25 +193,6 @@ class TestExtractAuthorKeys:
         assert extract_author_keys(data) == ["/authors/OL1A", "/authors/OL2A"]
 
 
-class TestExtractIsbn:
-    def test_prefers_isbn13(self, editions_payload):
-        assert extract_isbn(editions_payload) == "9780142410349"
-
-    def test_falls_back_to_isbn10(self):
-        data = {"entries": [{"isbn_10": ["0140328726"]}]}
-        assert extract_isbn(data) == "0140328726"
-
-    def test_no_isbn_returns_none(self):
-        assert extract_isbn({"entries": []}) is None
-
-    def test_skips_empty_entries(self):
-        data = {"entries": [{}, {"isbn_13": ["9781234567890"]}]}
-        assert extract_isbn(data) == "9781234567890"
-
-    def test_absent_entries_returns_none(self):
-        assert extract_isbn({}) is None
-
-
 class TestExtractPublicationYear:
     def test_returns_earliest(self, editions_payload):
         assert extract_publication_year(editions_payload) == 1996
@@ -309,4 +289,3 @@ class TestFetchBookData:
         assert isinstance(result, BookData)
         assert result.ol_key == "OL12345W"
         assert result.title == "Fantastic Mr Fox"
-        assert result.isbn == "9780142410349"

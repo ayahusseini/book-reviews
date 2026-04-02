@@ -105,9 +105,7 @@ class Book(db.Model):
     book_description = db.Column(db.Text, nullable=True)
     book_publication_year = db.Column(db.Integer(), nullable=True)
     book_rating = db.Column(db.Float(), nullable=True)
-    book_rating_goodreads = db.Column(db.Float(), nullable=True)
     book_page_count = db.Column(db.Integer(), nullable=True)
-    book_isbn = db.Column(db.Text(), nullable=True)
 
     authors = db.relationship(
         "Author",
@@ -141,7 +139,6 @@ class Tag(db.Model):
 
     tag_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     tag_name = db.Column(db.String, nullable=False, unique=True)
-    tag_description = db.Column(db.Text, nullable=True)
 
     books = db.relationship(
         "Book",
@@ -183,7 +180,6 @@ class Post(db.Model):
         db.DateTime,
         nullable=False,
         default=lambda: datetime.now(timezone.utc),
-        onupdate=lambda: datetime.now(timezone.utc),
     )
     post_created_at = db.Column(
         db.DateTime,
