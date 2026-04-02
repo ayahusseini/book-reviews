@@ -18,7 +18,5 @@ htmlcov/
 *.log
 
 instance/
-writing/posts/**
 writing/unpromoted_posts/**
-!writing/posts/**/.gitkeep
 !writing/unpromoted_posts/.gitkeep
