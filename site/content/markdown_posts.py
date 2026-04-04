@@ -19,8 +19,11 @@ from content.extract_quotes import (
     replace_ad_quotes_with_blockquotes,
 )
 
-# Matches [[slug]] and [[slug|display text]]
-_WIKILINK_RE = re.compile(r"\[\[([^\]|]+?)(?:\|([^\]]+?))?\]\]")
+# Matches ![[filename]] — Obsidian-style image embeds
+_IMAGE_WIKILINK_RE = re.compile(r"!\[\[([^\]]+?)\]\]")
+
+# Matches [[target]] and [[target|label]] — not preceded by !
+_WIKILINK_RE = re.compile(r"(?<!!)\[\[([^\]|]+?)(?:\|([^\]]+?))?\]\]")
 
 
 VALID_POST_TYPES = {
@@ -184,17 +187,50 @@ def parse_markdown_with_frontmatter(path: Path) -> MarkdownPost:
     )
 
 
-def _expand_wikilinks(text: str) -> str:
-    """Replace [[slug]] and [[slug|display text]] with Markdown links.
+def _heading_to_anchor(heading: str) -> str:
+    """Convert heading text to an HTML anchor id,
+    matching the toc extension's slugify."""
+    heading = heading.lower()
+    heading = re.sub(r"[^\w\s-]", "", heading)
+    return re.sub(r"\s+", "-", heading.strip())
 
-    [[my-post]] → [my-post](/posts/my-post)
-    [[my-post|Read this]] → [Read this](/posts/my-post)
+
+def _expand_wikilinks(text: str) -> str:
+    """Expand Obsidian-style wikilinks and image embeds.
+
+    ![[image.png]]           → ![image.png](/static/img/image.png)
+    [[slug]]                 → [slug](/posts/slug)
+    [[slug|label]]           → [label](/posts/slug)
+    [[#heading]]             → [heading](#anchor)
+    [[#heading|label]]       → [label](#anchor)
+    [[slug#heading]]         → [slug#heading](/posts/slug#anchor)
+    [[slug#heading|label]]   → [label](/posts/slug#anchor)
     """
 
+    def replace_image(m: re.Match) -> str:
+        filename = m.group(1).strip()
+        return f"![{filename}](/static/img/{filename})"
+
+    text = _IMAGE_WIKILINK_RE.sub(replace_image, text)
+
     def replace(m: re.Match) -> str:
-        slug = m.group(1).strip()
-        label = (m.group(2) or slug).strip()
-        return f"[{label}](/posts/{slug})"
+        target = m.group(1).strip()
+        label = (m.group(2) or "").strip()
+
+        if "#" in target:
+            parts = target.split("#", 1)
+            slug = parts[0].strip()
+            heading = parts[1].strip()
+            anchor = _heading_to_anchor(heading)
+            if slug:
+                display = label or target
+                return f"[{display}](/posts/{slug}#{anchor})"
+            else:
+                display = label or heading
+                return f"[{display}](#{anchor})"
+        else:
+            display = label or target
+            return f"[{display}](/posts/{target})"
 
     return _WIKILINK_RE.sub(replace, text)
 
@@ -250,6 +286,7 @@ def render_markdown_to_safe_html(text: str) -> str:
             "ul",
             "ol",
             "li",
+            "img",
         }
     )
     allowed_attrs = {
@@ -262,6 +299,7 @@ def render_markdown_to_safe_html(text: str) -> str:
         "table": ["class"],
         "td": ["class"],
         "th": ["class"],
+        "img": ["src", "alt", "title"],
     }
     cleaned = bleach.clean(
         html,

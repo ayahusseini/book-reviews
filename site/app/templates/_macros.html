@@ -51,7 +51,7 @@
         </span>
       {% endif %}
       {% if new_book_ids is not none and book.book_id in new_book_ids %}
-        <span title="Recently reviewed">🌱</span>
+        <img src="{{ url_for('static', filename='img/seedling_pixel.svg') }}" alt="New" title="Recently reviewed" class="seedling-icon pixel-art">
       {% endif %}
 
       {% if book.book_rating is not none %}

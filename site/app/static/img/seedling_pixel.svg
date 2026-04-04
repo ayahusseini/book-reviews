@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72" shape-rendering="crispEdges">
+  <!-- Pixel art seedling / new book indicator -->
+  <!-- Leaf top hint -->
+  <rect x="30" y="6" width="12" height="6" fill="#3da35d"/>
+  <!-- Leaf row 2 -->
+  <rect x="24" y="12" width="24" height="6" fill="#3da35d"/>
+  <!-- Leaf body rows 3-5 -->
+  <rect x="12" y="18" width="48" height="18" fill="#3da35d"/>
+  <!-- Leaf highlight -->
+  <rect x="18" y="18" width="6" height="12" fill="#5cca75"/>
+  <!-- Stem rows 6-8 -->
+  <rect x="36" y="36" width="6" height="18" fill="#6abf8a"/>
+  <!-- Dirt row 9 with stem -->
+  <rect x="12" y="54" width="24" height="6" fill="#5d4037"/>
+  <rect x="36" y="54" width="6" height="6" fill="#6abf8a"/>
+  <rect x="42" y="54" width="24" height="6" fill="#5d4037"/>
+  <!-- Dirt row 10 -->
+  <rect x="12" y="60" width="54" height="6" fill="#5d4037"/>
+  <!-- Dirt highlight -->
+  <rect x="12" y="54" width="54" height="2" fill="#6d4c41"/>
+</svg>

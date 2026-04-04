@@ -7,8 +7,10 @@
 3. [Writing a book review](#writing-a-book-review)
 4. [Writing a standalone post, note, or poem](#writing-a-standalone-post-note-or-poem)
 5. [Inline quotes](#inline-quotes)
-6. [Slugs and re-importing](#slugs-and-re-importing)
-7. [Deploying](#deploying)
+6. [Linking between posts](#linking-between-posts)
+7. [Images](#images)
+8. [Slugs and re-importing](#slugs-and-re-importing)
+9. [Deploying](#deploying)
 
 ---
 
@@ -160,6 +162,44 @@ Or with custom display text: [[wuthering-heights-review|my Wuthering Heights rev
 ```
 
 These are expanded to standard HTML links pointing to `/posts/<slug>` before rendering. All post types are reachable via `/posts/<slug>` regardless of type.
+
+### Linking to headings
+
+Link to a specific heading within any post using a `#` fragment:
+
+```markdown
+Jump to a heading in another post:
+[[wuthering-heights-review#Part Two]]
+
+With custom display text:
+[[wuthering-heights-review#Part Two|the second section]]
+
+Link to a heading within the current post:
+[[#Part Two]]
+
+Within-post link with display text:
+[[#Part Two|jump to Part Two]]
+```
+
+The heading fragment is converted to an anchor using the same rules as Python-Markdown's table of contents: lowercased, with spaces replaced by hyphens and non-alphanumeric characters removed. So `## Part Two` becomes `#part-two` and `## A Thought (or Two)` becomes `#a-thought-or-two`.
+
+---
+
+## Images
+
+Place image files in `site/app/static/img/` and embed them using Obsidian's image syntax:
+
+```markdown
+![[my-photo.jpg]]
+```
+
+This renders as:
+
+```html
+<img src="/static/img/my-photo.jpg" alt="my-photo.jpg">
+```
+
+The `alt` text defaults to the filename. Obsidian will display these images locally as long as your vault includes the image file at a path Obsidian can find (the filename just needs to match).
 
 ---
 

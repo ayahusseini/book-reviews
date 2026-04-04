@@ -21,7 +21,7 @@
                 {% if random_quote %}
                     <div class="quote-widget sidebar-widget sidebar-widget--quote">
                         <button class="quote-refresh-btn" id="refresh-quote" aria-label="Refresh quote">
-                            <img src="{{ url_for('static', filename='img/randomise.png') }}" alt="Randomise" class="randomise-icon">
+                            <img src="{{ url_for('static', filename='img/randomise_pixel.svg') }}" alt="Randomise" class="randomise-icon pixel-art">
                         </button>
                         <blockquote class="quote-text" id="quote-content">
                             {{ random_quote_html | safe }}
@@ -33,6 +33,13 @@
                 {% endif %}
 
                 {% block sidebar_left %}{% endblock %}
+
+                <div class="sidebar-coffee">
+                    <a href="https://ko-fi.com/ahuss" class="coffee-btn" target="_blank" rel="noopener noreferrer" title="Support this site">
+                        <img src="{{ url_for('static', filename='img/coffee_pixel.svg') }}" alt="" class="coffee-btn__icon">
+                        <span class="coffee-btn__text">buy me a coffee</span>
+                    </a>
+                </div>
             </aside>
 
     <!-- MAIN CONTENT -->
@@ -40,7 +47,7 @@
 
                 <nav>
                     <div class="nav-container">
-                        <img src="{{ url_for('static', filename='img/logo2.png') }}" alt="HusseiniReads logo" class="nav-logo">
+                        <img src="{{ url_for('static', filename='img/logo_pixel.svg') }}" alt="HusseiniReads logo" class="nav-logo pixel-art">
                         <div class="nav-text">
                             <h1>HusseiniReads</h1>
                             <div class="nav-links">
@@ -59,7 +66,7 @@
                     <div class="quote-widget-mobile-slot">
                         <div class="quote-widget quote-widget--mobile sidebar-widget--quote">
                             <button class="quote-refresh-btn--mobile" id="refresh-quote-mobile" aria-label="Refresh quote">
-                                <img src="{{ url_for('static', filename='img/randomise.png') }}" alt="Randomise" class="randomise-icon-mobile">
+                                <img src="{{ url_for('static', filename='img/randomise_pixel.svg') }}" alt="Randomise" class="randomise-icon-mobile pixel-art">
                             </button>
                             <blockquote class="quote-text" id="quote-content-mobile">
                                 {{ random_quote_html | safe }}

@@ -34,11 +34,15 @@
 
     /* Borders */
     --border:       oklch(0.28 0.10 268);
+    --border-bright: oklch(0.38 0.12 268);
 
     /* Layout */
     --content-width: 740px;
     --sidebar-width: 240px;
     --gap:           1.75rem;
+
+    /* Pixel art rendering */
+    --pixel-border: 2px solid var(--border);
 
     /* Fonts */
     --heading-font: 'Libre Baskerville', serif;
@@ -193,8 +197,11 @@ nav .nav-container {
 
 nav .nav-logo {
     flex-shrink: 0;
-    width: clamp(70px, 8vw, 75px);
+    width: clamp(80px, 10vw, 96px);
     height: auto;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    margin-right: 0.25rem;
 }
 
 nav .nav-text {
@@ -311,7 +318,8 @@ h3 {
 .sidebar-widget--quote {
     background: var(--bg-quote);
     padding: 0.9rem 1rem;
-    border-radius: 6px;
+    border-radius: 0;
+    border: 2px solid var(--border);
     font-family: var(--mono-font);
     font-size: 0.75rem;
     line-height: 1.7;
@@ -341,16 +349,19 @@ h3 {
 }
 
 .quote-refresh-btn .randomise-icon {
-    width: 40%;
-    height: auto;
+    width: 36px;
+    height: 36px;
     display: block;
     margin: 0 auto;
-    opacity: 0.6;
-    transition: opacity 0.2s ease;
+    opacity: 0.65;
+    transition: opacity 0.2s ease, transform 0.15s ease;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
 }
 
 .quote-refresh-btn:hover .randomise-icon {
     opacity: 1;
+    transform: scale(1.1);
 }
 
 /* Mobile slot: hidden by default; shown only on small screens */
@@ -365,16 +376,19 @@ h3 {
 
 
 .quote-refresh-btn--mobile .randomise-icon-mobile {
-    width: 3rem;
-    height: auto;
+    width: 36px;
+    height: 36px;
     display: block;
     margin: 0 auto;
-    opacity: 0.6;
-    transition: opacity 0.2s ease;
+    opacity: 0.65;
+    transition: opacity 0.2s ease, transform 0.15s ease;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
 }
 
 .quote-refresh-btn--mobile:hover .randomise-icon-mobile {
     opacity: 1;
+    transform: scale(1.1);
 }
 
 
@@ -484,7 +498,7 @@ h3 {
     letter-spacing: 0.08em;
     text-transform: uppercase;
     padding: 0.1rem 0.4rem;
-    border-radius: 2px;
+    border-radius: 0;
     border: 1px solid var(--orange-dim);
     color: var(--orange-dim);
     background: var(--bg);
@@ -771,4 +785,125 @@ p code {
     p {
         max-width: min(65ch, 100%);
     }
+}
+
+
+/* ================================================================
+   PIXEL ART COMPONENTS
+   ================================================================ */
+
+/* Generic pixel art image helper */
+.pixel-art {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+/* Pixel art seedling new-book indicator */
+.seedling-icon {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+    margin-left: 0.15rem;
+}
+
+/* ----------------------------------------------------------------
+   BUY ME A COFFEE
+   ---------------------------------------------------------------- */
+
+.coffee-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.55rem 0.75rem;
+    border: 2px solid var(--orange-dim);
+    background: var(--bg-quote);
+    color: var(--orange);
+    font-family: var(--mono-font);
+    font-size: 0.70rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 0.25rem;
+}
+
+.coffee-btn:hover {
+    border-color: var(--orange-bright);
+    color: var(--orange-bright);
+    background: var(--bg-elevated);
+}
+
+.coffee-btn__icon {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+.coffee-btn__text {
+    line-height: 1.3;
+}
+
+/* ----------------------------------------------------------------
+   PIXEL SECTION DIVIDER
+   ---------------------------------------------------------------- */
+
+.pixel-divider {
+    border: none;
+    border-top: 2px solid var(--border);
+    margin: 1.5rem 0;
+    width: 100%;
+}
+
+/* ----------------------------------------------------------------
+   BLOCKQUOTE — sharper pixel art feel (markdown content only)
+   ---------------------------------------------------------------- */
+
+.markdown-body blockquote,
+.markdown-body blockquote p {
+    border-radius: 0;
+    border-left: 3px solid var(--orange-dim);
+}
+
+blockquote,
+blockquote p {
+    border-radius: 0;
+}
+
+/* ----------------------------------------------------------------
+   NAV — tighter pixel art treatment
+   ---------------------------------------------------------------- */
+
+nav {
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+/* ----------------------------------------------------------------
+   HIGHLIGHT / CODE — crisp corners
+   ---------------------------------------------------------------- */
+
+.highlight {
+    border-radius: 0;
+    border: 1px solid var(--border);
+}
+
+p code {
+    border-radius: 0;
+}
+
+/* ----------------------------------------------------------------
+   SIDEBAR COFFEE WRAPPER
+   ---------------------------------------------------------------- */
+
+.sidebar-coffee {
+    border-top: 2px solid var(--border);
+    padding-top: 0.75rem;
 }

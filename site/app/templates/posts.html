@@ -10,7 +10,7 @@
       {% for post in posts %}
         <li>
           <a href="{{ url_for('posts.post_detail', slug=post.post_slug) }}">{{ post.post_title }}</a>
-          {% if post.post_slug in new_slugs %}<span title="Recently added"><p>🌱</p></span>{% endif %}
+          {% if post.post_slug in new_slugs %}<img src="{{ url_for('static', filename='img/seedling_pixel.svg') }}" alt="New" title="Recently added" class="seedling-icon pixel-art">{% endif %}
           <small>by {{ post.post_author }}{% if post.post_type %} ({{ post.post_type }}){% endif %} - Created: {{ post.post_created_at.strftime('%Y-%m-%d') }}</small>
         </li>
       {% endfor %}
