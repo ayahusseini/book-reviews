@@ -270,6 +270,36 @@ class TestExpandWikilinks:
         assert "/posts/post-b" in result
         assert "Post B" in result
 
+    def test_image_embed_becomes_img_tag(self):
+        result = _expand_wikilinks("![[my-photo.jpg]]")
+        assert "![my-photo.jpg](/static/img/my-photo.jpg)" in result
+
+    def test_image_embed_not_treated_as_wikilink(self):
+        result = _expand_wikilinks("![[my-photo.jpg]]")
+        assert "/posts/" not in result
+
+    def test_within_post_heading_link(self):
+        result = _expand_wikilinks("See [[#Part Two]] for details.")
+        assert "[Part Two](#part-two)" in result
+
+    def test_within_post_heading_link_with_label(self):
+        result = _expand_wikilinks("[[#Part Two|jump here]]")
+        assert "[jump here](#part-two)" in result
+
+    def test_heading_anchor_lowercased_with_hyphens(self):
+        result = _expand_wikilinks("[[#My Big Section]]")
+        assert "#my-big-section" in result
+
+    def test_cross_post_heading_link(self):
+        result = _expand_wikilinks("[[other-post#Section One]]")
+        assert (
+            "[other-post#Section One](/posts/other-post#section-one)" in result
+        )
+
+    def test_cross_post_heading_link_with_label(self):
+        result = _expand_wikilinks("[[other-post#Section One|read this]]")
+        assert "[read this](/posts/other-post#section-one)" in result
+
 
 # ---------------------------------------------------------------------------
 # render_markdown_to_safe_html
@@ -294,3 +324,18 @@ class TestRenderMarkdownToSafeHtml:
 
     def test_blockquote_rendered(self):
         assert "<blockquote>" in render_markdown_to_safe_html("> A quote.")
+
+    def test_image_embed_rendered(self):
+        html = render_markdown_to_safe_html("![[diagram.png]]")
+        assert "<img" in html
+        assert 'src="/static/img/diagram.png"' in html
+
+    def test_within_post_heading_link_rendered(self):
+        html = render_markdown_to_safe_html("See [[#My Section]] here.")
+        assert 'href="#my-section"' in html
+
+    def test_cross_post_heading_link_rendered(self):
+        html = render_markdown_to_safe_html(
+            "See [[other-post#My Section|this]]."
+        )
+        assert 'href="/posts/other-post#my-section"' in html

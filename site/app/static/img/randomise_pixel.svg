@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" shape-rendering="crispEdges">
+  <!-- Pixel art dice face (5-pip) for randomise quote -->
+  <!-- Border -->
+  <rect x="0" y="0" width="64" height="8" fill="#0a1832"/>
+  <rect x="0" y="56" width="64" height="8" fill="#0a1832"/>
+  <rect x="0" y="8" width="8" height="48" fill="#0a1832"/>
+  <rect x="56" y="8" width="8" height="48" fill="#0a1832"/>
+  <!-- Inner highlight top-left corner -->
+  <rect x="8" y="8" width="8" height="4" fill="#2d6cbf"/>
+  <rect x="8" y="12" width="4" height="40" fill="#2d6cbf"/>
+  <!-- Body -->
+  <rect x="8" y="8" width="48" height="48" fill="#1a4a8a"/>
+  <!-- Top-left pip -->
+  <rect x="16" y="16" width="8" height="8" fill="#e88a1a"/>
+  <!-- Top-right pip -->
+  <rect x="40" y="16" width="8" height="8" fill="#e88a1a"/>
+  <!-- Center pip -->
+  <rect x="28" y="28" width="8" height="8" fill="#e88a1a"/>
+  <!-- Bottom-left pip -->
+  <rect x="16" y="40" width="8" height="8" fill="#e88a1a"/>
+  <!-- Bottom-right pip -->
+  <rect x="40" y="40" width="8" height="8" fill="#e88a1a"/>
+</svg>

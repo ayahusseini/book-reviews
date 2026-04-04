@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72" shape-rendering="crispEdges">
+  <!-- Pixel art coffee mug, blue cup with brown coffee visible -->
+  <!-- Steam puffs -->
+  <rect x="12" y="6" width="6" height="6" fill="#c8bfa0"/>
+  <rect x="24" y="6" width="6" height="6" fill="#c8bfa0"/>
+  <rect x="18" y="12" width="6" height="6" fill="#c8bfa0"/>
+  <!-- Top rim -->
+  <rect x="6" y="24" width="42" height="6" fill="#0a1832"/>
+  <!-- Row 5: coffee visible inside + handle start -->
+  <rect x="6" y="30" width="6" height="6" fill="#0a1832"/>
+  <rect x="12" y="30" width="30" height="6" fill="#6d4c41"/>
+  <rect x="42" y="30" width="6" height="6" fill="#0a1832"/>
+  <rect x="48" y="30" width="12" height="6" fill="#0a1832"/>
+  <!-- Row 6: body + handle gap -->
+  <rect x="6" y="36" width="6" height="6" fill="#0a1832"/>
+  <rect x="12" y="36" width="30" height="6" fill="#1a4a8a"/>
+  <rect x="42" y="36" width="6" height="6" fill="#0a1832"/>
+  <rect x="54" y="36" width="6" height="6" fill="#0a1832"/>
+  <!-- Row 7: body + handle close -->
+  <rect x="6" y="42" width="6" height="6" fill="#0a1832"/>
+  <rect x="12" y="42" width="30" height="6" fill="#1a4a8a"/>
+  <rect x="42" y="42" width="6" height="6" fill="#0a1832"/>
+  <rect x="48" y="42" width="12" height="6" fill="#0a1832"/>
+  <!-- Row 8: body -->
+  <rect x="6" y="48" width="6" height="6" fill="#0a1832"/>
+  <rect x="12" y="48" width="30" height="6" fill="#1a4a8a"/>
+  <rect x="42" y="48" width="6" height="6" fill="#0a1832"/>
+  <!-- Cup bottom -->
+  <rect x="12" y="54" width="30" height="6" fill="#0a1832"/>
+  <!-- Saucer -->
+  <rect x="6" y="60" width="42" height="6" fill="#0a1832"/>
+  <!-- Cup highlight -->
+  <rect x="14" y="36" width="4" height="18" fill="#2d6cbf"/>
+</svg>
