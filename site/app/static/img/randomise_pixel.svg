@@ -1,23 +1,127 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" shape-rendering="crispEdges">
-  <!-- Pixel art dice face (5-pip) for randomise quote -->
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 45 45"
+   shape-rendering="crispEdges"
+   version="1.1"
+   id="svg14"
+   sodipodi:docname="randomise_pixel.svg"
+   inkscape:version="1.4.3 (0d15f75, 2025-12-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs14" />
+  <sodipodi:namedview
+     id="namedview14"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="6.6967111"
+     inkscape:cx="39.944981"
+     inkscape:cy="20.980448"
+     inkscape:window-width="1352"
+     inkscape:window-height="816"
+     inkscape:window-x="0"
+     inkscape:window-y="62"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg14" />
+  <!-- 9×9 pixel art dice, 5px per pixel -->
   <!-- Border -->
-  <rect x="0" y="0" width="64" height="8" fill="#0a1832"/>
-  <rect x="0" y="56" width="64" height="8" fill="#0a1832"/>
-  <rect x="0" y="8" width="8" height="48" fill="#0a1832"/>
-  <rect x="56" y="8" width="8" height="48" fill="#0a1832"/>
-  <!-- Inner highlight top-left corner -->
-  <rect x="8" y="8" width="8" height="4" fill="#2d6cbf"/>
-  <rect x="8" y="12" width="4" height="40" fill="#2d6cbf"/>
+  <rect
+     style="fill:#e3dedb;fill-opacity:1"
+     id="rect15"
+     width="35.776863"
+     height="35.387981"
+     x="4.6665473"
+     y="4.4721079" />
+  <rect
+     x="0"
+     y="0"
+     width="45"
+     height="5"
+     fill="#2a5490"
+     id="rect1"
+     style="fill:#333333" />
+  <rect
+     x="0"
+     y="40"
+     width="45"
+     height="5"
+     fill="#2a5490"
+     id="rect2"
+     inkscape:label="rect2"
+     style="fill:#333333" />
+  <rect
+     x="0"
+     y="0"
+     width="5"
+     height="45"
+     fill="#2a5490"
+     id="rect3"
+     style="fill:#333333" />
+  <rect
+     x="40"
+     y="0"
+     width="5"
+     height="45"
+     fill="#2a5490"
+     id="rect4"
+     style="fill:#333333" />
   <!-- Body -->
-  <rect x="8" y="8" width="48" height="48" fill="#1a4a8a"/>
-  <!-- Top-left pip -->
-  <rect x="16" y="16" width="8" height="8" fill="#e88a1a"/>
-  <!-- Top-right pip -->
-  <rect x="40" y="16" width="8" height="8" fill="#e88a1a"/>
-  <!-- Center pip -->
-  <rect x="28" y="28" width="8" height="8" fill="#e88a1a"/>
-  <!-- Bottom-left pip -->
-  <rect x="16" y="40" width="8" height="8" fill="#e88a1a"/>
-  <!-- Bottom-right pip -->
-  <rect x="40" y="40" width="8" height="8" fill="#e88a1a"/>
+  <!-- Highlight (top-left corner pixel) -->
+  <!-- Shadow (bottom-right) -->
+  <rect
+     x="35"
+     y="10"
+     width="5"
+     height="30"
+     fill="#3a7ab8"
+     id="rect9"
+     style="fill:#ebd6a9;fill-opacity:0" />
+  <!-- 5-pip arrangement (orange) -->
+  <rect
+     x="10"
+     y="10"
+     width="5"
+     height="5"
+     fill="#e88a1a"
+     id="rect10"
+     style="fill:#1a1a1a" />
+  <rect
+     x="30"
+     y="10"
+     width="5"
+     height="5"
+     fill="#e88a1a"
+     id="rect11"
+     style="fill:#1a1a1a" />
+  <rect
+     x="20"
+     y="20"
+     width="5"
+     height="5"
+     fill="#e88a1a"
+     id="rect12"
+     style="fill:#1a1a1a" />
+  <rect
+     x="10"
+     y="30"
+     width="5"
+     height="5"
+     fill="#e88a1a"
+     id="rect13"
+     style="fill:#1a1a1a" />
+  <rect
+     x="30"
+     y="30"
+     width="5"
+     height="5"
+     fill="#e88a1a"
+     id="rect14"
+     style="fill:#1a1a1a" />
 </svg>
