@@ -349,7 +349,7 @@ h3 {
 
 .quote-refresh-btn .randomise-icon {
     width: 100%;
-    max-width: 160px;
+    max-width: 190px;
     height: auto;
     display: block;
     margin: 0 auto;
@@ -375,7 +375,7 @@ h3 {
 
 .quote-refresh-btn--mobile .randomise-icon-mobile {
     width: 100%;
-    max-width: 160px;
+    max-width: 190px;
     height: auto;
     display: block;
     margin: 0 auto;
@@ -865,14 +865,8 @@ p code {
 }
 
 /* ----------------------------------------------------------------
-   BLOCKQUOTE — sharper pixel art feel (markdown content only)
+   BLOCKQUOTE — sharp corners, no decorative border
    ---------------------------------------------------------------- */
-
-.markdown-body blockquote,
-.markdown-body blockquote p {
-    border-radius: 0;
-    border-left: 3px solid var(--orange-dim);
-}
 
 blockquote,
 blockquote p {
