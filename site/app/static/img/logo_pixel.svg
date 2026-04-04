@@ -1,87 +1,483 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 64" shape-rendering="crispEdges">
-  <!-- Open book: cream pages with gold stars, orange spine, dark blue cover base -->
-  <!-- Row 2: top page edge -->
-  <rect x="8" y="8" width="80" height="4" fill="#0a1832"/>
-  <!-- Row 3: page interior top row -->
-  <rect x="8" y="12" width="4" height="4" fill="#0a1832"/>
-  <rect x="12" y="12" width="32" height="4" fill="#f5edd6"/>
-  <rect x="44" y="12" width="4" height="4" fill="#e88a1a"/>
-  <rect x="48" y="12" width="36" height="4" fill="#f5edd6"/>
-  <rect x="84" y="12" width="4" height="4" fill="#0a1832"/>
-  <!-- Row 4: stars at col 4 and col 17 -->
-  <rect x="8" y="16" width="4" height="4" fill="#0a1832"/>
-  <rect x="12" y="16" width="4" height="4" fill="#f5edd6"/>
-  <rect x="16" y="16" width="4" height="4" fill="#f0b928"/>
-  <rect x="20" y="16" width="24" height="4" fill="#f5edd6"/>
-  <rect x="44" y="16" width="4" height="4" fill="#e88a1a"/>
-  <rect x="48" y="16" width="20" height="4" fill="#f5edd6"/>
-  <rect x="68" y="16" width="4" height="4" fill="#f0b928"/>
-  <rect x="72" y="16" width="12" height="4" fill="#f5edd6"/>
-  <rect x="84" y="16" width="4" height="4" fill="#0a1832"/>
-  <!-- Row 5: plain -->
-  <rect x="8" y="20" width="4" height="4" fill="#0a1832"/>
-  <rect x="12" y="20" width="32" height="4" fill="#f5edd6"/>
-  <rect x="44" y="20" width="4" height="4" fill="#e88a1a"/>
-  <rect x="48" y="20" width="36" height="4" fill="#f5edd6"/>
-  <rect x="84" y="20" width="4" height="4" fill="#0a1832"/>
-  <!-- Row 6: stars at col 7 and col 14 -->
-  <rect x="8" y="24" width="4" height="4" fill="#0a1832"/>
-  <rect x="12" y="24" width="16" height="4" fill="#f5edd6"/>
-  <rect x="28" y="24" width="4" height="4" fill="#f0b928"/>
-  <rect x="32" y="24" width="12" height="4" fill="#f5edd6"/>
-  <rect x="44" y="24" width="4" height="4" fill="#e88a1a"/>
-  <rect x="48" y="24" width="8" height="4" fill="#f5edd6"/>
-  <rect x="56" y="24" width="4" height="4" fill="#f0b928"/>
-  <rect x="60" y="24" width="24" height="4" fill="#f5edd6"/>
-  <rect x="84" y="24" width="4" height="4" fill="#0a1832"/>
-  <!-- Row 7: plain -->
-  <rect x="8" y="28" width="4" height="4" fill="#0a1832"/>
-  <rect x="12" y="28" width="32" height="4" fill="#f5edd6"/>
-  <rect x="44" y="28" width="4" height="4" fill="#e88a1a"/>
-  <rect x="48" y="28" width="36" height="4" fill="#f5edd6"/>
-  <rect x="84" y="28" width="4" height="4" fill="#0a1832"/>
-  <!-- Row 8: stars at col 9 and col 18 -->
-  <rect x="8" y="32" width="4" height="4" fill="#0a1832"/>
-  <rect x="12" y="32" width="24" height="4" fill="#f5edd6"/>
-  <rect x="36" y="32" width="4" height="4" fill="#f0b928"/>
-  <rect x="40" y="32" width="4" height="4" fill="#f5edd6"/>
-  <rect x="44" y="32" width="4" height="4" fill="#e88a1a"/>
-  <rect x="48" y="32" width="24" height="4" fill="#f5edd6"/>
-  <rect x="72" y="32" width="4" height="4" fill="#f0b928"/>
-  <rect x="76" y="32" width="8" height="4" fill="#f5edd6"/>
-  <rect x="84" y="32" width="4" height="4" fill="#0a1832"/>
-  <!-- Row 9: plain -->
-  <rect x="8" y="36" width="4" height="4" fill="#0a1832"/>
-  <rect x="12" y="36" width="32" height="4" fill="#f5edd6"/>
-  <rect x="44" y="36" width="4" height="4" fill="#e88a1a"/>
-  <rect x="48" y="36" width="36" height="4" fill="#f5edd6"/>
-  <rect x="84" y="36" width="4" height="4" fill="#0a1832"/>
-  <!-- Row 10: stars at col 5 and col 13 -->
-  <rect x="8" y="40" width="4" height="4" fill="#0a1832"/>
-  <rect x="12" y="40" width="8" height="4" fill="#f5edd6"/>
-  <rect x="20" y="40" width="4" height="4" fill="#f0b928"/>
-  <rect x="24" y="40" width="20" height="4" fill="#f5edd6"/>
-  <rect x="44" y="40" width="4" height="4" fill="#e88a1a"/>
-  <rect x="48" y="40" width="4" height="4" fill="#f5edd6"/>
-  <rect x="52" y="40" width="4" height="4" fill="#f0b928"/>
-  <rect x="56" y="40" width="28" height="4" fill="#f5edd6"/>
-  <rect x="84" y="40" width="4" height="4" fill="#0a1832"/>
-  <!-- Row 11: bottom page edge -->
-  <rect x="8" y="44" width="36" height="4" fill="#0a1832"/>
-  <rect x="44" y="44" width="4" height="4" fill="#e88a1a"/>
-  <rect x="48" y="44" width="40" height="4" fill="#0a1832"/>
-  <!-- Row 12: dark blue cover top -->
-  <rect x="12" y="48" width="4" height="4" fill="#0a1832"/>
-  <rect x="16" y="48" width="28" height="4" fill="#0f2d5c"/>
-  <rect x="44" y="48" width="4" height="4" fill="#e88a1a"/>
-  <rect x="48" y="48" width="32" height="4" fill="#0f2d5c"/>
-  <rect x="80" y="48" width="4" height="4" fill="#0a1832"/>
-  <!-- Row 13: dark blue cover bottom -->
-  <rect x="12" y="52" width="4" height="4" fill="#0a1832"/>
-  <rect x="16" y="52" width="28" height="4" fill="#0f2d5c"/>
-  <rect x="44" y="52" width="4" height="4" fill="#e88a1a"/>
-  <rect x="48" y="52" width="32" height="4" fill="#0f2d5c"/>
-  <rect x="80" y="52" width="4" height="4" fill="#0a1832"/>
-  <!-- Row 14: cover base outline -->
-  <rect x="16" y="56" width="64" height="4" fill="#0a1832"/>
-</svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 96 64"
+   shape-rendering="crispEdges"
+   version="1.1"
+   id="svg71"
+   sodipodi:docname="logo_pixel.svg"
+   xml:space="preserve"
+   inkscape:version="1.4.3 (0d15f75, 2025-12-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+     id="defs71" /><sodipodi:namedview
+     id="namedview71"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="2.4778319"
+     inkscape:cx="4.6411543"
+     inkscape:cy="16.344935"
+     inkscape:window-width="1352"
+     inkscape:window-height="816"
+     inkscape:window-x="0"
+     inkscape:window-y="62"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg71" /><!-- Open book: cream pages with gold stars, orange spine, dark blue cover base --><!-- Row 2: top page edge --><rect
+     x="8"
+     y="8"
+     width="80"
+     height="4"
+     fill="#0a1832"
+     id="rect1" /><!-- Row 3: page interior top row --><rect
+     x="8"
+     y="12"
+     width="4"
+     height="4"
+     fill="#0a1832"
+     id="rect2" /><rect
+     x="12"
+     y="12"
+     width="32"
+     height="4"
+     fill="#f5edd6"
+     id="rect3" /><rect
+     x="48"
+     y="12"
+     width="36"
+     height="4"
+     fill="#f5edd6"
+     id="rect5" /><rect
+     x="84"
+     y="12"
+     width="4"
+     height="4"
+     fill="#0a1832"
+     id="rect6" /><!-- Row 4: stars at col 4 and col 17 --><rect
+     x="8"
+     y="16"
+     width="4"
+     height="4"
+     fill="#0a1832"
+     id="rect7" /><rect
+     x="12"
+     y="16"
+     width="4"
+     height="4"
+     fill="#f5edd6"
+     id="rect8" /><rect
+     x="16"
+     y="16"
+     width="4"
+     height="4"
+     fill="#f0b928"
+     id="rect9" /><rect
+     x="20"
+     y="16"
+     width="24"
+     height="4"
+     fill="#f5edd6"
+     id="rect10" /><rect
+     x="48"
+     y="16"
+     width="20"
+     height="4"
+     fill="#f5edd6"
+     id="rect12" /><rect
+     x="68"
+     y="16"
+     width="4"
+     height="4"
+     fill="#f0b928"
+     id="rect13" /><rect
+     x="72"
+     y="16"
+     width="12"
+     height="4"
+     fill="#f5edd6"
+     id="rect14" /><rect
+     x="84"
+     y="16"
+     width="4"
+     height="4"
+     fill="#0a1832"
+     id="rect15" /><!-- Row 5: plain --><rect
+     x="8"
+     y="20"
+     width="4"
+     height="4"
+     fill="#0a1832"
+     id="rect16" /><rect
+     x="12"
+     y="20"
+     width="32"
+     height="4"
+     fill="#f5edd6"
+     id="rect17" /><rect
+     x="48"
+     y="20"
+     width="36"
+     height="4"
+     fill="#f5edd6"
+     id="rect19" /><rect
+     x="84"
+     y="20"
+     width="4"
+     height="4"
+     fill="#0a1832"
+     id="rect20" /><!-- Row 6: stars at col 7 and col 14 --><rect
+     x="8"
+     y="24"
+     width="4"
+     height="4"
+     fill="#0a1832"
+     id="rect21" /><rect
+     x="12"
+     y="24"
+     width="16"
+     height="4"
+     fill="#f5edd6"
+     id="rect22" /><rect
+     x="28"
+     y="24"
+     width="4"
+     height="4"
+     fill="#f0b928"
+     id="rect23" /><rect
+     x="32"
+     y="24"
+     width="12"
+     height="4"
+     fill="#f5edd6"
+     id="rect24" /><rect
+     x="48"
+     y="24"
+     width="8"
+     height="4"
+     fill="#f5edd6"
+     id="rect26" /><rect
+     x="56"
+     y="24"
+     width="4"
+     height="4"
+     fill="#f0b928"
+     id="rect27" /><rect
+     x="60"
+     y="24"
+     width="24"
+     height="4"
+     fill="#f5edd6"
+     id="rect28" /><rect
+     x="84"
+     y="24"
+     width="4"
+     height="4"
+     fill="#0a1832"
+     id="rect29" /><!-- Row 7: plain --><rect
+     x="8"
+     y="28"
+     width="4"
+     height="4"
+     fill="#0a1832"
+     id="rect30" /><rect
+     x="12"
+     y="28"
+     width="32"
+     height="4"
+     fill="#f5edd6"
+     id="rect31" /><rect
+     x="57"
+     y="31"
+     width="4"
+     height="4"
+     fill="#e88a1a"
+     id="rect32-1" /><rect
+     x="48"
+     y="28"
+     width="36"
+     height="4"
+     fill="#f5edd6"
+     id="rect33" /><rect
+     x="84"
+     y="28"
+     width="4"
+     height="4"
+     fill="#0a1832"
+     id="rect34" /><!-- Row 8: stars at col 9 and col 18 --><rect
+     x="8"
+     y="32"
+     width="4"
+     height="4"
+     fill="#0a1832"
+     id="rect35" /><rect
+     x="12"
+     y="32"
+     width="24"
+     height="4"
+     fill="#f5edd6"
+     id="rect36" /><rect
+     x="36"
+     y="32"
+     width="4"
+     height="4"
+     fill="#f0b928"
+     id="rect37" /><rect
+     x="40"
+     y="32"
+     width="4"
+     height="4"
+     fill="#f5edd6"
+     id="rect38" /><rect
+     x="48"
+     y="32"
+     width="24"
+     height="4"
+     fill="#f5edd6"
+     id="rect40" /><rect
+     x="72"
+     y="32"
+     width="4"
+     height="4"
+     fill="#f0b928"
+     id="rect41" /><rect
+     x="76"
+     y="32"
+     width="8"
+     height="4"
+     fill="#f5edd6"
+     id="rect42" /><rect
+     x="84"
+     y="32"
+     width="4"
+     height="4"
+     fill="#0a1832"
+     id="rect43" /><!-- Row 9: plain --><rect
+     x="8"
+     y="36"
+     width="4"
+     height="4"
+     fill="#0a1832"
+     id="rect44" /><rect
+     x="12"
+     y="36"
+     width="32"
+     height="4"
+     fill="#f5edd6"
+     id="rect45" /><rect
+     x="48"
+     y="36"
+     width="36"
+     height="4"
+     fill="#f5edd6"
+     id="rect47" /><rect
+     x="84"
+     y="36"
+     width="4"
+     height="4"
+     fill="#0a1832"
+     id="rect48" /><!-- Row 10: stars at col 5 and col 13 --><rect
+     x="8"
+     y="40"
+     width="4"
+     height="4"
+     fill="#0a1832"
+     id="rect49" /><rect
+     x="12"
+     y="40"
+     width="8"
+     height="4"
+     fill="#f5edd6"
+     id="rect50" /><rect
+     x="20"
+     y="40"
+     width="4"
+     height="4"
+     fill="#f0b928"
+     id="rect51" /><rect
+     x="24"
+     y="40"
+     width="20"
+     height="4"
+     fill="#f5edd6"
+     id="rect52" /><rect
+     x="48"
+     y="40"
+     width="4"
+     height="4"
+     fill="#f5edd6"
+     id="rect54" /><rect
+     x="52"
+     y="40"
+     width="4"
+     height="4"
+     fill="#f0b928"
+     id="rect55" /><rect
+     x="56"
+     y="40"
+     width="28"
+     height="4"
+     fill="#f5edd6"
+     id="rect56" /><rect
+     x="84"
+     y="40"
+     width="4"
+     height="4"
+     fill="#0a1832"
+     id="rect57" /><!-- Row 11: bottom page edge --><rect
+     x="8"
+     y="44"
+     width="36"
+     height="4"
+     fill="#0a1832"
+     id="rect58" /><rect
+     x="48"
+     y="44"
+     width="40"
+     height="4"
+     fill="#0a1832"
+     id="rect60" /><!-- Row 12: dark blue cover top --><rect
+     x="12"
+     y="48"
+     width="4"
+     height="4"
+     fill="#0a1832"
+     id="rect61" /><rect
+     x="16"
+     y="48"
+     width="28"
+     height="4"
+     fill="#0f2d5c"
+     id="rect62" /><rect
+     x="48"
+     y="48"
+     width="32"
+     height="4"
+     fill="#0f2d5c"
+     id="rect64" /><rect
+     x="80"
+     y="48"
+     width="4"
+     height="4"
+     fill="#0a1832"
+     id="rect65" /><!-- Row 13: dark blue cover bottom --><rect
+     x="12"
+     y="52"
+     width="4"
+     height="4"
+     fill="#0a1832"
+     id="rect66" /><rect
+     x="16"
+     y="52"
+     width="28"
+     height="4"
+     fill="#0f2d5c"
+     id="rect67" /><g
+     id="g71"
+     style="fill:#c6954b;fill-opacity:1"><rect
+       x="44"
+       y="12"
+       width="4"
+       height="4"
+       fill="#e88a1a"
+       id="rect4"
+       style="fill:#c6954b;fill-opacity:1" /><rect
+       x="44"
+       y="29"
+       width="4"
+       height="4"
+       fill="#e88a1a"
+       id="rect4-0"
+       style="fill:#c6954b;fill-opacity:1" /><rect
+       x="44"
+       y="16"
+       width="4"
+       height="4"
+       fill="#e88a1a"
+       id="rect11"
+       style="fill:#c6954b;fill-opacity:1" /><rect
+       x="44"
+       y="20"
+       width="4"
+       height="4"
+       fill="#e88a1a"
+       id="rect18"
+       style="fill:#c6954b;fill-opacity:1" /><rect
+       x="44"
+       y="24"
+       width="4"
+       height="4"
+       fill="#e88a1a"
+       id="rect25"
+       style="fill:#c6954b;fill-opacity:1" /><rect
+       x="44"
+       y="28"
+       width="4"
+       height="4"
+       fill="#e88a1a"
+       id="rect32"
+       style="fill:#c6954b;fill-opacity:1" /><rect
+       x="44"
+       y="32"
+       width="4"
+       height="4"
+       fill="#e88a1a"
+       id="rect39"
+       style="fill:#c6954b;fill-opacity:1" /><rect
+       x="44"
+       y="36"
+       width="4"
+       height="4"
+       fill="#e88a1a"
+       id="rect46"
+       style="fill:#c6954b;fill-opacity:1" /><rect
+       x="44"
+       y="40"
+       width="4"
+       height="4"
+       fill="#e88a1a"
+       id="rect53"
+       style="fill:#c6954b;fill-opacity:1" /><rect
+       x="44"
+       y="44"
+       width="4"
+       height="4"
+       fill="#e88a1a"
+       id="rect59"
+       style="fill:#c6954b;fill-opacity:1" /><rect
+       x="44"
+       y="48"
+       width="4"
+       height="4"
+       fill="#e88a1a"
+       id="rect63"
+       style="fill:#c6954b;fill-opacity:1" /><rect
+       x="44"
+       y="52"
+       width="4"
+       height="4"
+       fill="#e88a1a"
+       id="rect68"
+       style="fill:#c6954b;fill-opacity:1" /></g><rect
+     x="48"
+     y="52"
+     width="32"
+     height="4"
+     fill="#0f2d5c"
+     id="rect69" /><rect
+     x="80"
+     y="52"
+     width="4"
+     height="4"
+     fill="#0a1832"
+     id="rect70" /><!-- Row 14: cover base outline --><rect
+     x="16"
+     y="56"
+     width="64"
+     height="4"
+     fill="#0a1832"
+     id="rect71" /></svg>

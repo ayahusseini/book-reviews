@@ -1,5 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
+
+@font-face {
+    font-family: 'CC Red Alert';
+    src: url('../fonts/cc-red-alert.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
 
 
 /* ================================================================
@@ -15,11 +22,11 @@
 
     /* Text */
     --text:         oklch(0.95 0.02 80);    /* warm near-white, faint orange tint */
-    --text-muted:   oklch(0.53 0.02 265);
+    --text-muted:   #666c78;
     --text-quote:   oklch(89.497% 0.04513 101.758);
 
     /* Accent — warm orange */
-    --orange:       oklch(0.72 0.18 50);
+    --orange:       #fa7c1f;
     --orange-bright:oklch(0.82 0.16 60);
     --orange-dim:   oklch(0.55 0.14 50);
     --purple-dim:   rgb(99, 50, 80);
@@ -45,9 +52,10 @@
     --pixel-border: 2px solid var(--border);
 
     /* Fonts */
+    --display-font: 'CC Red Alert', 'Courier New', monospace;
     --heading-font: 'Libre Baskerville', serif;
     --body-font:    'Libre Baskerville', serif;
-    --mono-font:    'Roboto Mono', monospace;
+    --mono-font:    'Courier Prime', 'Courier New', monospace;
 }
 
 
@@ -72,7 +80,7 @@ body {
     font-family: var(--body-font);
     font-size: 1rem;
     line-height: 1.75;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='900'%3E%3Crect width='1200' height='900' fill='none'/%3E%3Ccircle cx='47' cy='23' r='0.8' fill='white' opacity='0.55'/%3E%3Ccircle cx='134' cy='67' r='0.6' fill='white' opacity='0.35'/%3E%3Ccircle cx='203' cy='11' r='1.0' fill='white' opacity='0.65'/%3E%3Ccircle cx='289' cy='44' r='0.7' fill='white' opacity='0.40'/%3E%3Ccircle cx='371' cy='19' r='0.6' fill='white' opacity='0.30'/%3E%3Ccircle cx='458' cy='82' r='0.9' fill='white' opacity='0.50'/%3E%3Ccircle cx='512' cy='31' r='0.6' fill='white' opacity='0.35'/%3E%3Ccircle cx='634' cy='14' r='1.1' fill='white' opacity='0.70'/%3E%3Ccircle cx='701' cy='58' r='0.7' fill='white' opacity='0.40'/%3E%3Ccircle cx='789' cy='27' r='0.6' fill='white' opacity='0.30'/%3E%3Ccircle cx='856' cy='73' r='0.8' fill='white' opacity='0.45'/%3E%3Ccircle cx='923' cy='8'  r='1.0' fill='white' opacity='0.60'/%3E%3Ccircle cx='1011' cy='41' r='0.6' fill='white' opacity='0.35'/%3E%3Ccircle cx='1089' cy='19' r='0.8' fill='white' opacity='0.50'/%3E%3Ccircle cx='1156' cy='64' r='0.7' fill='white' opacity='0.38'/%3E%3Ccircle cx='78'  cy='142' r='0.7' fill='white' opacity='0.40'/%3E%3Ccircle cx='167' cy='118' r='1.0' fill='white' opacity='0.60'/%3E%3Ccircle cx='251' cy='155' r='0.6' fill='white' opacity='0.30'/%3E%3Ccircle cx='344' cy='131' r='0.8' fill='white' opacity='0.48'/%3E%3Ccircle cx='419' cy='163' r='0.6' fill='white' opacity='0.32'/%3E%3Ccircle cx='503' cy='109' r='1.1' fill='white' opacity='0.65'/%3E%3Ccircle cx='588' cy='147' r='0.7' fill='white' opacity='0.38'/%3E%3Ccircle cx='672' cy='121' r='0.6' fill='white' opacity='0.28'/%3E%3Ccircle cx='745' cy='158' r='0.9' fill='white' opacity='0.52'/%3E%3Ccircle cx='831' cy='112' r='0.6' fill='white' opacity='0.33'/%3E%3Ccircle cx='914' cy='149' r='0.8' fill='white' opacity='0.44'/%3E%3Ccircle cx='998' cy='126' r='1.0' fill='white' opacity='0.58'/%3E%3Ccircle cx='1072' cy='161' r='0.6' fill='white' opacity='0.30'/%3E%3Ccircle cx='1143' cy='138' r='0.7' fill='white' opacity='0.42'/%3E%3Ccircle cx='31'  cy='231' r='0.6' fill='white' opacity='0.28'/%3E%3Ccircle cx='119' cy='208' r='0.9' fill='white' opacity='0.50'/%3E%3Ccircle cx='214' cy='244' r='0.7' fill='white' opacity='0.38'/%3E%3Ccircle cx='302' cy='219' r='1.1' fill='white' opacity='0.68'/%3E%3Ccircle cx='387' cy='252' r='0.6' fill='white' opacity='0.30'/%3E%3Ccircle cx='463' cy='213' r='0.8' fill='white' opacity='0.46'/%3E%3Ccircle cx='549' cy='238' r='0.6' fill='white' opacity='0.32'/%3E%3Ccircle cx='621' cy='201' r='1.0' fill='white' opacity='0.60'/%3E%3Ccircle cx='718' cy='247' r='0.7' fill='white' opacity='0.36'/%3E%3Ccircle cx='793' cy='222' r='0.6' fill='white' opacity='0.28'/%3E%3Ccircle cx='878' cy='255' r='0.9' fill='white' opacity='0.52'/%3E%3Ccircle cx='961' cy='209' r='0.6' fill='white' opacity='0.34'/%3E%3Ccircle cx='1038' cy='241' r='0.8' fill='white' opacity='0.44'/%3E%3Ccircle cx='1121' cy='217' r='1.0' fill='white' opacity='0.62'/%3E%3Ccircle cx='64'  cy='318' r='0.8' fill='white' opacity='0.44'/%3E%3Ccircle cx='153' cy='341' r='0.6' fill='white' opacity='0.30'/%3E%3Ccircle cx='237' cy='307' r='1.0' fill='white' opacity='0.58'/%3E%3Ccircle cx='328' cy='335' r='0.7' fill='white' opacity='0.38'/%3E%3Ccircle cx='411' cy='312' r='0.6' fill='white' opacity='0.28'/%3E%3Ccircle cx='496' cy='348' r='0.9' fill='white' opacity='0.50'/%3E%3Ccircle cx='572' cy='321' r='0.6' fill='white' opacity='0.32'/%3E%3Ccircle cx='658' cy='344' r='1.1' fill='white' opacity='0.66'/%3E%3Ccircle cx='734' cy='309' r='0.7' fill='white' opacity='0.40'/%3E%3Ccircle cx='819' cy='337' r='0.6' fill='white' opacity='0.28'/%3E%3Ccircle cx='904' cy='315' r='0.8' fill='white' opacity='0.46'/%3E%3Ccircle cx='987' cy='350' r='0.6' fill='white' opacity='0.30'/%3E%3Ccircle cx='1054' cy='326' r='1.0' fill='white' opacity='0.60'/%3E%3Ccircle cx='1138' cy='342' r='0.7' fill='white' opacity='0.36'/%3E%3Ccircle cx='22'  cy='421' r='0.7' fill='white' opacity='0.38'/%3E%3Ccircle cx='108' cy='447' r='1.0' fill='white' opacity='0.56'/%3E%3Ccircle cx='191' cy='408' r='0.6' fill='white' opacity='0.28'/%3E%3Ccircle cx='276' cy='434' r='0.8' fill='white' opacity='0.44'/%3E%3Ccircle cx='362' cy='412' r='0.6' fill='white' opacity='0.30'/%3E%3Ccircle cx='445' cy='449' r='1.1' fill='white' opacity='0.64'/%3E%3Ccircle cx='531' cy='423' r='0.7' fill='white' opacity='0.38'/%3E%3Ccircle cx='614' cy='445' r='0.6' fill='white' opacity='0.26'/%3E%3Ccircle cx='698' cy='416' r='0.9' fill='white' opacity='0.50'/%3E%3Ccircle cx='774' cy='441' r='0.6' fill='white' opacity='0.30'/%3E%3Ccircle cx='859' cy='419' r='0.8' fill='white' opacity='0.44'/%3E%3Ccircle cx='942' cy='452' r='1.0' fill='white' opacity='0.58'/%3E%3Ccircle cx='1018' cy='427' r='0.6' fill='white' opacity='0.30'/%3E%3Ccircle cx='1097' cy='443' r='0.7' fill='white' opacity='0.36'/%3E%3Ccircle cx='1171' cy='411' r='0.8' fill='white' opacity='0.42'/%3E%3Ccircle cx='55'  cy='524' r='0.6' fill='white' opacity='0.28'/%3E%3Ccircle cx='141' cy='508' r='0.9' fill='white' opacity='0.50'/%3E%3Ccircle cx='229' cy='537' r='0.7' fill='white' opacity='0.36'/%3E%3Ccircle cx='315' cy='512' r='1.0' fill='white' opacity='0.60'/%3E%3Ccircle cx='399' cy='541' r='0.6' fill='white' opacity='0.28'/%3E%3Ccircle cx='484' cy='519' r='0.8' fill='white' opacity='0.44'/%3E%3Ccircle cx='568' cy='534' r='0.6' fill='white' opacity='0.30'/%3E%3Ccircle cx='653' cy='506' r='1.1' fill='white' opacity='0.64'/%3E%3Ccircle cx='737' cy='528' r='0.7' fill='white' opacity='0.38'/%3E%3Ccircle cx='822' cy='513' r='0.6' fill='white' opacity='0.26'/%3E%3Ccircle cx='907' cy='539' r='0.9' fill='white' opacity='0.50'/%3E%3Ccircle cx='991' cy='517' r='0.6' fill='white' opacity='0.30'/%3E%3Ccircle cx='1063' cy='532' r='0.8' fill='white' opacity='0.44'/%3E%3Ccircle cx='1148' cy='509' r='1.0' fill='white' opacity='0.58'/%3E%3Ccircle cx='89'  cy='613' r='0.8' fill='white' opacity='0.44'/%3E%3Ccircle cx='178' cy='638' r='0.6' fill='white' opacity='0.28'/%3E%3Ccircle cx='262' cy='601' r='1.1' fill='white' opacity='0.66'/%3E%3Ccircle cx='349' cy='625' r='0.7' fill='white' opacity='0.36'/%3E%3Ccircle cx='434' cy='608' r='0.6' fill='white' opacity='0.28'/%3E%3Ccircle cx='519' cy='641' r='0.9' fill='white' opacity='0.50'/%3E%3Ccircle cx='603' cy='619' r='0.6' fill='white' opacity='0.30'/%3E%3Ccircle cx='688' cy='637' r='0.8' fill='white' opacity='0.44'/%3E%3Ccircle cx='771' cy='604' r='1.0' fill='white' opacity='0.58'/%3E%3Ccircle cx='855' cy='628' r='0.6' fill='white' opacity='0.28'/%3E%3Ccircle cx='939' cy='614' r='0.7' fill='white' opacity='0.38'/%3E%3Ccircle cx='1024' cy='639' r='1.1' fill='white' opacity='0.64'/%3E%3Ccircle cx='1108' cy='617' r='0.6' fill='white' opacity='0.28'/%3E%3Ccircle cx='1183' cy='632' r='0.8' fill='white' opacity='0.42'/%3E%3Ccircle cx='43'  cy='718' r='0.6' fill='white' opacity='0.28'/%3E%3Ccircle cx='127' cy='741' r='1.0' fill='white' opacity='0.56'/%3E%3Ccircle cx='212' cy='707' r='0.7' fill='white' opacity='0.36'/%3E%3Ccircle cx='298' cy='729' r='0.6' fill='white' opacity='0.26'/%3E%3Ccircle cx='383' cy='714' r='0.9' fill='white' opacity='0.48'/%3E%3Ccircle cx='467' cy='742' r='0.6' fill='white' opacity='0.28'/%3E%3Ccircle cx='552' cy='721' r='1.1' fill='white' opacity='0.62'/%3E%3Ccircle cx='636' cy='738' r='0.7' fill='white' opacity='0.36'/%3E%3Ccircle cx='721' cy='709' r='0.6' fill='white' opacity='0.26'/%3E%3Ccircle cx='806' cy='731' r='0.8' fill='white' opacity='0.44'/%3E%3Ccircle cx='890' cy='716' r='0.6' fill='white' opacity='0.28'/%3E%3Ccircle cx='975' cy='743' r='1.0' fill='white' opacity='0.56'/%3E%3Ccircle cx='1059' cy='722' r='0.7' fill='white' opacity='0.34'/%3E%3Ccircle cx='1144' cy='737' r='0.6' fill='white' opacity='0.28'/%3E%3Ccircle cx='74'  cy='812' r='0.9' fill='white' opacity='0.48'/%3E%3Ccircle cx='159' cy='838' r='0.6' fill='white' opacity='0.28'/%3E%3Ccircle cx='244' cy='817' r='0.7' fill='white' opacity='0.36'/%3E%3Ccircle cx='331' cy='841' r='1.0' fill='white' opacity='0.58'/%3E%3Ccircle cx='416' cy='819' r='0.6' fill='white' opacity='0.26'/%3E%3Ccircle cx='501' cy='843' r='0.8' fill='white' opacity='0.44'/%3E%3Ccircle cx='587' cy='824' r='0.6' fill='white' opacity='0.28'/%3E%3Ccircle cx='672' cy='839' r='1.1' fill='white' opacity='0.60'/%3E%3Ccircle cx='758' cy='811' r='0.7' fill='white' opacity='0.34'/%3E%3Ccircle cx='843' cy='836' r='0.6' fill='white' opacity='0.26'/%3E%3Ccircle cx='928' cy='818' r='0.9' fill='white' opacity='0.48'/%3E%3Ccircle cx='1013' cy='842' r='0.6' fill='white' opacity='0.28'/%3E%3Ccircle cx='1098' cy='827' r='0.8' fill='white' opacity='0.42'/%3E%3Ccircle cx='1174' cy='843' r='0.7' fill='white' opacity='0.36'/%3E%3C/svg%3E");
+    background-image: url("../img/stars_bg.svg");
     background-repeat: repeat;
     background-size: 1200px 900px;
     background-attachment: fixed;
@@ -213,8 +221,11 @@ nav .nav-text {
 }
 
 nav h1 {
-    font-size: clamp(1.6rem, 2.5vw, 2.4rem);
+    font-family: var(--display-font);
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    font-weight: normal;
     line-height: 1.1;
+    letter-spacing: 0.04em;
     margin: 0;
 }
 
@@ -228,12 +239,14 @@ nav .nav-links {
 }
 
 nav a {
-    font-family: var(--mono-font);
-    font-size: 0.9rem;
+    font-family: var(--display-font);
+    font-size: 0.82rem;
+    font-weight: normal;
     text-decoration: none;
     color: var(--text-muted);
     padding: 0.1rem 0.3rem;
-    border-radius: 3px;
+    letter-spacing: 0.05em;
+    transition: color 0.12s;
 }
 
 nav a:hover { color: var(--orange-bright); }
@@ -254,10 +267,10 @@ h1 {
 }
 
 h2 {
-    font-family: var(--heading-font);
-    font-size: clamp(1.3rem, 3.5vw, 1.7rem);
-    font-weight: 700;
-    letter-spacing: -0.01em;
+    font-family: var(--display-font);
+    font-size: clamp(1.7rem, 4vw, 2.4rem);
+    font-weight: normal;
+    letter-spacing: 0.03em;
     color: var(--orange-bright);
     margin-top: 1.5rem;
     margin-bottom: 0.75rem;
@@ -265,14 +278,29 @@ h2 {
 
 /* Section labels — "2026", "Previously Read" */
 h3 {
-    font-family: var(--mono-font);
-    font-size: 0.68rem;
-    font-weight: 700;
+    font-family: var(--display-font);
+    font-size: 0.82rem;
+    font-weight: normal;
     text-transform: uppercase;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.12em;
     color: var(--orange-dim);
-    margin-top: 1.6rem;
-    margin-bottom: 0.65rem;
+    margin-top: 1.8rem;
+    margin-bottom: 0.7rem;
+}
+
+h3::before {
+    content: '>';
+    display: inline-block;
+    margin-right: 0.45em;
+    letter-spacing: 0;
+    color: var(--orange-dim);
+    opacity: 0.7;
+}
+
+/* Remove marker from post titles and markdown headings */
+h3.post-title::before,
+.markdown-body h3::before {
+    content: none;
 }
 
 /* Markdown article headings */
@@ -281,27 +309,31 @@ h3 {
 }
 
 .markdown-body h2 {
-    font-size: 1.3rem;
+    font-family: var(--display-font);
+    font-size: 1.5rem;
+    font-weight: normal;
+    letter-spacing: 0.03em;
     margin-top: 1.6rem;
     border-bottom: none;
     color: var(--orange-bright);
 }
 
 .markdown-body h3 {
-    font-family: var(--heading-font);
-    font-size: 1rem;
-    font-weight: 700;
+    font-family: var(--display-font);
+    font-size: 1.1rem;
+    font-weight: normal;
     text-transform: none;
-    letter-spacing: 0;
+    letter-spacing: 0.03em;
     color: var(--orange);
     margin-top: 1.1rem;
     margin-bottom: 0.3rem;
 }
 
 .markdown-body h4 {
-    font-family: var(--heading-font);
-    font-size: 0.9rem;
-    font-weight: 700;
+    font-family: var(--display-font);
+    font-size: 0.95rem;
+    font-weight: normal;
+    letter-spacing: 0.03em;
     color: var(--orange-dim);
     margin-top: 0.9rem;
     margin-bottom: 0.25rem;
@@ -336,30 +368,41 @@ h3 {
 /* Refresh button */
 .quote-refresh-btn,
 .quote-refresh-btn--mobile {
-    background: none;
-    border: none;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.45rem 0.6rem;
+    width: fit-content;
+    margin-bottom: 0.75rem;
+    background: var(--bg-elevated);
+    border: 2px solid var(--border);
     cursor: pointer;
-    padding: 0;
-    line-height: 0;
-    text-align: center;
-    margin-bottom: 0.6rem;
-    width: 100%;
-    display: block;
+    font-family: var(--display-font);
+    font-size: 0.72rem;
+    font-weight: normal;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    text-align: left;
+    transition: border-color 0.15s, color 0.15s;
 }
 
-.quote-refresh-btn .randomise-icon {
-    width: 100%;
-    max-width: 190px;
-    height: auto;
-    display: block;
-    margin: 0 auto;
-    opacity: 0.70;
-    transition: opacity 0.2s ease, transform 0.15s ease;
+.quote-refresh-btn:hover,
+.quote-refresh-btn--mobile:hover {
+    border-color: var(--text-muted);
+    color: var(--text);
 }
 
-.quote-refresh-btn:hover .randomise-icon {
-    opacity: 1;
-    transform: scale(1.04);
+.quote-refresh-btn .randomise-icon,
+.quote-refresh-btn--mobile .randomise-icon-mobile {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+.randomise-label {
+    line-height: 1;
 }
 
 /* Mobile slot: hidden by default; shown only on small screens */
@@ -373,20 +416,6 @@ h3 {
 }
 
 
-.quote-refresh-btn--mobile .randomise-icon-mobile {
-    width: 100%;
-    max-width: 190px;
-    height: auto;
-    display: block;
-    margin: 0 auto;
-    opacity: 0.70;
-    transition: opacity 0.2s ease, transform 0.15s ease;
-}
-
-.quote-refresh-btn--mobile:hover .randomise-icon-mobile {
-    opacity: 1;
-    transform: scale(1.04);
-}
 
 
 /* ================================================================
@@ -400,8 +429,8 @@ h3 {
 }
 
 .book-list__item::marker {
-    color: oklch(0.42 0.05 268);
-    font-size: 0.85em;
+    color: var(--orange-dim);
+    font-size: 0.75em;
 }
 
 .book-list__item {
@@ -436,7 +465,7 @@ h3 {
 .book-list__author::before {
     content: '—';
     margin-right: 0.3em;
-    opacity: 0.45;
+    opacity: 0.35;
 }
 
 .book-list__tags {
@@ -462,12 +491,12 @@ h3 {
 }
 
 .book-header__title {
-    font-family: var(--heading-font);
-    font-size: clamp(1.4rem, 4vw, 2.1rem);
-    font-weight: 700;
-    letter-spacing: -0.02em;
+    font-family: var(--display-font);
+    font-size: clamp(1.7rem, 4.5vw, 2.6rem);
+    font-weight: normal;
+    letter-spacing: 0.03em;
     color: var(--orange-bright);
-    line-height: 1.15;
+    line-height: 1.2;
 }
 
 .book-header__author {
@@ -490,16 +519,22 @@ h3 {
 
 .tag {
     font-family: var(--mono-font);
-    font-size: 0.60rem;
+    font-size: 0.64rem;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.07em;
     text-transform: uppercase;
-    padding: 0.1rem 0.4rem;
+    padding: 0.15rem 0.5rem;
     border-radius: 0;
     border: 1px solid var(--orange-dim);
     color: var(--orange-dim);
-    background: var(--bg);
+    background: transparent;
     white-space: nowrap;
+    opacity: 0.85;
+    transition: opacity 0.12s, border-color 0.12s;
+}
+
+.tag:hover {
+    opacity: 1;
 }
 
 
@@ -517,10 +552,7 @@ h3 {
     top: -1px;
 }
 
-.star svg       { width: 11px; height: 11px; }
-.star.full svg  { fill: var(--gold); }
-.star.half svg  { fill: var(--gold); }
-.star.empty svg { fill: oklch(35.959% 0.08497 274.361); }
+.star { width: 11px; height: 11px; display: inline-block; }
 
 
 /* ================================================================
@@ -559,11 +591,11 @@ h3.post-title,
     align-items: center;
     gap: 0.5rem;
     flex-wrap: wrap;
-    font-family: var(--heading-font);
-    font-size: 1.45rem;
-    font-weight: 700;
+    font-family: var(--display-font);
+    font-size: 1.55rem;
+    font-weight: normal;
     text-transform: none;
-    letter-spacing: -0.01em;
+    letter-spacing: 0.03em;
     color: var(--link) !important;
     margin-top: 0;
     margin-bottom: 0.2rem;
@@ -803,8 +835,8 @@ p code {
 
 /* Pixel art seedling new-book indicator */
 .seedling-icon {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     vertical-align: middle;
     position: relative;
     top: -1px;
@@ -823,10 +855,10 @@ p code {
     border: 2px solid #7d4e2e;
     background: #1c0d06;
     color: #c8956c;
-    font-family: var(--mono-font);
-    font-size: 0.70rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
+    font-family: var(--display-font);
+    font-size: 0.72rem;
+    font-weight: normal;
+    letter-spacing: 0.06em;
     text-decoration: none;
     cursor: pointer;
     transition: border-color 0.15s, color 0.15s, background 0.15s;
@@ -894,6 +926,17 @@ nav {
 
 p code {
     border-radius: 0;
+}
+
+/* ----------------------------------------------------------------
+   ABOUT PAGE AVATAR
+   ---------------------------------------------------------------- */
+
+.about-avatar {
+    display: block;
+    height: clamp(100px, 14vw, 140px);
+    width: auto;
+    margin-bottom: 1.25rem;
 }
 
 /* ----------------------------------------------------------------

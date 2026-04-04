@@ -21,27 +21,8 @@
                 {% if random_quote %}
                     <div class="quote-widget sidebar-widget sidebar-widget--quote">
                         <button class="quote-refresh-btn" id="refresh-quote" aria-label="Refresh quote">
-                            <svg class="randomise-icon pixel-art" viewBox="0 0 200 44" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
-                                <!-- outer border -->
-                                <rect x="0" y="0" width="200" height="4" fill="#0a1832"/>
-                                <rect x="0" y="40" width="200" height="4" fill="#0a1832"/>
-                                <rect x="0" y="4" width="4" height="36" fill="#0a1832"/>
-                                <rect x="196" y="4" width="4" height="36" fill="#0a1832"/>
-                                <!-- sign body -->
-                                <rect x="4" y="4" width="192" height="36" fill="#1a3865"/>
-                                <!-- dice section: slightly lighter blue -->
-                                <rect x="4" y="4" width="40" height="36" fill="#1a4a8a"/>
-                                <!-- 5-pip dice — orange pips centred in the 40px section -->
-                                <rect x="14" y="14" width="4" height="4" fill="#e88a1a"/>
-                                <rect x="26" y="14" width="4" height="4" fill="#e88a1a"/>
-                                <rect x="20" y="20" width="4" height="4" fill="#e88a1a"/>
-                                <rect x="14" y="26" width="4" height="4" fill="#e88a1a"/>
-                                <rect x="26" y="26" width="4" height="4" fill="#e88a1a"/>
-                                <!-- orange divider -->
-                                <rect x="44" y="6" width="2" height="32" fill="#e88a1a"/>
-                                <!-- RANDOMISE label -->
-                                <text x="122" y="23" font-family="'Roboto Mono','Courier New',monospace" font-size="13" font-weight="700" fill="#e88a1a" text-anchor="middle" dominant-baseline="middle" letter-spacing="1">RANDOMISE</text>
-                            </svg>
+                            <img src="{{ url_for('static', filename='img/randomise_pixel.svg') }}" alt="" class="randomise-icon pixel-art">
+                            <span class="randomise-label">randomise</span>
                         </button>
                         <blockquote class="quote-text" id="quote-content">
                             {{ random_quote_html | safe }}
@@ -86,27 +67,8 @@
                     <div class="quote-widget-mobile-slot">
                         <div class="quote-widget quote-widget--mobile sidebar-widget--quote">
                             <button class="quote-refresh-btn--mobile" id="refresh-quote-mobile" aria-label="Refresh quote">
-                                <svg class="randomise-icon-mobile pixel-art" viewBox="0 0 200 44" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
-                                    <!-- outer border -->
-                                    <rect x="0" y="0" width="200" height="4" fill="#0a1832"/>
-                                    <rect x="0" y="40" width="200" height="4" fill="#0a1832"/>
-                                    <rect x="0" y="4" width="4" height="36" fill="#0a1832"/>
-                                    <rect x="196" y="4" width="4" height="36" fill="#0a1832"/>
-                                    <!-- sign body -->
-                                    <rect x="4" y="4" width="192" height="36" fill="#1a3865"/>
-                                    <!-- dice section -->
-                                    <rect x="4" y="4" width="40" height="36" fill="#1a4a8a"/>
-                                    <!-- 5-pip dice -->
-                                    <rect x="14" y="14" width="4" height="4" fill="#e88a1a"/>
-                                    <rect x="26" y="14" width="4" height="4" fill="#e88a1a"/>
-                                    <rect x="20" y="20" width="4" height="4" fill="#e88a1a"/>
-                                    <rect x="14" y="26" width="4" height="4" fill="#e88a1a"/>
-                                    <rect x="26" y="26" width="4" height="4" fill="#e88a1a"/>
-                                    <!-- orange divider -->
-                                    <rect x="44" y="6" width="2" height="32" fill="#e88a1a"/>
-                                    <!-- RANDOMISE label -->
-                                    <text x="122" y="23" font-family="'Roboto Mono','Courier New',monospace" font-size="13" font-weight="700" fill="#e88a1a" text-anchor="middle" dominant-baseline="middle" letter-spacing="1">RANDOMISE</text>
-                                </svg>
+                                <img src="{{ url_for('static', filename='img/randomise_pixel.svg') }}" alt="" class="randomise-icon-mobile pixel-art">
+                                <span class="randomise-label">randomise</span>
                             </button>
                             <blockquote class="quote-text" id="quote-content-mobile">
                                 {{ random_quote_html | safe }}

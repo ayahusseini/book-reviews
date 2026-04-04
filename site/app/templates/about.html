@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 
 {% block main_content %}
-    <p>👋 Hi! My Name's Aya. I'm a dead beat physicist, currently working as a Data Scientist. I love programming - specifically wrangling with a complex system using language.
+    <img src="{{ url_for('static', filename='img/waving_woman.svg') }}" alt="Waving woman" class="pixel-art about-avatar">
+    <p>Hi! My Name's Aya. I'm a dead beat physicist, currently working as a Data Scientist. I love programming - specifically wrangling with a complex system using language.
         That is to say, I also love reading. I created this website to document book reviews. I wanted to do this for a few reasons:
         <ul>
             <li>To fight the <a href="https://en.wikipedia.org/wiki/Forgetting_curve">Ebbinghaus Forgetting Curve</a>: I often find myself saying that Cat's Cradle is my favourite book, and that its had this great big influence on me. Unfortunately I read it when I was 19, so I also find myself not being able to say a single thing about it.</li>
