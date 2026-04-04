@@ -197,11 +197,10 @@ nav .nav-container {
 
 nav .nav-logo {
     flex-shrink: 0;
-    width: clamp(80px, 10vw, 96px);
+    width: clamp(80px, 9vw, 96px);
     height: auto;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
-    margin-right: 0.25rem;
 }
 
 nav .nav-text {
@@ -349,19 +348,18 @@ h3 {
 }
 
 .quote-refresh-btn .randomise-icon {
-    width: 36px;
-    height: 36px;
+    width: 100%;
+    max-width: 160px;
+    height: auto;
     display: block;
     margin: 0 auto;
-    opacity: 0.65;
+    opacity: 0.70;
     transition: opacity 0.2s ease, transform 0.15s ease;
-    image-rendering: pixelated;
-    image-rendering: crisp-edges;
 }
 
 .quote-refresh-btn:hover .randomise-icon {
     opacity: 1;
-    transform: scale(1.1);
+    transform: scale(1.04);
 }
 
 /* Mobile slot: hidden by default; shown only on small screens */
@@ -376,19 +374,18 @@ h3 {
 
 
 .quote-refresh-btn--mobile .randomise-icon-mobile {
-    width: 36px;
-    height: 36px;
+    width: 100%;
+    max-width: 160px;
+    height: auto;
     display: block;
     margin: 0 auto;
-    opacity: 0.65;
+    opacity: 0.70;
     transition: opacity 0.2s ease, transform 0.15s ease;
-    image-rendering: pixelated;
-    image-rendering: crisp-edges;
 }
 
 .quote-refresh-btn--mobile:hover .randomise-icon-mobile {
     opacity: 1;
-    transform: scale(1.1);
+    transform: scale(1.04);
 }
 
 
@@ -754,6 +751,12 @@ p code {
         display: none;
     }
 
+    /* Coffee button: completely hidden on mobile (sidebar is hidden, belt-and-braces) */
+    .sidebar-coffee,
+    .coffee-btn {
+        display: none !important;
+    }
+
     /* Reflow sidebar meta inline since sidebar is hidden */
     .sidebar-meta {
         display: flex;
@@ -817,9 +820,9 @@ p code {
     align-items: center;
     gap: 0.55rem;
     padding: 0.55rem 0.75rem;
-    border: 2px solid var(--orange-dim);
-    background: var(--bg-quote);
-    color: var(--orange);
+    border: 2px solid #7d4e2e;
+    background: #1c0d06;
+    color: #c8956c;
     font-family: var(--mono-font);
     font-size: 0.70rem;
     font-weight: 700;
@@ -833,9 +836,9 @@ p code {
 }
 
 .coffee-btn:hover {
-    border-color: var(--orange-bright);
-    color: var(--orange-bright);
-    background: var(--bg-elevated);
+    border-color: #b87333;
+    color: #d4a574;
+    background: #251008;
 }
 
 .coffee-btn__icon {

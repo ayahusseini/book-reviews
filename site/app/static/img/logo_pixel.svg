@@ -1,29 +1,87 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 72" shape-rendering="crispEdges">
-  <!-- Pixel art closed book: portrait orientation -->
-  <!-- Outline: top, bottom, left, right -->
-  <rect x="4" y="0" width="52" height="4" fill="#0a1832"/>
-  <rect x="4" y="68" width="52" height="4" fill="#0a1832"/>
-  <rect x="4" y="4" width="4" height="64" fill="#0a1832"/>
-  <rect x="56" y="4" width="4" height="64" fill="#0a1832"/>
-  <!-- Spine highlight (bright edge) -->
-  <rect x="8" y="4" width="4" height="64" fill="#f0b928"/>
-  <!-- Spine main (orange) -->
-  <rect x="12" y="4" width="4" height="64" fill="#e88a1a"/>
-  <!-- Cover (dark blue) -->
-  <rect x="16" y="4" width="36" height="64" fill="#1a3865"/>
-  <!-- Pages visible on right edge (cream) -->
-  <rect x="52" y="4" width="4" height="64" fill="#f5edd6"/>
-  <!-- Cover: top decoration band -->
-  <rect x="18" y="6" width="32" height="4" fill="#2d5f9e"/>
-  <!-- Cover: bottom decoration band -->
-  <rect x="18" y="62" width="32" height="4" fill="#2d5f9e"/>
-  <!-- Cover: title block -->
-  <rect x="22" y="18" width="24" height="6" fill="#2d6cbf"/>
-  <rect x="22" y="26" width="24" height="4" fill="#2d6cbf"/>
-  <!-- Cover: author line (shorter, dimmer) -->
-  <rect x="24" y="34" width="18" height="3" fill="#1e4a80"/>
-  <!-- Cover: star decoration -->
-  <rect x="26" y="44" width="4" height="4" fill="#f0b928"/>
-  <rect x="32" y="44" width="4" height="4" fill="#f0b928"/>
-  <rect x="38" y="44" width="4" height="4" fill="#f0b928"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 64" shape-rendering="crispEdges">
+  <!-- Open book: cream pages with gold stars, orange spine, dark blue cover base -->
+  <!-- Row 2: top page edge -->
+  <rect x="8" y="8" width="80" height="4" fill="#0a1832"/>
+  <!-- Row 3: page interior top row -->
+  <rect x="8" y="12" width="4" height="4" fill="#0a1832"/>
+  <rect x="12" y="12" width="32" height="4" fill="#f5edd6"/>
+  <rect x="44" y="12" width="4" height="4" fill="#e88a1a"/>
+  <rect x="48" y="12" width="36" height="4" fill="#f5edd6"/>
+  <rect x="84" y="12" width="4" height="4" fill="#0a1832"/>
+  <!-- Row 4: stars at col 4 and col 17 -->
+  <rect x="8" y="16" width="4" height="4" fill="#0a1832"/>
+  <rect x="12" y="16" width="4" height="4" fill="#f5edd6"/>
+  <rect x="16" y="16" width="4" height="4" fill="#f0b928"/>
+  <rect x="20" y="16" width="24" height="4" fill="#f5edd6"/>
+  <rect x="44" y="16" width="4" height="4" fill="#e88a1a"/>
+  <rect x="48" y="16" width="20" height="4" fill="#f5edd6"/>
+  <rect x="68" y="16" width="4" height="4" fill="#f0b928"/>
+  <rect x="72" y="16" width="12" height="4" fill="#f5edd6"/>
+  <rect x="84" y="16" width="4" height="4" fill="#0a1832"/>
+  <!-- Row 5: plain -->
+  <rect x="8" y="20" width="4" height="4" fill="#0a1832"/>
+  <rect x="12" y="20" width="32" height="4" fill="#f5edd6"/>
+  <rect x="44" y="20" width="4" height="4" fill="#e88a1a"/>
+  <rect x="48" y="20" width="36" height="4" fill="#f5edd6"/>
+  <rect x="84" y="20" width="4" height="4" fill="#0a1832"/>
+  <!-- Row 6: stars at col 7 and col 14 -->
+  <rect x="8" y="24" width="4" height="4" fill="#0a1832"/>
+  <rect x="12" y="24" width="16" height="4" fill="#f5edd6"/>
+  <rect x="28" y="24" width="4" height="4" fill="#f0b928"/>
+  <rect x="32" y="24" width="12" height="4" fill="#f5edd6"/>
+  <rect x="44" y="24" width="4" height="4" fill="#e88a1a"/>
+  <rect x="48" y="24" width="8" height="4" fill="#f5edd6"/>
+  <rect x="56" y="24" width="4" height="4" fill="#f0b928"/>
+  <rect x="60" y="24" width="24" height="4" fill="#f5edd6"/>
+  <rect x="84" y="24" width="4" height="4" fill="#0a1832"/>
+  <!-- Row 7: plain -->
+  <rect x="8" y="28" width="4" height="4" fill="#0a1832"/>
+  <rect x="12" y="28" width="32" height="4" fill="#f5edd6"/>
+  <rect x="44" y="28" width="4" height="4" fill="#e88a1a"/>
+  <rect x="48" y="28" width="36" height="4" fill="#f5edd6"/>
+  <rect x="84" y="28" width="4" height="4" fill="#0a1832"/>
+  <!-- Row 8: stars at col 9 and col 18 -->
+  <rect x="8" y="32" width="4" height="4" fill="#0a1832"/>
+  <rect x="12" y="32" width="24" height="4" fill="#f5edd6"/>
+  <rect x="36" y="32" width="4" height="4" fill="#f0b928"/>
+  <rect x="40" y="32" width="4" height="4" fill="#f5edd6"/>
+  <rect x="44" y="32" width="4" height="4" fill="#e88a1a"/>
+  <rect x="48" y="32" width="24" height="4" fill="#f5edd6"/>
+  <rect x="72" y="32" width="4" height="4" fill="#f0b928"/>
+  <rect x="76" y="32" width="8" height="4" fill="#f5edd6"/>
+  <rect x="84" y="32" width="4" height="4" fill="#0a1832"/>
+  <!-- Row 9: plain -->
+  <rect x="8" y="36" width="4" height="4" fill="#0a1832"/>
+  <rect x="12" y="36" width="32" height="4" fill="#f5edd6"/>
+  <rect x="44" y="36" width="4" height="4" fill="#e88a1a"/>
+  <rect x="48" y="36" width="36" height="4" fill="#f5edd6"/>
+  <rect x="84" y="36" width="4" height="4" fill="#0a1832"/>
+  <!-- Row 10: stars at col 5 and col 13 -->
+  <rect x="8" y="40" width="4" height="4" fill="#0a1832"/>
+  <rect x="12" y="40" width="8" height="4" fill="#f5edd6"/>
+  <rect x="20" y="40" width="4" height="4" fill="#f0b928"/>
+  <rect x="24" y="40" width="20" height="4" fill="#f5edd6"/>
+  <rect x="44" y="40" width="4" height="4" fill="#e88a1a"/>
+  <rect x="48" y="40" width="4" height="4" fill="#f5edd6"/>
+  <rect x="52" y="40" width="4" height="4" fill="#f0b928"/>
+  <rect x="56" y="40" width="28" height="4" fill="#f5edd6"/>
+  <rect x="84" y="40" width="4" height="4" fill="#0a1832"/>
+  <!-- Row 11: bottom page edge -->
+  <rect x="8" y="44" width="36" height="4" fill="#0a1832"/>
+  <rect x="44" y="44" width="4" height="4" fill="#e88a1a"/>
+  <rect x="48" y="44" width="40" height="4" fill="#0a1832"/>
+  <!-- Row 12: dark blue cover top -->
+  <rect x="12" y="48" width="4" height="4" fill="#0a1832"/>
+  <rect x="16" y="48" width="28" height="4" fill="#0f2d5c"/>
+  <rect x="44" y="48" width="4" height="4" fill="#e88a1a"/>
+  <rect x="48" y="48" width="32" height="4" fill="#0f2d5c"/>
+  <rect x="80" y="48" width="4" height="4" fill="#0a1832"/>
+  <!-- Row 13: dark blue cover bottom -->
+  <rect x="12" y="52" width="4" height="4" fill="#0a1832"/>
+  <rect x="16" y="52" width="28" height="4" fill="#0f2d5c"/>
+  <rect x="44" y="52" width="4" height="4" fill="#e88a1a"/>
+  <rect x="48" y="52" width="32" height="4" fill="#0f2d5c"/>
+  <rect x="80" y="52" width="4" height="4" fill="#0a1832"/>
+  <!-- Row 14: cover base outline -->
+  <rect x="16" y="56" width="64" height="4" fill="#0a1832"/>
 </svg>

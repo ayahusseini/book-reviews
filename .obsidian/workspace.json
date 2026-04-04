@@ -165,8 +165,21 @@
               "icon": "lucide-list",
               "title": "Outline of TIL- 2026-04-02-Communicating-in-binaries"
             }
+          },
+          {
+            "id": "beb8cdc1ce5ac4e1",
+            "type": "leaf",
+            "state": {
+              "type": "file-properties",
+              "state": {
+                "file": "writing/unpromoted_posts/TIL- 2026-04-02-Communicating-in-binaries.md"
+              },
+              "icon": "lucide-info",
+              "title": "File properties for TIL- 2026-04-02-Communicating-in-binaries"
+            }
           }
-        ]
+        ],
+        "currentTab": 5
       }
     ],
     "direction": "horizontal",
@@ -186,6 +199,7 @@
   },
   "active": "0961bd04ae98cf6b",
   "lastOpenFiles": [
+    "site/app/static/img/under_construction_pixel.svg",
     "site/app/static/img/coffee_pixel.svg",
     "site/app/static/img/seedling_pixel.svg",
     "site/app/static/img/randomise_pixel.svg",
