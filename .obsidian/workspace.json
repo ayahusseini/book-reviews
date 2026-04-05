@@ -11,10 +11,14 @@
             "id": "0961bd04ae98cf6b",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "writing/posts/poetry/annabel-lee.md",
+                "mode": "source",
+                "source": true
+              },
               "icon": "lucide-file",
-              "title": "New tab"
+              "title": "annabel-lee"
             }
           }
         ]
@@ -74,7 +78,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "b4865e2dd9da23b7",
@@ -90,6 +95,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "writing/posts/poetry/annabel-lee.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -99,7 +105,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks"
+              "title": "Backlinks for annabel-lee"
             }
           },
           {
@@ -108,11 +114,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "writing/posts/poetry/annabel-lee.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links"
+              "title": "Outgoing links from annabel-lee"
             }
           },
           {
@@ -150,12 +157,13 @@
             "state": {
               "type": "outline",
               "state": {
+                "file": "writing/posts/poetry/annabel-lee.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline"
+              "title": "Outline of annabel-lee"
             }
           },
           {
@@ -163,9 +171,11 @@
             "type": "leaf",
             "state": {
               "type": "file-properties",
-              "state": {},
+              "state": {
+                "file": "writing/posts/poetry/annabel-lee.md"
+              },
               "icon": "lucide-info",
-              "title": "File properties"
+              "title": "File properties for annabel-lee"
             }
           }
         ],
@@ -189,15 +199,22 @@
   },
   "active": "0961bd04ae98cf6b",
   "lastOpenFiles": [
-    "writing/posts/TILs/TIL 2026-04-01- SQL-Indexes.md",
+    "writing/posts/poetry/nothing.md",
+    "nothing.md",
+    "writing/posts/reviews/nothing.md",
+    "2026-03-20.md",
+    "writing/posts/poetry/annabel-lee.md",
+    "writing/unpromoted_posts/TIL- 2026-04-02-Communicating-in-binaries.md",
     "writing/unpromoted_posts/TIL 2026-04-01- SQL-Indexes.md",
+    "writing/unpromoted_posts/part_0_networks.md",
+    "writing/unpromoted_posts/going-infinite.md",
+    "writing/posts/TILs/TIL 2026-04-01- SQL-Indexes.md",
     "writing/posts/TILs/TIL 2026-03-30 - T-SQL.md",
     "writing/posts/TILs/TIL 2026-04-04 - Values and Outcomes.md",
     "writing/posts/TILs/TIL 2026-04-05 - T-SQL.md",
     "writing/posts/TILs/TIL 2026-03-26.md",
     "writing/posts/TILs/TIL 2026-03-27.md",
     "writing/posts/TILs/TIL 2026-04-05 - Values and Outcomes.md",
-    "writing/unpromoted_posts/TIL- 2026-04-02-Communicating-in-binaries.md",
     "site/app/static/fonts/cc-red-alert.ttf",
     "site/app/static/fonts",
     "site/app/static/img/star_empty.svg",
