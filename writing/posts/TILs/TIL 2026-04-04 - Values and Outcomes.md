@@ -1,9 +1,9 @@
 ---
-title: TIL 2026-04-05 - Values vs Outcomes in Ethics
+title: TIL 2026-04-04 - Values vs Outcomes in Ethics
 author: Aya
 type: note
 slug: TIL-2026-04-05-Values-and-Outcomes
-date: 2026-04-05
+date: 2026-04-04
 ---
 
 Part of a series of "Today I Learned"s
