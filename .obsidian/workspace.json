@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "writing/posts/poetry/annabel-lee.md",
+                "file": "writing/posts/poetry/nothing.md",
                 "mode": "source",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "annabel-lee"
+              "title": "nothing"
             }
           }
         ]
@@ -95,7 +95,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "writing/posts/poetry/annabel-lee.md",
+                "file": "writing/posts/poetry/nothing.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -105,7 +105,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for annabel-lee"
+              "title": "Backlinks for nothing"
             }
           },
           {
@@ -114,12 +114,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "writing/posts/poetry/annabel-lee.md",
+                "file": "writing/posts/poetry/nothing.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from annabel-lee"
+              "title": "Outgoing links from nothing"
             }
           },
           {
@@ -157,13 +157,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "writing/posts/poetry/annabel-lee.md",
+                "file": "writing/posts/poetry/nothing.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of annabel-lee"
+              "title": "Outline of nothing"
             }
           },
           {
@@ -172,10 +172,10 @@
             "state": {
               "type": "file-properties",
               "state": {
-                "file": "writing/posts/poetry/annabel-lee.md"
+                "file": "writing/posts/poetry/nothing.md"
               },
               "icon": "lucide-info",
-              "title": "File properties for annabel-lee"
+              "title": "File properties for nothing"
             }
           }
         ],
@@ -199,11 +199,13 @@
   },
   "active": "0961bd04ae98cf6b",
   "lastOpenFiles": [
+    "site/instance/site.db-journal",
+    "writing/posts/poetry/neutral_tones.md",
     "writing/posts/poetry/nothing.md",
+    "writing/posts/poetry/annabel-lee.md",
     "nothing.md",
     "writing/posts/reviews/nothing.md",
     "2026-03-20.md",
-    "writing/posts/poetry/annabel-lee.md",
     "writing/unpromoted_posts/TIL- 2026-04-02-Communicating-in-binaries.md",
     "writing/unpromoted_posts/TIL 2026-04-01- SQL-Indexes.md",
     "writing/unpromoted_posts/part_0_networks.md",
