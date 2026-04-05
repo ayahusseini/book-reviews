@@ -204,7 +204,7 @@ nav .nav-container {
 }
 
 nav .nav-logo {
-    padding: 0.7rem;
+    padding: 1rem;
     flex-shrink: 0;
     width: clamp(80px, 9vw, 96px);
     height: auto;

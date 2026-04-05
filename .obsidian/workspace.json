@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "writing/unpromoted_posts/TIL- 2026-04-02-Communicating-in-binaries.md",
+                "file": "writing/posts/TILs/TIL 2026-04-01- SQL-Indexes.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "TIL- 2026-04-02-Communicating-in-binaries"
+              "title": "TIL 2026-04-01- SQL-Indexes"
             }
           }
         ]
@@ -78,8 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
     "id": "b4865e2dd9da23b7",
@@ -95,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "writing/unpromoted_posts/TIL- 2026-04-02-Communicating-in-binaries.md",
+                "file": "writing/posts/TILs/TIL 2026-04-01- SQL-Indexes.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -105,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for TIL- 2026-04-02-Communicating-in-binaries"
+              "title": "Backlinks for TIL 2026-04-01- SQL-Indexes"
             }
           },
           {
@@ -114,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "writing/unpromoted_posts/TIL- 2026-04-02-Communicating-in-binaries.md",
+                "file": "writing/posts/TILs/TIL 2026-04-01- SQL-Indexes.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from TIL- 2026-04-02-Communicating-in-binaries"
+              "title": "Outgoing links from TIL 2026-04-01- SQL-Indexes"
             }
           },
           {
@@ -157,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "writing/unpromoted_posts/TIL- 2026-04-02-Communicating-in-binaries.md",
+                "file": "writing/posts/TILs/TIL 2026-04-01- SQL-Indexes.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of TIL- 2026-04-02-Communicating-in-binaries"
+              "title": "Outline of TIL 2026-04-01- SQL-Indexes"
             }
           },
           {
@@ -172,10 +171,10 @@
             "state": {
               "type": "file-properties",
               "state": {
-                "file": "writing/unpromoted_posts/TIL- 2026-04-02-Communicating-in-binaries.md"
+                "file": "writing/posts/TILs/TIL 2026-04-01- SQL-Indexes.md"
               },
               "icon": "lucide-info",
-              "title": "File properties for TIL- 2026-04-02-Communicating-in-binaries"
+              "title": "File properties for TIL 2026-04-01- SQL-Indexes"
             }
           }
         ],
@@ -199,6 +198,12 @@
   },
   "active": "0961bd04ae98cf6b",
   "lastOpenFiles": [
+    "writing/posts/TILs/TIL 2026-04-05 - T-SQL.md",
+    "writing/posts/TILs/TIL 2026-03-26.md",
+    "writing/posts/TILs/TIL 2026-03-27.md",
+    "writing/posts/TILs/TIL 2026-04-05 - Values and Outcomes.md",
+    "writing/posts/TILs/TIL 2026-04-01- SQL-Indexes.md",
+    "writing/unpromoted_posts/TIL- 2026-04-02-Communicating-in-binaries.md",
     "site/app/static/fonts/cc-red-alert.ttf",
     "site/app/static/fonts",
     "site/app/static/img/star_empty.svg",
@@ -211,9 +216,7 @@
     "site/app/static/img/seedling_pixel.svg",
     "site/app/static/img/randomise_pixel.svg",
     "site/app/static/img/logo_pixel.svg",
-    "writing/posts/TILs/TIL 2026-03-26.md",
     "writing/unpromoted_posts/the-stranger.md",
-    "writing/unpromoted_posts/TIL- 2026-04-02-Communicating-in-binaries.md",
     "2026-03-29.md",
     "docs/writing-posts.md",
     "docs/deployment.md"
