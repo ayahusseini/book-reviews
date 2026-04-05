@@ -9,7 +9,6 @@ Live at: https://husseinireads.com/books/
 ---
 
 ## Table of contents
-
 1. [Quick start](#quick-start)
 2. [Make targets](#make-targets)
 3. [Project structure](#project-structure)
