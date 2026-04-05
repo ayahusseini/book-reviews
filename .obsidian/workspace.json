@@ -11,14 +11,10 @@
             "id": "0961bd04ae98cf6b",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "writing/posts/TILs/TIL 2026-04-01- SQL-Indexes.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "TIL 2026-04-01- SQL-Indexes"
+              "title": "New tab"
             }
           }
         ]
@@ -94,7 +90,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "writing/posts/TILs/TIL 2026-04-01- SQL-Indexes.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +99,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for TIL 2026-04-01- SQL-Indexes"
+              "title": "Backlinks"
             }
           },
           {
@@ -113,12 +108,11 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "writing/posts/TILs/TIL 2026-04-01- SQL-Indexes.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from TIL 2026-04-01- SQL-Indexes"
+              "title": "Outgoing links"
             }
           },
           {
@@ -156,13 +150,12 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "writing/posts/TILs/TIL 2026-04-01- SQL-Indexes.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of TIL 2026-04-01- SQL-Indexes"
+              "title": "Outline"
             }
           },
           {
@@ -170,11 +163,9 @@
             "type": "leaf",
             "state": {
               "type": "file-properties",
-              "state": {
-                "file": "writing/posts/TILs/TIL 2026-04-01- SQL-Indexes.md"
-              },
+              "state": {},
               "icon": "lucide-info",
-              "title": "File properties for TIL 2026-04-01- SQL-Indexes"
+              "title": "File properties"
             }
           }
         ],
@@ -198,13 +189,14 @@
   },
   "active": "0961bd04ae98cf6b",
   "lastOpenFiles": [
+    "writing/posts/TILs/TIL 2026-04-01- SQL-Indexes.md",
+    "writing/unpromoted_posts/TIL 2026-04-01- SQL-Indexes.md",
     "writing/posts/TILs/TIL 2026-03-30 - T-SQL.md",
     "writing/posts/TILs/TIL 2026-04-04 - Values and Outcomes.md",
     "writing/posts/TILs/TIL 2026-04-05 - T-SQL.md",
     "writing/posts/TILs/TIL 2026-03-26.md",
     "writing/posts/TILs/TIL 2026-03-27.md",
     "writing/posts/TILs/TIL 2026-04-05 - Values and Outcomes.md",
-    "writing/posts/TILs/TIL 2026-04-01- SQL-Indexes.md",
     "writing/unpromoted_posts/TIL- 2026-04-02-Communicating-in-binaries.md",
     "site/app/static/fonts/cc-red-alert.ttf",
     "site/app/static/fonts",
