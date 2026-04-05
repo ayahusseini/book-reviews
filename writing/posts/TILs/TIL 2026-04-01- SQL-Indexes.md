@@ -13,20 +13,37 @@ Part of a series of "Today I Learned"s
 ### What is a Header?
 - In the context of file formats, a header is a block of bytes at the very start of the file containing metadata about the file itself
 - It tells any `Reader` object some information on how actually to parse the file
+
 ### How does a database get stored?
 - There are two main types of ways to store a database:
 	- **File-based databases** live as a single file on your computer 
 		- E.G. SQLite
 	- **Server-based databases** are stored as multiple structured files within a directory. 
 		- E.G. Postgres
-- The headers of these files are important
-	- For SQLite, the first $100$ bytes of any `.db` file are the database header. These contain things like:
-		- **A magic string:** "SQLite format 3\000" - this is how programs (and tools like file) recognise that this is a SQLite file at all, before reading anything else
-		- The page size
-		- The schema version 
-	- For server-based databases, there is no single file header for the whole database. The database spans too many files for that to be meaningful. Instead, every individual **page** carries its own small header
-			- A Postgres page header is 24 bytes at the start of every 8KB page. It stores: where the free space within that page starts and ends, an array of pointers to each row's location within the page, a checksum to detect corruption, and a log sequence number used for crash recovery
-			- Global metadata - which tables exist, what their columns are, their types - lives in special system tables (`pg_class`, `pg_attribute`, etc.), stored in their own pages like any other data
+
+### What is a page?
+
+Before getting into Indexes, it's useful to understand pages. These are the fundamental unit both types of database use to organise data on disk.
+
+A **page** is a fixed-size chunk of a database file. It holds multiple rows plus some bookkeeping metadata. 
+- In **SQLite**, the single `.db` file is divided into pages from byte 0 onwards. Each page is 4096 bytes (4KB) by default. Page 1 starts at byte 0, page 2 at byte 4096, page 3 at byte 8192, and so on
+- In **Postgres**, each table is stored as one or more files inside the data directory, and those files are also divided into pages - 8192 bytes (8KB) each by default
+
+The fixed size means the database can jump to any page with a single operation:
+
+```
+byte offset of page N = N × page_size
+```
+
+### The headers of these files
+- For SQLite, the first $100$ bytes of any `.db` file are the database header. These contain things like:
+    - **A magic string:** "SQLite format 3\000" - this is how programs (and tools like file) recognise that this is a SQLite file at all, before reading anything else
+    - The page size
+    - The schema version 
+- For server-based databases, there is no single file header for the whole database. The database spans too many files for that to be meaningful. Instead, every individual **page** carries its own small header 
+        - Global metadata - which tables exist, what their columns are, their types - lives in special system tables (`pg_class`, `pg_attribute`, etc.), stored in their own pages like any other data
+
+### Finding a particular row
 - Suppose we wanted to find a particular row - say, the user whose email is `aya@example.com`
     - The most naive approach is to open the file and scan through it byte by byte from the start, reading each row until we find a match
     - We can try to be clever. What happens if we sort all the emails alphabetically and then jump to the mid-point, decide whether we need to go higher or lower and repeat (e.g. just a binary search)?
@@ -41,21 +58,18 @@ xxd test.db | head -20
 ```
 
 - The output is mostly zeros and headers at first, but the string `aya@example.com` is sitting in there in plain ASCII, packed alongside other row data. There's no fast path to find it - a query on this table reads the whole file
-    - In **Postgres**, the same scan happens, but the scale is more visible. Postgres stores each table as a file (or a set of files) inside its data directory. You can find where a table lives with:
-        ```sql
-        SELECT pg_relation_filepath('users');
-        -- returns something like: base/16384/16385
-        ```
-        Running `EXPLAIN ANALYZE SELECT * FROM users WHERE email = 'aya@example.com'` on a table without an index will show `Seq Scan` - Postgres is reading every page of that file, top to bottom
 
-- The row-scanning approach gets expensive fast. On a table with 10 million rows, a query that matches one row still reads all 10 million. The cost grows linearly with the size of the table
-- **Fixed-size pages** are the first structural improvement. Instead of packing rows into a continuous blob, the file is divided into chunks of a fixed size - typically $8 \text{KB}$
-- Within each file, we have a fixed-size unit of storage called a **page**. This is typically around $8 \text{KB}$ of storage. A single page can contain multiple rows, metadata, etc.
-    - The key property is that page $N$ always starts at byte offset $N \times 8192$. The database can jump directly to any page with a single seek operation, without reading anything before it
-    - This also maps cleanly onto how operating systems and disk hardware already work - storage hardware reads and writes in fixed blocks (typically 4KB or 512 bytes). Aligning database pages to these boundaries means each page read translates to a small, predictable number of hardware operations
-    - Pages also make the in-memory cache (the **buffer pool**) much simpler to manage. The database keeps a pool of fixed-size slots in memory. When it needs a page, it checks the pool first, and if it's not there, evicts an old page to make room. Fixed sizes mean no fragmentation
-    - Each page holds as many rows as will fit. A table with millions of rows spans thousands of pages
-    - Reading a page from disk is slow - orders of magnitude slower than reading from memory
+- In **Postgres**, the same scan happens, but the scale is more visible. Postgres stores each table as a file (or a set of files) inside its data directory. You can find where a table lives with:
+```sql
+SELECT pg_relation_filepath('users');
+-- returns something like: base/16384/16385
+```
+- Running `EXPLAIN ANALYZE SELECT * FROM users WHERE email = 'aya@example.com'` on a table without an index will show `Seq Scan` - Postgres is reading every page of that file, top to bottom
+
+#### Scanning each row gets expensive fast
+
+- Pages make the in-memory cache (the **buffer pool**) much simpler to manage. The database keeps a pool of fixed-size slots in memory. When it needs a page, it checks the pool first, and if it's not there, evicts an old page to make room. Fixed sizes mean no fragmentation
+- Reading a page from disk is slow - orders of magnitude slower than reading from memory
 - Even with pages, a query like `SELECT * FROM users WHERE email = 'aya@example.com'` without any further help still forces the database to load every page and check every row - a **full table scan**
     - On a table with 10 million rows, this might mean reading 80,000+ pages
 
