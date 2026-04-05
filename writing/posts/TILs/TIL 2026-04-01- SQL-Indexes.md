@@ -3,7 +3,7 @@ title: TIL 2026-04-01- SQL Indexes
 author: Aya
 type: note
 slug: TIL 2026-04-01- SQL Indexes
-date: 2026-04-04
+date: 2026-04-01
 ---
 
 Part of a series of "Today I Learned"s
