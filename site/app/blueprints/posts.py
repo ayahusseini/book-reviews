@@ -30,7 +30,11 @@ def _new_slugs(posts: list[Post]) -> set[str]:
 @posts_bp.route("/", methods=["GET"])
 @cache.cached()
 def post_list():
-    posts = Post.query.order_by(Post.post_updated_at.desc()).all()
+    posts = (
+        Post.query.filter(Post.post_type.notin_({"code", "quotes"}))
+        .order_by(Post.post_updated_at.desc())
+        .all()
+    )
     return render_template(
         "posts.html", posts=posts, new_slugs=_new_slugs(posts)
     )

@@ -6,11 +6,12 @@
 2. [Frontmatter reference](#frontmatter-reference)
 3. [Writing a book review](#writing-a-book-review)
 4. [Writing a standalone post, note, or poem](#writing-a-standalone-post-note-or-poem)
-5. [Inline quotes](#inline-quotes)
-6. [Linking between posts](#linking-between-posts)
-7. [Images](#images)
-8. [Slugs and re-importing](#slugs-and-re-importing)
-9. [Deploying](#deploying)
+5. [Adding a code demo file](#adding-a-code-demo-file)
+6. [Inline quotes](#inline-quotes)
+7. [Linking between posts](#linking-between-posts)
+8. [Images](#images)
+9. [Slugs and re-importing](#slugs-and-re-importing)
+10. [Deploying](#deploying)
 
 ---
 
@@ -24,6 +25,7 @@
 | `note` | `/posts/<slug>` | No | Short post with no book link. |
 | `poem` | `/poems/<slug>` | No | Displayed on the poems page. |
 | `designdoc` | `/design/all` | No | Site design notes. |
+| `code` | `/posts/<filename>` | No | Code demo file (`.sql`, `.py`, etc.). Not shown in the posts listing. |
 | `quotes` | — | — | Auto-generated from `ad-quote` blocks. Never create manually. |
 
 ---
@@ -126,6 +128,31 @@ writing/posts/poetry/small-hours.md
 
 ---
 
+## Adding a code demo file
+
+Code posts are created directly from source files (`.sql`, `.py`, `.js`, etc.) — no frontmatter needed. Drop the file in `writing/posts/other/` and run:
+
+```sh
+make code
+```
+
+The file is imported as a `code`-type post with:
+- **slug** = the full filename (e.g. `demo.sql`)
+- **URL** = `/posts/demo.sql`
+- **author** = `aya` (override with `make code AUTHOR="someone"`)
+
+The post renders as a syntax-highlighted code block with a copy button. It does not appear in the posts listing.
+
+To link to a code post from a regular post, use the full filename as the wikilink target:
+
+```markdown
+Here is [[demo.sql|the SQL demo]] for this query.
+```
+
+Supported file extensions: `.sql`, `.py`, `.js`, `.ts`, `.sh`, `.json`, `.yaml`, `.yml`, `.html`, `.css`, `.r`, `.rb`, `.go`, `.rs`, `.c`, `.cpp`, `.java`.
+
+---
+
 ## Inline quotes
 
 Wrap passages you want to extract as quotes with ` ```ad-quote ` fences:
@@ -220,6 +247,7 @@ The recommended workflow keeps everything local — you never need to touch the 
 
 ```sh
 make posts           # import your new/updated posts
+make code            # import any new/updated code demo files
 ```
 
 Optionally tweak tags:
