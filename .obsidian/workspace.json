@@ -196,6 +196,8 @@
   },
   "active": "0961bd04ae98cf6b",
   "lastOpenFiles": [
+    "site/testing/__pycache__/test_import_code.cpython-313-pytest-9.0.2.pyc",
+    "site/testing/test_import_code.py",
     "writing/posts/other/demo.sql",
     "writing/unpromoted_posts/demo.sql",
     "writing/posts/other",

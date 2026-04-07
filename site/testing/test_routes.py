@@ -125,6 +125,53 @@ class TestPostsRoutes:
 
 
 # ---------------------------------------------------------------------------
+# /posts — code type
+# ---------------------------------------------------------------------------
+
+
+class TestCodePostRoutes:
+    def test_code_post_accessible_by_slug_with_dot(self, client, session):
+        make_post(session, "demo.sql", post_type="code")
+        response = client.get("/posts/demo.sql")
+        assert response.status_code == 200
+
+    def test_code_post_excluded_from_post_list(self, client, session):
+        make_post(session, "demo.sql", post_type="code")
+        response = client.get("/posts/")
+        assert b"demo.sql" not in response.data
+
+    def test_code_post_excluded_from_misc_post_list(self, client, session):
+        make_post(session, "demo.sql", post_type="code")
+        response = client.get("/posts/misc_posts")
+        assert b"demo.sql" not in response.data
+
+    def test_code_post_has_copy_button(self, client, session):
+        make_post(
+            session,
+            "demo.sql",
+            post_type="code",
+            body="```sql\nSELECT 1;\n```",
+        )
+        response = client.get("/posts/demo.sql")
+        assert b"copy-btn" in response.data
+
+    def test_code_post_has_no_back_link(self, client, session):
+        make_post(session, "demo.sql", post_type="code")
+        response = client.get("/posts/demo.sql")
+        assert b"Back to posts" not in response.data
+
+    def test_non_code_post_has_back_link(self, client, session):
+        make_post(session, "regular-post", post_type="standalone")
+        response = client.get("/posts/regular-post")
+        assert b"Back to posts" in response.data
+
+    def test_standalone_post_visible_in_post_list(self, client, session):
+        make_post(session, "regular-post", post_type="standalone")
+        response = client.get("/posts/")
+        assert b"regular-post" in response.data
+
+
+# ---------------------------------------------------------------------------
 # /poems
 # ---------------------------------------------------------------------------
 
