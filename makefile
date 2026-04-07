@@ -2,9 +2,11 @@ APP     = site/app
 PYPATH  = site
 MIGRATIONS = site/migrations
 POSTS   = writing/posts
+CODE    = writing/posts/other
 SEEDS   = writing/book_seed.json
+AUTHOR  = aya
 
-.PHONY: dev seed seed-refresh posts sync test migrate shell setup reset install tags deploy-db
+.PHONY: dev seed seed-refresh posts code sync test migrate shell setup reset install tags deploy-db
 
 dev:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) run --debug
@@ -18,7 +20,10 @@ seed-refresh:
 posts:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) import-posts --path $(POSTS)
 
-sync: seed posts restart
+code:
+	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) import-code --path $(CODE) --author "$(AUTHOR)"
+
+sync: seed posts code restart
 
 restart:
 	touch site/app/__init__.py

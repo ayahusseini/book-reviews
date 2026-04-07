@@ -243,6 +243,94 @@ def seed_books_command(path_str: str, refresh: bool) -> None:
     )
 
 
+_EXT_TO_LANG: dict[str, str] = {
+    ".sql": "sql",
+    ".py": "python",
+    ".js": "javascript",
+    ".ts": "typescript",
+    ".sh": "bash",
+    ".json": "json",
+    ".yaml": "yaml",
+    ".yml": "yaml",
+    ".html": "html",
+    ".css": "css",
+    ".r": "r",
+    ".rb": "ruby",
+    ".go": "go",
+    ".rs": "rust",
+    ".c": "c",
+    ".cpp": "cpp",
+    ".java": "java",
+}
+
+
+@click.command("import-code")
+@click.option(
+    "--path",
+    "path_str",
+    required=True,
+    help="Directory containing code files (.sql, .py, etc.).",
+)
+@click.option(
+    "--author",
+    required=True,
+    help="Author name to assign to all imported code posts.",
+)
+@with_appcontext
+def import_code_command(path_str: str, author: str) -> None:
+    """Import code files as code-type posts."""
+    code_dir = Path(path_str)
+    if not code_dir.exists():
+        raise click.ClickException(f"Directory does not exist: {code_dir}")
+
+    code_files = sorted(
+        p
+        for p in code_dir.rglob("*")
+        if p.is_file() and p.suffix.lower() in _EXT_TO_LANG
+    )
+
+    if not code_files:
+        click.echo(f"No supported code files found under {code_dir}")
+        return
+
+    created = updated = errors = 0
+    for path in code_files:
+        try:
+            lang = _EXT_TO_LANG[path.suffix.lower()]
+            content = path.read_text(encoding="utf-8")
+            body = f"```{lang}\n{content}\n```"
+            slug = path.name
+            title = path.name
+
+            _, is_new = upsert_post(
+                slug=slug,
+                title=title,
+                author=author,
+                body=body,
+                post_parent_slug=None,
+                post_type="code",
+                post_rating=None,
+                book=None,
+            )
+            if is_new:
+                created += 1
+                click.echo(f"  Created: {path.name}")
+            else:
+                updated += 1
+                click.echo(f"  Updated: {path.name}")
+        except Exception as exc:  # noqa: BLE001
+            click.echo(f"ERROR {path.name}: {exc}")
+            errors += 1
+
+    db.session.commit()
+    click.echo(
+        f"Imported code from {code_dir}: "
+        f"created={created}, updated={updated}, errors={errors}"
+    )
+    cache.clear()
+    click.echo("Cache cleared.")
+
+
 @click.command("manage-tags")
 @click.option(
     "--book",
@@ -312,5 +400,6 @@ def manage_tags_command(
 def init_app(app) -> None:
     """Register CLI commands with the Flask app."""
     app.cli.add_command(import_posts_command)
+    app.cli.add_command(import_code_command)
     app.cli.add_command(seed_books_command)
     app.cli.add_command(manage_tags_command)

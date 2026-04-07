@@ -931,6 +931,35 @@ p code {
 }
 
 /* ----------------------------------------------------------------
+   CODE POST COPY BUTTON
+   ---------------------------------------------------------------- */
+
+.code-post-wrapper {
+    position: relative;
+}
+
+.copy-btn {
+    position: absolute;
+    top: 0.4rem;
+    right: 0.4rem;
+    z-index: 1;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--mono-font);
+    font-size: 0.72rem;
+    padding: 0.2rem 0.55rem;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: background 0.12s, color 0.12s;
+}
+
+.copy-btn:hover {
+    background: var(--border);
+    color: var(--text);
+}
+
+/* ----------------------------------------------------------------
    ABOUT PAGE AVATAR
    ---------------------------------------------------------------- */
 

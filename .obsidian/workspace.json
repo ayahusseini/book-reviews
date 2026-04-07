@@ -11,14 +11,10 @@
             "id": "0961bd04ae98cf6b",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "writing/posts/poetry/nothing.md",
-                "mode": "source",
-                "source": true
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "nothing"
+              "title": "New tab"
             }
           }
         ]
@@ -194,27 +190,35 @@
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
-      "bases:Create new base": false
+      "bases:Create new base": false,
+      "obsidian-excalidraw-plugin:New drawing": false
     }
   },
   "active": "0961bd04ae98cf6b",
   "lastOpenFiles": [
+    "writing/posts/other/demo.sql",
+    "writing/unpromoted_posts/demo.sql",
+    "writing/posts/other",
     "site/instance/site.db-journal",
-    "writing/posts/poetry/neutral_tones.md",
+    "writing/unpromoted_posts/TIL-2026-04-06-SQL-EXISTS.md",
+    "writing/posts/TILs/TIL-2026-04-06-SQL-EXISTS.md",
+    "writing/posts/TILs/demo.sql",
+    "writing/unpromoted_posts/demo.md",
+    "writing/posts/TILs/TIL 2026-03-26.md",
+    "writing/unpromoted_posts/part_0_networks.md",
     "writing/posts/poetry/nothing.md",
+    "writing/posts/poetry/neutral_tones.md",
     "writing/posts/poetry/annabel-lee.md",
     "nothing.md",
     "writing/posts/reviews/nothing.md",
     "2026-03-20.md",
     "writing/unpromoted_posts/TIL- 2026-04-02-Communicating-in-binaries.md",
     "writing/unpromoted_posts/TIL 2026-04-01- SQL-Indexes.md",
-    "writing/unpromoted_posts/part_0_networks.md",
     "writing/unpromoted_posts/going-infinite.md",
     "writing/posts/TILs/TIL 2026-04-01- SQL-Indexes.md",
     "writing/posts/TILs/TIL 2026-03-30 - T-SQL.md",
     "writing/posts/TILs/TIL 2026-04-04 - Values and Outcomes.md",
     "writing/posts/TILs/TIL 2026-04-05 - T-SQL.md",
-    "writing/posts/TILs/TIL 2026-03-26.md",
     "writing/posts/TILs/TIL 2026-03-27.md",
     "writing/posts/TILs/TIL 2026-04-05 - Values and Outcomes.md",
     "site/app/static/fonts/cc-red-alert.ttf",
