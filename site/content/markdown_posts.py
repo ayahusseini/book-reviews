@@ -291,7 +291,7 @@ def render_markdown_to_safe_html(text: str) -> str:
         }
     )
     allowed_attrs = {
-        "*": ["class"],
+        "*": ["class", "id"],
         "a": ["href", "title", "rel"],
         "span": ["class"],
         "div": ["class"],

@@ -310,7 +310,7 @@ h3.post-title::before,
     font-family: var(--body-font);
 }
 
-.markdown-body img {
+.markdown-body img:not(.star) {
     max-width: 65ch;
     width: 100%;
     height: auto;
