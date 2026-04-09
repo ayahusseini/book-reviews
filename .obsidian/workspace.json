@@ -67,7 +67,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "photo",
+                "query": "SQL EXISTS",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -92,8 +92,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 721.5
   },
   "right": {
     "id": "b4865e2dd9da23b7",
@@ -224,13 +223,14 @@
   },
   "active": "e2cfc950474602ab",
   "lastOpenFiles": [
+    "site/instance/site.db-journal",
+    "site/instance/site.db",
     "writing/posts/TILs/TIL-2026-03-26.md",
     "writing/posts/TILs/TIL-2026-04-09-Multi-Threading-and-Race-Conditions.md",
     "writing/posts/TILs/TIL-2026-04-04-Values-and-Outcomes.md",
     "writing/posts/TILs/TIL-2026-04-06-SQL-parse-trees-and-capitalism.md",
     "writing/posts/TILs/TIL-2026-03-27.md",
     "writing/posts/TILs/TIL-2026-03-30-T-SQL.md",
-    "site/instance/site.db-journal",
     "writing/unpromoted_posts/sql_query_trees_from_first_principles (1).md",
     "site/app/static/img/excalidraw/combining_queries.excalidraw.md",
     "site/app/static/img/excalidraw/combining_queries.excalidraw.svg",
@@ -255,7 +255,6 @@
     "site/app/static/img/excalidraw/Drawing 2026-04-07 16.52.24.excalidraw.md",
     "writing/posts/reviews/brighton-rock.md",
     "Screenshot 2026-04-09 at 03.31.26.png",
-    "writing/unpromoted_posts/going-infinite.md",
     "site/app/static/img/excalidraw/decomposition-ofquery-into-parse-tree.excalidraw.svg",
     "site/app/static/img/logo_pixel.svg",
     "site/app/static/img/posts/query.png",
