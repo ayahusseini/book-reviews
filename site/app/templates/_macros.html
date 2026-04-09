@@ -51,7 +51,7 @@
 
     {# Tags — exclude year tags #}
     {% set display_tags = book.tags
-        | rejectattr('tag_name', 'in', ['2026', '2025', '2024', '2023'])
+        | rejectattr('tag_name', 'in', ['read-2026', 'read-2025', 'read-2024', 'read-2023'])
         | list
     %}
     {% if display_tags %}

@@ -125,11 +125,11 @@ class TestUpsertBooks:
     def test_tags_attached(self, session):
         upsert_books(
             [make_book_data("OL1W")],
-            tag_map={"OL1W": ["fiction", "2026"]},
+            tag_map={"OL1W": ["fiction", "read-2026"]},
         )
         book = session.query(Book).filter_by(book_ol_key="OL1W").first()
         tag_names = {t.tag_name for t in book.tags}
-        assert tag_names == {"fiction", "2026"}
+        assert tag_names == {"fiction", "read-2026"}
 
     def test_existing_book_is_updated_not_duplicated(self, session):
         upsert_books([make_book_data("OL1W", "Original")])

@@ -4,17 +4,41 @@
     "type": "split",
     "children": [
       {
-        "id": "b6e6bb5461b6d601",
+        "id": "673676a06cc9761c",
         "type": "tabs",
         "children": [
           {
-            "id": "0961bd04ae98cf6b",
+            "id": "ff99985e561ef1b1",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "writing/posts/TILs/TIL-2026-04-06-SQL-Query-trees.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "New tab"
+              "title": "TIL-2026-04-06-SQL-Query-trees"
+            }
+          }
+        ]
+      },
+      {
+        "id": "e1528e9cf1d51ae4",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "dcd2786ec0f9ffa7",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "writing/unpromoted_posts/sql_query_trees_from_first_principles (1).md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "sql_query_trees_from_first_principles (1)"
             }
           }
         ]
@@ -49,7 +73,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "photo",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -74,8 +98,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
     "id": "b4865e2dd9da23b7",
@@ -173,9 +196,19 @@
               "icon": "lucide-info",
               "title": "File properties for nothing"
             }
+          },
+          {
+            "id": "8b55fbbdc404d65e",
+            "type": "leaf",
+            "state": {
+              "type": "excalidraw-sidepanel",
+              "state": {},
+              "icon": "excalidraw-icon",
+              "title": "Excalidraw Sidepanel"
+            }
           }
         ],
-        "currentTab": 5
+        "currentTab": 6
       }
     ],
     "direction": "horizontal",
@@ -194,50 +227,53 @@
       "obsidian-excalidraw-plugin:New drawing": false
     }
   },
-  "active": "0961bd04ae98cf6b",
+  "active": "ff99985e561ef1b1",
   "lastOpenFiles": [
+    "writing/posts/TILs/TIL-2026-03-27.md",
+    "writing/posts/reviews/perfume-story-of-a-murderer.md",
+    "writing/posts/reviews/flesh.md",
+    "writing/posts/reviews/haunting-hill-house.md",
+    "writing/posts/reviews/the-affirmation.md",
+    "writing/posts/reviews/orbital.md",
+    "writing/posts/reviews/main-brighton-rock-post.md",
+    "writing/posts/reviews/all-the-pretty-horses.md",
+    "writing/posts/reviews/all-systems-red.md",
+    "site/app/static/img/excalidraw/decomposition-ofquery-into-parse-tree.excalidraw.md",
+    "writing/posts/TILs/TIL-2026-04-04-Values-and-Outcomes.md",
+    "writing/posts/TILs/TIL-2026-03-30-T-SQL.md",
+    "writing/posts/TILs/TIL-2026-03-26.md",
+    "writing/posts/poetry/she-walks-in-beauty.md",
+    "writing/posts/poetry/john-cooper-clarke-nothing.md",
+    "writing/posts/poetry/neutral-tones.md",
+    "writing/posts/poetry/death-poem-hanabusa-ikkei.md",
+    "writing/posts/poetry/edgar-allan-poe-annabel-lee.md",
+    "site/app/static/img/posts/query_structure.png",
+    "site/app/static/img/excalidraw/Drawing 2026-04-07 16.52.24.excalidraw.md",
+    "writing/posts/reviews/brighton-rock.md",
+    "Screenshot 2026-04-09 at 03.31.26.png",
+    "writing/unpromoted_posts/going-infinite.md",
+    "writing/unpromoted_posts/example-post.md",
+    "writing/posts/TILs/TIL 2026-03-26.md",
+    "writing/posts/TILs/TIL 2026-03-27.md",
+    "writing/posts/TILs/TIL 2026-03-30 - T-SQL.md",
+    "writing/posts/TILs/TIL 2026-04-04 - Values and Outcomes.md",
+    "site/app/static/img/excalidraw/decomposition-ofquery-into-parse-tree.excalidraw.svg",
+    "site/app/static/img/logo_pixel.svg",
+    "site/app/static/img/posts/query.png",
+    "site/app/static/img/posts",
+    "site/app/static/img/coffee_pixel.svg",
+    "site/app/static/img/excalidraw",
+    "Excalidraw",
+    "site/instance/site.db-journal",
     "site/testing/__pycache__/test_import_code.cpython-313-pytest-9.0.2.pyc",
     "site/testing/test_import_code.py",
     "writing/posts/other/demo.sql",
     "writing/unpromoted_posts/demo.sql",
     "writing/posts/other",
-    "site/instance/site.db-journal",
-    "writing/unpromoted_posts/TIL-2026-04-06-SQL-EXISTS.md",
-    "writing/posts/TILs/TIL-2026-04-06-SQL-EXISTS.md",
     "writing/posts/TILs/demo.sql",
-    "writing/unpromoted_posts/demo.md",
-    "writing/posts/TILs/TIL 2026-03-26.md",
-    "writing/unpromoted_posts/part_0_networks.md",
-    "writing/posts/poetry/nothing.md",
-    "writing/posts/poetry/neutral_tones.md",
-    "writing/posts/poetry/annabel-lee.md",
-    "nothing.md",
-    "writing/posts/reviews/nothing.md",
-    "2026-03-20.md",
-    "writing/unpromoted_posts/TIL- 2026-04-02-Communicating-in-binaries.md",
-    "writing/unpromoted_posts/TIL 2026-04-01- SQL-Indexes.md",
-    "writing/unpromoted_posts/going-infinite.md",
-    "writing/posts/TILs/TIL 2026-04-01- SQL-Indexes.md",
-    "writing/posts/TILs/TIL 2026-03-30 - T-SQL.md",
-    "writing/posts/TILs/TIL 2026-04-04 - Values and Outcomes.md",
-    "writing/posts/TILs/TIL 2026-04-05 - T-SQL.md",
-    "writing/posts/TILs/TIL 2026-03-27.md",
-    "writing/posts/TILs/TIL 2026-04-05 - Values and Outcomes.md",
-    "site/app/static/fonts/cc-red-alert.ttf",
-    "site/app/static/fonts",
     "site/app/static/img/star_empty.svg",
     "site/app/static/img/star_half.svg",
     "site/app/static/img/star_full.svg",
-    "site/app/static/img/stars_bg.svg",
-    "site/app/static/img/waving_woman.svg",
-    "site/app/static/img/under_construction_pixel.svg",
-    "site/app/static/img/coffee_pixel.svg",
-    "site/app/static/img/seedling_pixel.svg",
-    "site/app/static/img/randomise_pixel.svg",
-    "site/app/static/img/logo_pixel.svg",
-    "writing/unpromoted_posts/the-stranger.md",
-    "2026-03-29.md",
-    "docs/writing-posts.md",
-    "docs/deployment.md"
+    "site/app/static/img/stars_bg.svg"
   ]
 }

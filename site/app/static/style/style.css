@@ -278,7 +278,7 @@ h2 {
     margin-bottom: 0.75rem;
 }
 
-/* Section labels — "2026", "Previously Read" */
+/* Section labels — "read-2026", "Previously Read" */
 h3 {
     font-family: var(--display-font);
     font-size: 0.82rem;
