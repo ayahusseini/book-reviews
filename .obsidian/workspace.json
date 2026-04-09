@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "writing/posts/TILs/TIL-2026-04-06-SQL-parse-trees-and-capitalism.md",
+                "file": "writing/posts/TILs/TIL-2026-04-04-Values-and-Outcomes.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "TIL-2026-04-06-SQL-parse-trees-and-capitalism"
+              "title": "TIL-2026-04-04-Values-and-Outcomes"
             }
           }
         ]
@@ -78,7 +78,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "b4865e2dd9da23b7",
@@ -209,15 +210,18 @@
   },
   "active": "dcd2786ec0f9ffa7",
   "lastOpenFiles": [
+    "writing/posts/TILs/TIL-2026-04-06-SQL-parse-trees-and-capitalism.md",
+    "writing/posts/TILs/TIL-2026-04-04-Values-and-Outcomes.md",
+    "writing/posts/TILs/TIL-2026-03-30-T-SQL.md",
+    "writing/posts/TILs/TIL-2026-03-27.md",
+    "writing/posts/TILs/TIL-2026-03-26.md",
     "site/instance/site.db-journal",
     "writing/unpromoted_posts/sql_query_trees_from_first_principles (1).md",
     "site/app/static/img/excalidraw/combining_queries.excalidraw.md",
     "site/app/static/img/excalidraw/combining_queries.excalidraw.svg",
-    "writing/posts/TILs/TIL-2026-04-06-SQL-parse-trees-and-capitalism.md",
     "excalidraw/combin.md",
     "excalidraw",
     "site/app/static/img/excalidraw/Drawing 2026-04-09 05.38.00.excalidraw.svg",
-    "writing/posts/TILs/TIL-2026-03-27.md",
     "writing/posts/reviews/perfume-story-of-a-murderer.md",
     "writing/posts/reviews/flesh.md",
     "writing/posts/reviews/haunting-hill-house.md",
@@ -227,9 +231,6 @@
     "writing/posts/reviews/all-the-pretty-horses.md",
     "writing/posts/reviews/all-systems-red.md",
     "site/app/static/img/excalidraw/decomposition-ofquery-into-parse-tree.excalidraw.md",
-    "writing/posts/TILs/TIL-2026-04-04-Values-and-Outcomes.md",
-    "writing/posts/TILs/TIL-2026-03-30-T-SQL.md",
-    "writing/posts/TILs/TIL-2026-03-26.md",
     "writing/posts/poetry/she-walks-in-beauty.md",
     "writing/posts/poetry/john-cooper-clarke-nothing.md",
     "writing/posts/poetry/neutral-tones.md",

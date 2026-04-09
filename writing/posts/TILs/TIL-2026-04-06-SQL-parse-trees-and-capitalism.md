@@ -7,6 +7,7 @@ date: 2026-04-06
 ---
 Part of a series of "Today I Learned"s. 
 
+Contents:
 - Technical:
 	- [[#Query trees|Query trees]]
 		- [[#Query trees#The separation of what and how in SQL|The separation of what and how in SQL]]
@@ -57,6 +58,7 @@ WHERE
 ```
 
 How can we represent this in memory in a way that:
+
 - Preserves correct operator precedence (`AND` should be before `OR` unless overridden by parentheses)?
 - Is easy to evaluate, transform, or optimise?
 - Handles arbitrary nesting depth (subqueries inside subqueries inside subqueries)?
@@ -74,6 +76,7 @@ A tree structure solves all of these issues naturally:
 ![[excalidraw/decomposition-ofquery-into-parse-tree.excalidraw.svg]]
 
 This tree is naturally traversable with recursive algorithms. It's easiest to read this bottom-up, visiting the children before the parents (**post-order**) such that each operator receives its operands' values as an input, before computing its own result. The structure contains the meaning; no extra state is needed:
+
 - Precedence is encoded as depth. `AND` is the root, which means it binds last (lowest precedence at this level). `>` and `=` are leaves, binding tightest.
 - Any node can be replaced with an arbitrarily deep subtree — this is how subqueries work.
 
@@ -89,6 +92,8 @@ salary > 80000 AND (department_id = 1 OR department_id = 2)
 ```
 
 There are three distinct pieces of information we want to express:
+
+
 1. **What** the operations are: `>`, `AND`, `OR`, `=`
 2. **What** the operands are: `salary`, `80000`, `department_id`, `1`, `2`
 3. **How** the operations group together. `OR` applies to the two `=` comparisons as a unit, and `AND` applies to the `>` result and the `OR` result as a unit
@@ -139,8 +144,10 @@ We aren't capturing all of this information in the list itself since we need to 
 ##### Stacks destroy information 
 
 We can also try a **stack**. A stack is a sequence of items with a strict rule: you can only ever interact with the item on top. There are two operations on a stack:
+
 - **Pushing** - placing a new item on top
 - **Popping** - removing the topmost item
+
 A physical analogy is a literal stack of plates, which follows the same LIFO (Last In, First Out) structure.
 
 Before getting into why stacks *won't* work for storing query information, it's worth going over why we might consider them. They are extremely fast and simple. There isn't any indexing, searching, or memory allocation required beyond a single growing array.  This makes them attractive for situations where you process a stream of items in sequence and only ever need the most recent context.
@@ -228,6 +235,7 @@ We'd also need to decide how to represent `AND`s connecting two clauses: do we u
 A data structure is sufficient for a problem if it represents all instances of the problem without loss. It is minimal if removing any of its structural properties makes it insufficient. 
 
 For example, a rooted and ordered tree has the following properties:
+
 - Nodes representing individual operations and operands
 - Parent-child relationships (where childrens' outputs are a parent's input)
 - Ordered child nodes (because `a - b != b - a`)
@@ -243,10 +251,12 @@ So far, we have established that SQL _should_ be represented as a tree. There is
 #### Terminals and Non-Terminals 
 
 Every grammar has two kinds of things:
+
 - Terminals are the tokens that appear in the code you write. They are called terminals because you can't break them down any further.
 	- Examples include `SELECT`, `FROM`, `>`, `column_name`, `'abc'`, `80000`
 - Non-terminals are named patterns that represent a *kind of thing* in the language, rather than a specific token.
 	- E.G., in SQL, we have non-terminals like `expression`, `where_clause`, `select_stmt`, `column_reference`
+
 What you see in actual SQL are terminals. `WHERE`, `salary`, `=`, `0`. The non-terminals are the parser's way of naming the _patterns_ that those terminals form. 
 
 #### Production Rules
@@ -323,10 +333,14 @@ I found the episode's central argument genuinely surprising. I fall into the tra
 I won't rewrite or summarise the entire contents of the podcast, since it's pretty compact, but here are some scattered notes:
 
 For most of human history, economic life ran on two logics.
+
+
 - The first was subsistence: most people farmed to produce enough to eat, and a little surplus to trade locally for things you couldn't grow yourself. A peasant family was not trying to expand output year on year.
 - The second was tribute: Above the peasants sat lords and religious authorities who extracted a share of what peasants produced. They did this through obligation, custom, or servitude. 
 
 Importantly, both systems still had a **profit drive**. The distinction with capitalists is that neither is involved in reinvestment. A lord could, in theory, have taken his extracted grain and ploughed it back into better equipment or more land clearance. And some did do this, but it never became the dominant logic:
+
+
 - More gold didn't straightforwardly buy you more swords, because the whole structure of feudal society was built around land tenure as the basis of obligation, not cash. The lord's rational move was to acquire more land, which gave him more serfs, which gave him more military obligation, which gave him more power. Reinvesting grain into better ploughs didn't obviously advance that goal.
 - Even if gold *did* buy power, there was no mechanism by which producing twice as much grain translated reliably into twice as much gold. The local markets weren't deep enough to absorb it. You'd need towns of a certain size, and enough monetary circulation for large transactions to happen at all.
 
