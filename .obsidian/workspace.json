@@ -229,6 +229,7 @@
   },
   "active": "ff99985e561ef1b1",
   "lastOpenFiles": [
+    "site/instance/site.db-journal",
     "writing/posts/TILs/TIL-2026-03-27.md",
     "writing/posts/reviews/perfume-story-of-a-murderer.md",
     "writing/posts/reviews/flesh.md",
@@ -256,7 +257,6 @@
     "writing/posts/TILs/TIL 2026-03-26.md",
     "writing/posts/TILs/TIL 2026-03-27.md",
     "writing/posts/TILs/TIL 2026-03-30 - T-SQL.md",
-    "writing/posts/TILs/TIL 2026-04-04 - Values and Outcomes.md",
     "site/app/static/img/excalidraw/decomposition-ofquery-into-parse-tree.excalidraw.svg",
     "site/app/static/img/logo_pixel.svg",
     "site/app/static/img/posts/query.png",
@@ -264,7 +264,6 @@
     "site/app/static/img/coffee_pixel.svg",
     "site/app/static/img/excalidraw",
     "Excalidraw",
-    "site/instance/site.db-journal",
     "site/testing/__pycache__/test_import_code.cpython-313-pytest-9.0.2.pyc",
     "site/testing/test_import_code.py",
     "writing/posts/other/demo.sql",
