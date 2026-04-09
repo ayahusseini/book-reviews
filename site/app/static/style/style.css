@@ -310,6 +310,12 @@ h3.post-title::before,
     font-family: var(--body-font);
 }
 
+.markdown-body img {
+    max-width: 65ch;
+    width: 100%;
+    height: auto;
+}
+
 .markdown-body h2 {
     font-family: var(--display-font);
     font-size: 1.5rem;
