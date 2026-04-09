@@ -7,6 +7,24 @@ date: 2026-04-06
 ---
 Part of a series of "Today I Learned"s. 
 
+- Technical:
+	- [[#Query trees|Query trees]]
+		- [[#Query trees#The separation of what and how in SQL|The separation of what and how in SQL]]
+		- [[#Query trees#Parsing things into trees|Parsing things into trees]]
+			- [[#Parsing things into trees#Tangent: Minimum data structures|Tangent: Minimum data structures]]
+				- [[#Tangent: Minimum data structures#Flat lists lose information|Flat lists lose information]]
+				- [[#Tangent: Minimum data structures#Stacks destroy information|Stacks destroy information]]
+				- [[#Tangent: Minimum data structures#Hash maps lose information|Hash maps lose information]]
+				- [[#Tangent: Minimum data structures#The precise definition of 'minimum'|The precise definition of 'minimum']]
+		- [[#Query trees#Formal Grammars and Why They Produce Trees|Formal Grammars and Why They Produce Trees]]
+			- [[#Formal Grammars and Why They Produce Trees#Terminals and Non-Terminals|Terminals and Non-Terminals]]
+			- [[#Formal Grammars and Why They Produce Trees#Production Rules|Production Rules]]
+			- [[#Formal Grammars and Why They Produce Trees#Recursive Production Rules Produce Trees|Recursive Production Rules Produce Trees]]
+		- [[#Query trees#Beyond the Parse Tree|Beyond the Parse Tree]]
+	- [[#Less interesting: BEGIN and ROLLBACK|Less interesting: BEGIN and ROLLBACK]]
+- Non-Technical 
+	- [[#Capitalism isn't the same thing as wanting to make money|Capitalism isn't the same thing as wanting to make money]]
+		- [[#Capitalism isn't the same thing as wanting to make money#Merchants|Merchants]]
 
 ## Query trees
 
