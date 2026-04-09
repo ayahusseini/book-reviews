@@ -13,8 +13,18 @@ from app.extensions import cache
 
 posts_bp = Blueprint("posts", __name__)
 
-SHOWN_IN_POSTS = {"review", "essay", "standalone", "note"}
+SHOWN_IN_POSTS = {"review", "essay", "standalone", "note", "til"}
 NEW_POST_DAYS = 2
+
+# Display order and labels for post type groups.
+# Sections with no posts are omitted automatically.
+TYPE_GROUPS: list[tuple[str, str]] = [
+    ("til", "TODAY I LEARNED"),
+    ("essay", "ESSAYS"),
+    ("standalone", "POSTS"),
+    ("note", "NOTES"),
+    ("review", "REVIEWS"),
+]
 
 
 def _new_slugs(posts: list[Post]) -> set[str]:
@@ -27,6 +37,20 @@ def _new_slugs(posts: list[Post]) -> set[str]:
     }
 
 
+def _group_posts(posts: list[Post]) -> list[tuple[str, list[Post]]]:
+    """Return [(label, posts), ...] in TYPE_GROUPS order,
+    skipping empty groups."""
+    by_type: dict[str, list[Post]] = {}
+    for post in posts:
+        by_type.setdefault(post.post_type, []).append(post)
+
+    return [
+        (label, by_type[post_type])
+        for post_type, label in TYPE_GROUPS
+        if post_type in by_type
+    ]
+
+
 @posts_bp.route("/", methods=["GET"])
 @cache.cached()
 def post_list():
@@ -36,7 +60,9 @@ def post_list():
         .all()
     )
     return render_template(
-        "posts.html", posts=posts, new_slugs=_new_slugs(posts)
+        "posts.html",
+        grouped_posts=_group_posts(posts),
+        new_slugs=_new_slugs(posts),
     )
 
 
@@ -52,7 +78,9 @@ def misc_post_list():
         .all()
     )
     return render_template(
-        "posts.html", posts=posts, new_slugs=_new_slugs(posts)
+        "posts.html",
+        grouped_posts=_group_posts(posts),
+        new_slugs=_new_slugs(posts),
     )
 
 

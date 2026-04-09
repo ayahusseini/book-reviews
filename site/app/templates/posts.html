@@ -5,16 +5,19 @@
 {% endblock %}
 
 {% block main_content %}
-  {% if posts %}
-    <ul>
-      {% for post in posts %}
-        <li>
-          <a href="{{ url_for('posts.post_detail', slug=post.post_slug) }}">{{ post.post_title }}</a>
-          {% if post.post_slug in new_slugs %}<img src="{{ url_for('static', filename='img/seedling_pixel.svg') }}" alt="New" title="Recently added" class="seedling-icon pixel-art">{% endif %}
-          <small>by {{ post.post_author }}{% if post.post_type %} ({{ post.post_type }}){% endif %} - Created: {{ post.post_created_at.strftime('%Y-%m-%d') }}</small>
-        </li>
-      {% endfor %}
-    </ul>
+  {% if grouped_posts %}
+    {% for label, posts in grouped_posts %}
+      <h3>{{ label }}</h3>
+      <ul>
+        {% for post in posts %}
+          <li>
+            <a href="{{ url_for('posts.post_detail', slug=post.post_slug) }}">{{ post.post_title }}</a>
+            {% if post.post_slug in new_slugs %}<img src="{{ url_for('static', filename='img/seedling_pixel.svg') }}" alt="New" title="Recently added" class="seedling-icon pixel-art">{% endif %}
+            <small>{{ post.post_created_at.strftime('%Y-%m-%d') }}</small>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endfor %}
   {% else %}
     {% include "under_construction.html" %}
   {% endif %}

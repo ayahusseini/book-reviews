@@ -1,13 +1,14 @@
 ---
 title: TIL 2026-04-06  - SQL Parse Trees and Capitalism
 author: Aya
-type: note
+type: til
 slug: TIL-2026-04-06-SQL-parse-trees-and-capitalism
 date: 2026-04-06
 ---
 Part of a series of "Today I Learned"s. 
 
-Contents:
+## Contents:
+
 - Technical:
 	- [[#Query trees|Query trees]]
 		- [[#Query trees#The separation of what and how in SQL|The separation of what and how in SQL]]

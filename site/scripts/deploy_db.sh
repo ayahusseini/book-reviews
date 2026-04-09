@@ -2,24 +2,45 @@
 # deploy-db.sh — copy local SQLite database to production and restart Gunicorn.
 #
 # Usage:
-#   ./site/scripts/deploy-db.sh [user@host]
+#   ./site/scripts/deploy-db.sh [--reset-database-posts-only] [user@host]
 #
-# The remote host can be supplied as an argument or set via the DEPLOY_HOST
-# environment variable. If neither is provided the script will exit with an
-# error.
+# Options:
+#   --reset-database-posts-only
+#       Delete all posts from the local DB and re-import from markdown before
+#       deploying. Books, authors, and tags are not touched. Useful when you
+#       only need to push post changes without a full reseed.
+#
+# The remote host can be supplied as a positional argument or set via the
+# DEPLOY_HOST environment variable.
 #
 # Examples:
 #   DEPLOY_HOST=root@1.2.3.4 ./site/scripts/deploy-db.sh
 #   ./site/scripts/deploy-db.sh root@1.2.3.4
+#   ./site/scripts/deploy-db.sh --reset-database-posts-only root@1.2.3.4
 
 set -euo pipefail
+
+# ── Argument parsing ──────────────────────────────────────────────────────────
+
+RESET_POSTS_ONLY=false
+POSITIONAL_ARGS=()
+
+for arg in "$@"; do
+    case "$arg" in
+        --reset-database-posts-only)
+            RESET_POSTS_ONLY=true
+            ;;
+        *)
+            POSITIONAL_ARGS+=("$arg")
+            ;;
+    esac
+done
 
 # ── Config ────────────────────────────────────────────────────────────────────
 
 LOCAL_DB="site/instance/site.db"
 REMOTE_DB="/var/www/book_reviews/site/instance/site.db"
-REMOTE_HOST="${1:-${DEPLOY_HOST:-}}"
-
+REMOTE_HOST="${POSITIONAL_ARGS[0]:-${DEPLOY_HOST:-}}"
 
 # ── Validation ────────────────────────────────────────────────────────────────
 
@@ -34,6 +55,14 @@ if [[ ! -f "$LOCAL_DB" ]]; then
     echo "ERROR: local database not found at '$LOCAL_DB'."
     echo "  Run 'make setup' or 'make seed' first."
     exit 1
+fi
+
+# ── Optional: reset posts ─────────────────────────────────────────────────────
+
+if [[ "$RESET_POSTS_ONLY" == true ]]; then
+    echo "==> Resetting posts in local database (books unchanged)"
+    PYTHONPATH=site uv run flask --app site/app reset-posts --path writing/posts
+    echo "==> Posts reset."
 fi
 
 # ── Deploy ────────────────────────────────────────────────────────────────────

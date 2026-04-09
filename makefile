@@ -6,7 +6,7 @@ CODE    = writing/posts/other
 SEEDS   = writing/book_seed.json
 AUTHOR  = aya
 
-.PHONY: dev seed seed-refresh posts code sync test migrate shell setup reset install tags deploy-db
+.PHONY: dev seed seed-refresh posts code sync test migrate shell setup reset reset-posts install tags deploy-db
 
 dev:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) run --debug
@@ -67,6 +67,11 @@ reset:
 	rm -f site/instance/site.db
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) db upgrade --directory $(MIGRATIONS)
 	$(MAKE) sync
+
+# Delete all posts from the local DB and re-import from markdown.
+# Books, authors, and tags are not touched.
+reset-posts:
+	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) reset-posts --path $(POSTS)
 
 # Copy the local SQLite database to production and restart Gunicorn.
 # Set DEPLOY_HOST=user@host in your environment or pass it on the command line:

@@ -331,6 +331,56 @@ def import_code_command(path_str: str, author: str) -> None:
     click.echo("Cache cleared.")
 
 
+@click.command("reset-posts")
+@click.option(
+    "--path",
+    "path_str",
+    default=str(Path(__file__).parents[3] / "writing" / "posts"),
+    show_default=True,
+    help="Directory of markdown posts to re-import after reset.",
+)
+@with_appcontext
+def reset_posts_command(path_str: str) -> None:
+    """Delete all posts from the database and re-import from --path.
+
+    Books, authors, and tags are not touched.
+    """
+    from app.database.models import Post
+
+    deleted = Post.query.delete()
+    db.session.commit()
+    click.echo(f"Deleted {deleted} post(s) from the database.")
+
+    posts_dir = Path(path_str)
+    if not posts_dir.exists():
+        raise click.ClickException(f"Posts dir does not exist: {posts_dir}")
+
+    md_files = sorted(p for p in posts_dir.rglob("*.md") if p.is_file())
+    if not md_files:
+        click.echo(f"No markdown files found under {posts_dir}")
+        return
+
+    created = updated = errors = 0
+    for path in md_files:
+        try:
+            is_new = import_post_file(path)
+            if is_new:
+                created += 1
+            else:
+                updated += 1
+        except click.ClickException as exc:
+            click.echo(f"ERROR: {exc.format_message()}")
+            errors += 1
+
+    db.session.commit()
+    click.echo(
+        f"Re-imported posts from {posts_dir}: "
+        f"created={created}, updated={updated}, errors={errors}"
+    )
+    cache.clear()
+    click.echo("Cache cleared.")
+
+
 @click.command("manage-tags")
 @click.option(
     "--book",
@@ -402,4 +452,5 @@ def init_app(app) -> None:
     app.cli.add_command(import_posts_command)
     app.cli.add_command(import_code_command)
     app.cli.add_command(seed_books_command)
+    app.cli.add_command(reset_posts_command)
     app.cli.add_command(manage_tags_command)
