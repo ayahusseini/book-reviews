@@ -1,7 +1,7 @@
 ---
 title: TIL 2026-04-04 - (Basic) Values vs Outcomes
 author: Aya
-type: note
+type: til
 slug: TIL-2026-04-04-Values-and-Outcomes
 date: 2026-04-04
 ---

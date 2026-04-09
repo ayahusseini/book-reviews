@@ -300,6 +300,18 @@ class TestExpandWikilinks:
         result = _expand_wikilinks("[[other-post#Section One|read this]]")
         assert "[read this](/posts/other-post#section-one)" in result
 
+    def test_nested_heading_path_uses_leaf_anchor(self):
+        # Obsidian uses [[#Parent#Child]] syntax; the HTML anchor is just the leaf
+        result = _expand_wikilinks(
+            "[[#Query trees#The separation of what and how in SQL|The separation of what and how in SQL]]"
+        )
+        assert "href" not in result  # this is markdown, not HTML
+        assert "(#the-separation-of-what-and-how-in-sql)" in result
+
+    def test_nested_heading_path_no_label_uses_leaf_as_display(self):
+        result = _expand_wikilinks("[[#Parent Section#Child Section]]")
+        assert "[Child Section](#child-section)" in result
+
 
 # ---------------------------------------------------------------------------
 # render_markdown_to_safe_html
@@ -311,7 +323,7 @@ class TestRenderMarkdownToSafeHtml:
         assert "<strong>" in render_markdown_to_safe_html("**bold**")
 
     def test_renders_heading(self):
-        assert "<h2>" in render_markdown_to_safe_html("## Heading")
+        assert "<h2" in render_markdown_to_safe_html("## Heading")
 
     def test_script_tags_stripped(self):
         html = render_markdown_to_safe_html("<script>alert('xss')</script>")

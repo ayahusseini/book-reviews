@@ -18,6 +18,7 @@ VALID_POST_TYPES = {
     "quotes",
     "poem",
     "designdoc",
+    "til",
 }
 
 

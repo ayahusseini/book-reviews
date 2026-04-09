@@ -35,6 +35,7 @@ VALID_POST_TYPES = {
     "poem",
     "designdoc",
     "code",
+    "til",
 }
 
 
@@ -221,13 +222,16 @@ def _expand_wikilinks(text: str) -> str:
         if "#" in target:
             parts = target.split("#", 1)
             slug = parts[0].strip()
-            heading = parts[1].strip()
-            anchor = _heading_to_anchor(heading)
+            heading_path = parts[1].strip()
+            # Obsidian uses "Parent#Child" path syntax; only the leaf heading
+            # maps to an HTML anchor id.
+            leaf_heading = heading_path.rsplit("#", 1)[-1].strip()
+            anchor = _heading_to_anchor(leaf_heading)
             if slug:
                 display = label or target
                 return f"[{display}](/posts/{slug}#{anchor})"
             else:
-                display = label or heading
+                display = label or leaf_heading
                 return f"[{display}](#{anchor})"
         else:
             display = label or target
