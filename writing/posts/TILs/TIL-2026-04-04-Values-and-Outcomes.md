@@ -8,8 +8,6 @@ date: 2026-04-04
 
 Part of a series of "Today I Learned"s
 
-# Non-Technical
-
 ## Two ways of deciding if something is right
 
 There's a basic disagreement at the heart of moral philosophy:
