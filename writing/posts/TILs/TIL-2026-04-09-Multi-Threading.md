@@ -1,21 +1,21 @@
 ---
-title: TIL 2026-04-09  - Multi-Threading and Race Conditions
+title: TIL 2026-04-09  - Multi-Threading
 author: Aya
 type: til
-slug: TIL-2026-04-09-Race-Conditions
+slug: TIL-2026-04-09-Multi-Threading
 date: 2026-04-09
 ---
 
 # Contents
 
-# Technical
 
-- [[#Multi-Threading in computers|Multi-Threading in computers]]
-	- [[#Running more programs than we have cores|Running more programs than we have cores]]
-	- [[#Concurrency vs Parallelism|Concurrency vs Parallelism]]
-	- [[#Threads|Threads]]
-	- [[#More on the `top` command|More on the `top` command]]
-
+- Technical
+	- [[#Multi-Threading in computers|Multi-Threading in computers]]
+		- [[#Running more programs than we have cores|Running more programs than we have cores]]
+		- [[#Concurrency vs Parallelism|Concurrency vs Parallelism]]
+		- [[#Threads|Threads]]
+		- [[#More on the `top` command|More on the `top` command]]
+- Non-technical
 
 # Multi-Threading in computers
 
@@ -114,3 +114,9 @@ Of real interest is the process table. This gives us a row per process:
 - `TIME` is the total CPU time consumed since a process started
 - `#TH` is the thread count
 - `MEM` is the RAM being used by this process
+
+# Physicality and consciousness
+
+I've been mulling over [[reviews/flesh|Flesh]] for a while now (and seriously procrastinating my review of it). I loved the book, and in particular the way that it thinks of our bodies. The physical world and the internal world are often thought of as separate. At best, we treat the body as an input device, feeding data about external stimuli *into* the real self. 
+
+There is a concept called **body ownership**, which means that we feel like a self located in a particular body, separate from the world around us. Feeling contained, and a part of this physical entity, keeps us separate from AI (which is running on different VPCs on different machines). 
