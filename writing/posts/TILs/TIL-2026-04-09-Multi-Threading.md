@@ -16,6 +16,7 @@ date: 2026-04-09
 		- [[#Threads|Threads]]
 		- [[#More on the `top` command|More on the `top` command]]
 - Non-technical
+	- [[#Physicality and consciousness]]
 
 # Multi-Threading in computers
 
@@ -117,6 +118,6 @@ Of real interest is the process table. This gives us a row per process:
 
 # Physicality and consciousness
 
-I've been mulling over [[reviews/flesh|Flesh]] for a while now (and seriously procrastinating my review of it). I loved the book, and in particular the way that it thinks of our bodies. The physical world and the internal world are often thought of as separate. At best, we treat the body as an input device, feeding data about external stimuli *into* the real self. 
+I've been mulling over [Flesh](https://en.wikipedia.org/wiki/Flesh_(Szalay_novel)) for a while now (and seriously procrastinating my review of it). I loved the book, and in particular the way that it thinks of our bodies. The physical world and the internal world are often thought of as separate. At best, we treat the body as an input device, feeding data about external stimuli *into* the real self. 
 
-There is a concept called **body ownership**, which means that we feel like a self located in a particular body, separate from the world around us. Feeling contained, and a part of this physical entity, keeps us separate from AI (which is running on different VPCs on different machines). 
+There is a concept called **body ownership**, which means that we feel like a self located in a particular body, separate from the world around us. Feeling contained and part of a physical entity helps keep us separate from AI.

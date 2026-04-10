@@ -13,6 +13,20 @@
             "state": {
               "type": "markdown",
               "state": {
+                "file": "writing/posts/poetry/When We Two Parted.md",
+                "mode": "source",
+                "source": true
+              },
+              "icon": "lucide-file",
+              "title": "When We Two Parted"
+            }
+          },
+          {
+            "id": "75e587233f907cfd",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
                 "file": "writing/posts/TILs/TIL-2026-04-09-Multi-Threading.md",
                 "mode": "source",
                 "source": false
@@ -21,7 +35,8 @@
               "title": "TIL-2026-04-09-Multi-Threading"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -208,23 +223,28 @@
       "obsidian-excalidraw-plugin:New drawing": false
     }
   },
-  "active": "8a1e8f320bc6ff89",
+  "active": "75e587233f907cfd",
   "lastOpenFiles": [
-    "writing/posts/reviews/flesh.md",
+    "writing/posts/poetry/Fire and Ice.md",
+    "site/instance/site.db-journal",
+    "writing/posts/poetry/neutral-tones.md",
+    "writing/posts/poetry/When We Two Parted.md",
+    "writing/posts/poetry/Yes Yes.md",
+    "writing/posts/poetry/she-walks-in-beauty.md",
     "writing/posts/TILs/TIL-2026-04-09-Multi-Threading.md",
+    "writing/posts/TILs/TIL-2026-04-04-Values-and-Outcomes.md",
+    "writing/posts/TILs/TIL-2026-04-06-SQL-parse-trees-and-capitalism.md",
+    "writing/posts/reviews/flesh.md",
     "site/app/static/img/excalidraw/Drawing 2026-04-09 17.04.42.excalidraw.md",
     "site/app/static/img/excalidraw/Drawing 2026-04-09 17.04.42.excalidraw.svg",
     "site/app/static/img/excalidraw/Drawing 2026-04-09 05.38.00.excalidraw.svg",
     "Interview flowchart.md",
     "site/app/static/img/excalidraw/banking_backend.md",
     "site/app/static/img/excalidraw/banking_backend.svg",
-    "writing/posts/TILs/TIL-2026-04-06-SQL-parse-trees-and-capitalism.md",
-    "writing/posts/TILs/TIL-2026-04-04-Values-and-Outcomes.md",
     "writing/posts/TILs/TIL-2026-03-30-T-SQL.md",
     "writing/posts/TILs/TIL-2026-03-27.md",
     "writing/posts/TILs/TIL-2026-03-26.md",
     "writing/unpromoted_posts/TIL 2026-04-01- SQL-Indexes.md",
-    "site/instance/site.db-journal",
     "site/instance/site.db",
     "writing/unpromoted_posts/sql_query_trees_from_first_principles (1).md",
     "site/app/static/img/excalidraw/combining_queries.excalidraw.md",
@@ -237,11 +257,6 @@
     "writing/posts/reviews/orbital.md",
     "writing/posts/reviews/main-brighton-rock-post.md",
     "writing/posts/reviews/all-the-pretty-horses.md",
-    "writing/posts/reviews/all-systems-red.md",
-    "site/app/static/img/excalidraw/decomposition-ofquery-into-parse-tree.excalidraw.md",
-    "writing/posts/poetry/she-walks-in-beauty.md",
-    "writing/posts/poetry/john-cooper-clarke-nothing.md",
-    "writing/posts/poetry/neutral-tones.md",
     "site/app/static/img/posts/query_structure.png",
     "Screenshot 2026-04-09 at 03.31.26.png",
     "site/app/static/img/excalidraw/decomposition-ofquery-into-parse-tree.excalidraw.svg",
