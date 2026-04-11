@@ -13,30 +13,15 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "writing/posts/poetry/When We Two Parted.md",
-                "mode": "source",
-                "source": true
-              },
-              "icon": "lucide-file",
-              "title": "When We Two Parted"
-            }
-          },
-          {
-            "id": "75e587233f907cfd",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
                 "file": "writing/posts/TILs/TIL-2026-04-09-Multi-Threading.md",
                 "mode": "source",
-                "source": false
+                "source": true
               },
               "icon": "lucide-file",
               "title": "TIL-2026-04-09-Multi-Threading"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -93,8 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 721.5,
-    "collapsed": true
+    "width": 721.5
   },
   "right": {
     "id": "b4865e2dd9da23b7",
@@ -223,18 +207,18 @@
       "obsidian-excalidraw-plugin:New drawing": false
     }
   },
-  "active": "75e587233f907cfd",
+  "active": "8a1e8f320bc6ff89",
   "lastOpenFiles": [
+    "writing/posts/poetry/When We Two Parted.md",
+    "writing/posts/reviews/flesh.md",
+    "writing/posts/TILs/TIL-2026-04-09-Multi-Threading.md",
     "writing/posts/poetry/Fire and Ice.md",
     "site/instance/site.db-journal",
     "writing/posts/poetry/neutral-tones.md",
-    "writing/posts/poetry/When We Two Parted.md",
     "writing/posts/poetry/Yes Yes.md",
     "writing/posts/poetry/she-walks-in-beauty.md",
-    "writing/posts/TILs/TIL-2026-04-09-Multi-Threading.md",
     "writing/posts/TILs/TIL-2026-04-04-Values-and-Outcomes.md",
     "writing/posts/TILs/TIL-2026-04-06-SQL-parse-trees-and-capitalism.md",
-    "writing/posts/reviews/flesh.md",
     "site/app/static/img/excalidraw/Drawing 2026-04-09 17.04.42.excalidraw.md",
     "site/app/static/img/excalidraw/Drawing 2026-04-09 17.04.42.excalidraw.svg",
     "site/app/static/img/excalidraw/Drawing 2026-04-09 05.38.00.excalidraw.svg",

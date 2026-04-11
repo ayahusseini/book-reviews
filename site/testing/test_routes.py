@@ -101,10 +101,6 @@ class TestBooksRoutes:
 
 
 class TestPostsRoutes:
-    def test_post_list_returns_200(self, client):
-        response = client.get("/posts/")
-        assert response.status_code == 200
-
     def test_misc_post_list_returns_200(self, client):
         response = client.get("/posts/misc_posts")
         assert response.status_code == 200
@@ -164,11 +160,6 @@ class TestCodePostRoutes:
         make_post(session, "regular-post", post_type="standalone")
         response = client.get("/posts/regular-post")
         assert b"Back to posts" in response.data
-
-    def test_standalone_post_visible_in_post_list(self, client, session):
-        make_post(session, "regular-post", post_type="standalone")
-        response = client.get("/posts/")
-        assert b"regular-post" in response.data
 
 
 # ---------------------------------------------------------------------------

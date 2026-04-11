@@ -51,21 +51,6 @@ def _group_posts(posts: list[Post]) -> list[tuple[str, list[Post]]]:
     ]
 
 
-@posts_bp.route("/", methods=["GET"])
-@cache.cached()
-def post_list():
-    posts = (
-        Post.query.filter(Post.post_type.notin_({"code", "quotes"}))
-        .order_by(Post.post_updated_at.desc())
-        .all()
-    )
-    return render_template(
-        "posts.html",
-        grouped_posts=_group_posts(posts),
-        new_slugs=_new_slugs(posts),
-    )
-
-
 @posts_bp.route("/misc_posts", methods=["GET"])
 @cache.cached()
 def misc_post_list():
