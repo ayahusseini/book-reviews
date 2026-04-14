@@ -14,7 +14,6 @@ from app.config import (
 )
 from app.backend import models as models
 from app.extensions import db, migrate, cache
-from app.setup_logging import setup_logging
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 load_dotenv()
@@ -59,9 +58,6 @@ def create_app():
         app.wsgi_app = ProxyFix(
             app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
         )
-
-    setup_logging(app)
-    app.logger.info(f"Starting app with config: {config_name}")
 
     os.makedirs(app.instance_path, exist_ok=True)
 

@@ -1,6 +1,5 @@
 """Pytest configuration and shared fixtures."""
 
-import logging
 from unittest.mock import patch, MagicMock
 
 import pytest
@@ -16,7 +15,6 @@ def app():
     """Create a Flask app for the test session using an in-memory database."""
     with patch("app.read_config_setting", return_value="testing"):
         app = create_app()
-    app.logger.handlers.clear()
     yield app
 
 
@@ -28,14 +26,6 @@ def db(app):
         yield flask_db
         flask_db.session.remove()
         flask_db.drop_all()
-
-
-@pytest.fixture(autouse=True)
-def cleanup_loggers(app):
-    """Reset logger handlers after each test to prevent handler bleed."""
-    yield
-    logging.getLogger().handlers.clear()
-    app.logger.handlers.clear()
 
 
 @pytest.fixture

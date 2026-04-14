@@ -240,7 +240,7 @@ Body.
         assert result.book_ol_key == "my-new-book"
         assert result.book_title == "A New Book"
 
-    def test_returns_none_when_key_set_but_no_title_and_not_in_db(
+    def test_raises_when_key_set_but_no_title_and_not_in_db(
         self, tmp_path, session
     ):
         content = """\
@@ -254,5 +254,5 @@ Body.
 """
         path = write_post(tmp_path, content)
         parsed = parse_markdown_with_frontmatter(path)
-        result = resolve_book(parsed)
-        assert result is None
+        with pytest.raises(ValueError, match="not in the database"):
+            resolve_book(parsed)
