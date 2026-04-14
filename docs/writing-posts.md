@@ -41,7 +41,8 @@ author: "Aya"                              # required
 type: "review"                             # required — see post types above
 slug: "wuthering-heights-review"           # optional, defaults to filename stem
 date: "2026-01-15"                         # optional creation date (YYYY-MM-DD)
-book_ol_key: "OL14933414W"                 # required for review and essay
+book_ol_key: "OL14933414W"                 # book identifier — use this for Open Library books
+enrich_book: true                          # fetch book metadata from Open Library (key must start with OL)
 rating: 4.5                                # review only, 0–5
 tags:
   - "classics"
@@ -51,13 +52,36 @@ tags:
 Post body in Markdown...
 ```
 
+For books not on Open Library, supply metadata directly instead of using `book_ol_key` + `enrich_book`:
+
+```yaml
+---
+title: "My Review"
+author: "Aya"
+type: "review"
+book_key: "remains-of-the-day"             # stable identifier for the book (any unique slug)
+book_title: "The Remains of the Day"       # required when using book_key
+book_authors:                              # optional list of author names
+  - "Kazuo Ishiguro"
+book_publication_year: 1989               # optional
+book_page_count: 258                       # optional
+book_description: "..."                    # optional
+rating: 4.5
+---
+```
+
 ### Field notes
 
 - **`title`** and **`author`** are always required.
 - **`type`** must be one of the valid post types above.
 - **`slug`** defaults to the filename stem (`wuthering-heights.md` → `wuthering-heights`). The slug is the stable unique identifier — changing it creates a new post and orphans the old one.
 - **`date`** sets `post_created_at`. If omitted, it defaults to the time `make posts` is first run. Re-importing does not change this.
-- **`book_ol_key`** is the Open Library works key (e.g. `OL14933414W`). If the book is not already in the database it will be fetched automatically from Open Library.
+- **`book_ol_key`** is the Open Library works key (e.g. `OL14933414W`). The book must either already be in the database or have `enrich_book: true` set.
+- **`enrich_book`** — set to `true` to fetch book metadata from Open Library on import. The key must start with `OL`. If the book is already in the database the fetch is skipped.
+- **`book_key`** — use instead of `book_ol_key` for books not on Open Library. Any unique slug (e.g. `remains-of-the-day`). Must be paired with `book_title`.
+- **`book_title`** — required when using `book_key`. The book's display title.
+- **`book_authors`** — list of author name strings. Used when creating the book from frontmatter.
+- **`book_publication_year`**, **`book_page_count`**, **`book_description`** — optional metadata for manually-supplied books.
 - **`rating`** is only valid on `review` posts and is ignored on all other types. Must be between 0 and 5.
 - **`tags`** are normalised to lowercase, deduplicated, and attached to the referenced book. New tags are created automatically.
 
@@ -65,19 +89,19 @@ Post body in Markdown...
 
 ## Writing a book review
 
+### For a book on Open Library
+
 1. Find the book's Open Library works key. Go to [openlibrary.org](https://openlibrary.org), search for the book, open the Works page, and copy the key from the URL (e.g. `OL14933414W`).
 
 2. Add the book to `writing/book_seed.json` if you want it to appear in the book list before the review is written:
 
    ```json
-   { "olid": "OL14933414W", "tags": ["2026"] }
+   { "key": "OL14933414W", "enrich": true, "tags": ["2026"] }
    ```
+
+   Run `make seed` to fetch its metadata from Open Library and insert it into the database.
 
 3. Create a markdown file under `writing/posts/reviews/`:
-
-   ```
-   writing/posts/reviews/wuthering-heights.md
-   ```
 
    ```yaml
    ---
@@ -101,7 +125,45 @@ Post body in Markdown...
    make posts
    ```
 
-   The book is fetched from Open Library automatically if it is not already in the database. Running `make posts` again after editing the file updates the post in place.
+   If the book was seeded first the import is instant. If not, add `enrich_book: true` to the frontmatter to have it fetched from Open Library on import.
+
+### For a book not on Open Library
+
+Supply all metadata directly in the frontmatter — no seed file entry or API call needed:
+
+```yaml
+---
+title: "My Review"
+author: "Aya"
+type: "review"
+book_key: "remains-of-the-day"
+book_title: "The Remains of the Day"
+book_authors:
+  - "Kazuo Ishiguro"
+book_publication_year: 1989
+book_page_count: 258
+rating: 4.5
+date: "2026-03-10"
+tags:
+  - "fiction"
+---
+
+Opening thoughts...
+```
+
+`book_key` is the stable identifier stored in the database — choose a slug that won't change (e.g. a slugified title). `book_title` is required; all other book fields are optional.
+
+You can also seed a manual book before writing the review:
+
+```json
+{
+  "key": "remains-of-the-day",
+  "title": "The Remains of the Day",
+  "authors": ["Kazuo Ishiguro"],
+  "publication_year": 1989,
+  "tags": ["fiction"]
+}
+```
 
 ---
 
@@ -246,9 +308,12 @@ The recommended workflow keeps everything local — you never need to touch the 
 ### Step 1: write and import locally
 
 ```sh
+make seed            # upsert books (fetches OL data where enrich=true)
 make posts           # import your new/updated posts
 make code            # import any new/updated code demo files
 ```
+
+Or all at once: `make sync`
 
 Optionally tweak tags:
 
@@ -259,9 +324,10 @@ PYTHONPATH=site uv run flask --app site/app manage-tags --book OL14933414W --add
 ### Step 2: push the database
 
 ```sh
-export DEPLOY_HOST=root@your_server_ip
 make deploy-db
 ```
+
+`DEPLOY_HOST` is read from `.env` (e.g. `DEPLOY_HOST=root@your_server_ip`). You can also pass it inline: `make deploy-db DEPLOY_HOST=root@1.2.3.4`.
 
 This copies `site/instance/site.db` to the server via `scp` and restarts Gunicorn (which clears the in-process cache). Done.
 

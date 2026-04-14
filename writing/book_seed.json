@@ -1,64 +1,76 @@
 [
   {
-    "olid": "OL42549900W",
+    "key": "OL42549900W",
+    "enrich": true,
     "tags": ["read-2026"],
     "rating": 4.5
   },
   {
-    "olid": "OL28176642W",
+    "key": "OL28176642W",
+    "enrich": true,
     "tags": ["read-2026", "fiction", "mystery"],
     "rating": 4.5
   },
   {
-    "olid": "OL21177W",
+    "key": "OL21177W",
+    "enrich": true,
     "tags": ["read-2026", "fiction"],
     "rating": 5
   },
   {
-    "olid": "OL34032834W",
+    "key": "OL34032834W",
+    "enrich": true,
     "tags": ["read-2026", "non-fiction"],
     "rating": 4
   },
   {
-    "olid": "OL66562W",
+    "key": "OL66562W",
+    "enrich": true,
     "tags": ["read-2026", "fiction"],
     "rating": 3
   },
   {
-    "olid": "OL166482W",
+    "key": "OL166482W",
+    "enrich": true,
     "description": "Peter Sinclair's life falls apart - he loses his job, his home, and his relationship. He retreats to a friend's country home to seek solace. He decides to make sense of his life by writing it all down. This autobiography quickly gets redrafted into a fictional narrative set in the Dream Archipelago."
   },
   {
-    "olid": "OL274518W",
+    "key": "OL274518W",
+    "enrich": true,
     "title": "Love in the Time of Cholera",
     "rating": 5,
     "tags": ["read-2026", "fiction"]
   },
   {
-    "olid": "OL25329395W",
+    "key": "OL25329395W",
+    "enrich": true,
     "title": "Beautiful Star",
     "rating": 2.5,
     "tags": ["fiction"]
   },
   {
-    "olid": "OL35710736W",
+    "key": "OL35710736W",
+    "enrich": true,
     "rating": 3.5,
     "tags": ["non-fiction", "finance", "biography"]
   },
   {
-    "olid": "OL3511458W",
+    "key": "OL3511458W",
+    "enrich": true,
     "rating": 4,
     "tags": ["fiction", "historical"]
   },
   {
-    "olid": "OL498463W",
+    "key": "OL498463W",
+    "enrich": true,
     "rating": 4,
     "tags": ["fiction"],
     "title": "The Trial"
   },
-  { 
-    "olid": "OL3171069W",
-    "rating": 4  ,
+  {
+    "key": "OL3171069W",
+    "enrich": true,
+    "rating": 4,
     "title": "The Haunting of Hill House"
   }
 ]

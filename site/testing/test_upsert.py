@@ -5,14 +5,15 @@ every test via the session fixture, so tests are fully isolated.
 """
 
 import pytest
-from app.database.models import Book, Post, Tag
-from app.database.upserts import (
+from app.backend.models import Book, Post, Tag
+from app.backend.upserts import (
     attach_tags,
     upsert_books,
     upsert_post,
+    upsert_single_manual_book,
     upsert_tags,
 )
-from app.open_library import AuthorData, BookData
+from app.backend.open_library import AuthorData, BookData
 
 
 # ---------------------------------------------------------------------------
@@ -153,6 +154,37 @@ class TestUpsertBooks:
         )
         # 1 insert books, 1 insert authors, 1 upsert tags, 1 attach tags
         assert execute_spy.call_count == 4
+
+
+# ---------------------------------------------------------------------------
+# upsert_single_manual_book
+# ---------------------------------------------------------------------------
+
+
+class TestUpsertSingleManualBook:
+    def test_creates_book_from_book_data(self, session):
+        data = make_book_data("my-manual-key", "A Manual Book")
+        book = upsert_single_manual_book(data)
+        assert book.book_ol_key == "my-manual-key"
+        assert book.book_title == "A Manual Book"
+
+    def test_returns_existing_book_without_creating_duplicate(self, session):
+        existing = make_book(session, "my-manual-key", "Existing Book")
+        result = upsert_single_manual_book(make_book_data("my-manual-key"))
+        assert result.book_id == existing.book_id
+        assert (
+            session.query(Book).filter_by(book_ol_key="my-manual-key").count()
+            == 1
+        )
+
+    def test_attaches_authors(self, session):
+        data = make_book_data(
+            "manual-key",
+            authors=[AuthorData(name="Some Author", ol_id="some-author")],
+        )
+        book = upsert_single_manual_book(data)
+        assert len(book.authors) == 1
+        assert book.authors[0].author_name == "Some Author"
 
 
 # ---------------------------------------------------------------------------

@@ -87,12 +87,14 @@ writing/posts/**/*.md   writing/book_seed.json
 
 ### Design decisions
 
-- **Books and authors are many-to-many.** A book can have multiple authors; an author can have multiple books. Resolved via `book_author_mapping`. Author data comes from Open Library.
+- **Books and authors are many-to-many.** A book can have multiple authors; an author can have multiple books. Resolved via `book_author_mapping`.
 - **Books and tags are many-to-many.** Resolved via `book_to_tag_map`. Tags are created on the fly from `book_seed.json` and post frontmatter.
 - **Posts can exist without a book.** `book_id` is nullable — standalone posts, poems, and design docs have no book link.
 - **Quote posts are children of their parent post.** `parent_id` is a self-referential FK. The random quote widget uses `parent.post_slug` to link back to the source.
 - **`post_updated_at` only changes on real edits.** Re-running `make posts` without changing content does not touch this field.
-- **Book metadata comes entirely from Open Library** unless overridden in `book_seed.json`. The overrides (title, description, rating) are applied on every `make seed` without making HTTP requests.
+- **`book_ol_key` is the stable book identifier** but it is not required to be an Open Library key. Manual books use any unique slug (e.g. `remains-of-the-day`). OL enrichment is opt-in per entry via `enrich: true` (seed) or `enrich_book: true` (post frontmatter).
+- **`author_ol_id` is the stable author identifier** and is non-nullable. OL-fetched authors use their OL author ID; manually-supplied authors use a slug derived from their name (e.g. `kazuo-ishiguro`).
+- **Open Library is optional.** The seed command and post importer never call the OL API unless explicitly asked. Books can be fully specified inline.
 
 ---
 
@@ -100,7 +102,11 @@ writing/posts/**/*.md   writing/book_seed.json
 
 ### I want to add a book to the site
 
-→ Edit `writing/book_seed.json`, add an entry with the OL works key, then run `make seed`.
+→ Edit `writing/book_seed.json` and run `make seed`.
+
+For an Open Library book: `{ "key": "OL14933414W", "enrich": true, "tags": ["2026"] }` — fetches metadata from OL on first seed.
+
+For a manual book: `{ "key": "my-slug", "title": "Title", "authors": ["Author Name"], ... }` — no API call, insert directly.
 
 ### I want to write a review or post
 
@@ -147,23 +153,36 @@ writing/posts/**/*.md   writing/book_seed.json
 ## Data flow: adding a book
 
 ```
-1. Edit book_seed.json         { "olid": "OL123W", "tags": ["2026"] }
+1. Edit book_seed.json
         │
-        ▼
-2. make seed
+        ├─ OL book  { "key": "OL123W", "enrich": true, "tags": ["2026"] }
+        │      │
+        │      ▼
+        │  make seed
+        │      │
+        │      ├─ Book already in DB? ──Yes──► apply overrides (title/desc/rating/tags) only
+        │      │                                                no HTTP request made
+        │      └─ Book not in DB? ──────────► fetch_book_data(key)
+        │                                           │
+        │                                     Open Library API
+        │                                     /works/{id}.json
+        │                                     /works/{id}/editions.json
+        │                                     /authors/{id}.json  (per author)
+        │                                           │
+        │                                     upsert_books(...)
+        │                                           │
+        │                                     INSERT book, authors, tags, mappings
         │
-        ├─ Book already in DB? ──Yes──► apply overrides (title/desc/rating/tags) only
-        │                                                no HTTP request made
-        └─ Book not in DB? ──────────► fetch_book_data(olid)
-                                              │
-                                        Open Library API
-                                        /works/{id}.json
-                                        /works/{id}/editions.json
-                                        /authors/{id}.json  (per author)
-                                              │
-                                        upsert_books(...)
-                                              │
-                                        INSERT book, authors, tags, mappings
+        └─ Manual book  { "key": "my-slug", "title": "...", "authors": [...] }
+               │
+               ▼
+           make seed
+               │
+               ├─ Book already in DB? ──Yes──► apply overrides (title/desc/rating/tags)
+               └─ Book not in DB? ──────────► upsert_books(BookData from seed entry)
+                                                    │
+                                              INSERT book, authors, tags, mappings
+                                              (no HTTP request)
 ```
 
 ---
@@ -179,17 +198,23 @@ writing/posts/**/*.md   writing/book_seed.json
         ▼
 3. parse_markdown_with_frontmatter(path)
         │
-        ├── extract YAML frontmatter (title, author, type, book_ol_key, ...)
+        ├── extract YAML frontmatter (title, author, type, book_ol_key/book_key, ...)
         ├── extract ```ad-quote blocks → Quote objects
         └── replace ad-quote blocks with Markdown blockquotes
         │
         ▼
 4. resolve_book(parsed)
         │
-        ├── book_ol_key not set? ──► return None
-        └── book_ol_key set?
-              ├── already in DB? ──► return existing Book
-              └── not in DB? ──────► fetch from Open Library + upsert
+        ├── no key (book_ol_key or book_key)? ──► return None
+        │
+        ├── enrich_book: true?
+        │       ├── key starts with OL? ──► fetch from Open Library + upsert
+        │       └── key does NOT start with OL? ──► raise error immediately
+        │
+        └── enrich_book: false/absent?
+                ├── book already in DB? ──────────► return existing Book
+                ├── book not in DB, book_title set? ► upsert from frontmatter fields
+                └── book not in DB, no title? ───────► return None (standalone)
         │
         ▼
 5. upsert_post(...)

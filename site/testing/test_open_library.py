@@ -9,7 +9,7 @@ from __future__ import annotations
 import pytest
 import requests
 
-from app.open_library import (
+from app.backend.open_library import (
     AuthorData,
     BookData,
     build_author_url,
@@ -270,19 +270,19 @@ class TestFetchBookData:
 
         with (
             patch(
-                "app.open_library.fetch_works_data",
+                "app.backend.open_library.fetch_works_data",
                 return_value=works_payload,
             ),
             patch(
-                "app.open_library.fetch_editions_data",
+                "app.backend.open_library.fetch_editions_data",
                 return_value=editions_payload,
             ),
             patch(
-                "app.open_library.fetch_all_authors",
+                "app.backend.open_library.fetch_all_authors",
                 return_value=[],
             ),
         ):
-            from app.open_library import fetch_book_data
+            from app.backend.open_library import fetch_book_data
 
             result = fetch_book_data("OL12345W")
 

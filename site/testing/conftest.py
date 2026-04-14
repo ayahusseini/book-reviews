@@ -46,6 +46,7 @@ def session(db):
     factory = sessionmaker(bind=connection)
     scoped = scoped_session(factory)
 
+    original_session = db.session
     db.session = scoped
 
     yield scoped
@@ -53,6 +54,7 @@ def session(db):
     scoped.remove()
     transaction.rollback()
     connection.close()
+    db.session = original_session
 
 
 @pytest.fixture
