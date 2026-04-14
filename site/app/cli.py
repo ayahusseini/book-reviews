@@ -74,7 +74,7 @@ def resolve_book(parsed: MarkdownPost) -> Book | None:
 
     if parsed.enrich_book:
         if not key.startswith("OL"):
-            raise click.ClickException(
+            raise ValueError(
                 f"enrich_book=true but key {key!r} does not start with 'OL'"
             )
         return upsert_single_book(key)
@@ -120,10 +120,7 @@ def sync_quotes(
 
 def import_post_file(path: Path) -> bool:
     """Upsert a single post file. Returns True if the post is new."""
-    try:
-        parsed = parse_markdown_with_frontmatter(path)
-    except (ValueError, TypeError) as exc:
-        raise click.ClickException(str(exc))
+    parsed = parse_markdown_with_frontmatter(path)
 
     if (
         parsed.post_type in {"review", "essay"}
@@ -162,6 +159,21 @@ def import_post_file(path: Path) -> bool:
     return is_new
 
 
+def _import_files(md_files: list[Path]) -> tuple[int, int, int]:
+    """Run import_post_file over a list of paths, tallying results."""
+    created = updated = errors = 0
+    for path in md_files:
+        try:
+            if import_post_file(path):
+                created += 1
+            else:
+                updated += 1
+        except (ValueError, TypeError) as exc:
+            click.echo(f"ERROR: {exc}")
+            errors += 1
+    return created, updated, errors
+
+
 @click.command("import-posts")
 @click.option(
     "--path",
@@ -181,18 +193,7 @@ def import_posts_command(path_str: str) -> None:
         click.echo(f"No markdown files found under {posts_dir}")
         return
 
-    created = updated = errors = 0
-    for path in md_files:
-        try:
-            is_new = import_post_file(path)
-            if is_new:
-                created += 1
-            else:
-                updated += 1
-        except click.ClickException as exc:
-            click.echo(f"ERROR: {exc.format_message()}")
-            errors += 1
-
+    created, updated, errors = _import_files(md_files)
     db.session.commit()
     click.echo(
         f"Imported posts from {posts_dir}: "
@@ -437,18 +438,7 @@ def reset_posts_command(path_str: str) -> None:
         click.echo(f"No markdown files found under {posts_dir}")
         return
 
-    created = updated = errors = 0
-    for path in md_files:
-        try:
-            is_new = import_post_file(path)
-            if is_new:
-                created += 1
-            else:
-                updated += 1
-        except click.ClickException as exc:
-            click.echo(f"ERROR: {exc.format_message()}")
-            errors += 1
-
+    created, updated, errors = _import_files(md_files)
     db.session.commit()
     click.echo(
         f"Re-imported posts from {posts_dir}: "
@@ -484,44 +474,38 @@ def manage_tags_command(
     remove_tags: tuple[str, ...],
 ) -> None:
     """Add, remove, rename, delete, or list tags."""
+    book = Book.query.filter_by(book_ol_key=ol_key.strip()).first()
+    if not book:
+        click.echo("Book not found")
+        return
+
     made_changes = False
 
-    if add_tags or remove_tags:
-        if not ol_key:
-            raise click.ClickException(
-                "--book is required when using --add or --remove."
-            )
-        book = Book.query.filter_by(book_ol_key=ol_key.strip()).first()
-        if not book:
-            click.echo("Book not found")
-            return
-
-        for raw in add_tags:
-            name = raw.strip().lower()
-            if any(t.tag_name == name for t in book.tags):
-                click.echo(f"  (already present) {name!r}")
-            else:
-                book.tags.append(upsert_tags([name])[name])
-                click.echo(f"  Added {name!r} to {book.book_title!r}.")
-                made_changes = True
-
-        for raw in remove_tags:
-            name = raw.strip().lower()
-            match = next((t for t in book.tags if t.tag_name == name), None)
-            if match is None:
-                click.echo(f"  (not present) {name!r} — skipped.")
-            else:
-                book.tags.remove(match)
-                click.echo(f"  Removed {name!r} from {book.book_title!r}.")
-                made_changes = True
-
-        if made_changes:
-            db.session.commit()
-            cache.clear()
-            click.echo("Changes committed and cache cleared.")
+    for raw in add_tags:
+        name = raw.strip().lower()
+        if any(t.tag_name == name for t in book.tags):
+            click.echo(f"  (already present) {name!r}")
         else:
-            click.echo("No changes made.")
-        return
+            book.tags.append(upsert_tags([name])[name])
+            click.echo(f"  Added {name!r} to {book.book_title!r}.")
+            made_changes = True
+
+    for raw in remove_tags:
+        name = raw.strip().lower()
+        match = next((t for t in book.tags if t.tag_name == name), None)
+        if match is None:
+            click.echo(f"  (not present) {name!r} — skipped.")
+        else:
+            book.tags.remove(match)
+            click.echo(f"  Removed {name!r} from {book.book_title!r}.")
+            made_changes = True
+
+    if made_changes:
+        db.session.commit()
+        cache.clear()
+        click.echo("Changes committed and cache cleared.")
+    else:
+        click.echo("No changes made.")
 
 
 def init_app(app) -> None:

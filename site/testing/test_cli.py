@@ -8,7 +8,6 @@ these tests focus on the pure logic and DB-touching helpers.
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-import click
 import pytest
 
 from app.cli import _manual_book_data, _slugify, resolve_book
@@ -175,9 +174,7 @@ Body.
 """
         path = write_post(tmp_path, content)
         parsed = parse_markdown_with_frontmatter(path)
-        with pytest.raises(
-            click.ClickException, match="does not start with 'OL'"
-        ):
+        with pytest.raises(ValueError, match="does not start with 'OL'"):
             resolve_book(parsed)
 
     def test_enrich_true_with_ol_key_calls_upsert_single_book(

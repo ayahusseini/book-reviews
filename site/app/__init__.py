@@ -38,7 +38,7 @@ def get_config_obj(config_str: str) -> Config:
         "testing": TestingConfig,
     }
 
-    if config_str not in configs.keys():
+    if config_str not in configs:
         raise ValueError(
             "The config string must be one of"
             + f"{','.join(list(configs.keys()))}"
