@@ -7,6 +7,7 @@ from flask import Blueprint, redirect, url_for, render_template, jsonify
 from app.backend.models import Post
 from app.backend.markdown import render_markdown_to_safe_html
 from app.extensions import cache
+from app.routes.helper import all_heatmap_cells
 
 main_bp = Blueprint("homepage", __name__)
 
@@ -18,7 +19,7 @@ def index():
 
 @main_bp.route("/about", methods=["GET"], endpoint="about")
 def about():
-    return render_template("about.html")
+    return render_template("about.html", heatmap_cells=all_heatmap_cells())
 
 
 @cache.memoize()

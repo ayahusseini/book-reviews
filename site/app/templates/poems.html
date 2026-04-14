@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block header %}<h2>Poems</h2>{% endblock %}
 {% block main_content %}
-  <p class="text-muted">A collection of poems I enjoy.</p>   <!-- add this -->
   {% if poems %}
     <ul>
       {% for poem in poems %}
