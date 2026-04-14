@@ -23,6 +23,7 @@
 | `essay` | `/books/<id>` | Yes (recommended) | Longer piece about a book. |
 | `standalone` | `/posts/<slug>` | No | General post with no book link. |
 | `note` | `/posts/<slug>` | No | Short post with no book link. |
+| `til` | `/posts/<slug>` | No | Short "Today I Learned" entry. Shown in the posts listing under TODAY I LEARNED. |
 | `poem` | `/poems/<slug>` | No | Displayed on the poems page. |
 | `designdoc` | `/design/all` | No | Site design notes. |
 | `code` | `/posts/<filename>` | No | Code demo file (`.sql`, `.py`, etc.). Not shown in the posts listing. |
@@ -342,6 +343,16 @@ git pull && sudo systemctl restart gunicorn
 # back locally:
 make deploy-db
 ```
+
+### Rebuilding the local database from scratch
+
+If the local database gets into a bad state, wipe and rebuild it:
+
+```sh
+make reset
+```
+
+This deletes `site/instance/site.db`, re-runs all migrations, re-seeds books from `writing/book_seed.json`, and re-imports all posts and code. OL metadata is re-fetched for seed entries with `"enrich": true`.
 
 ### When you have schema changes
 

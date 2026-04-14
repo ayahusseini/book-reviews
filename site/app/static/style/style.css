@@ -975,11 +975,23 @@ p code {
    ABOUT PAGE AVATAR
    ---------------------------------------------------------------- */
 
+.about-intro {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+}
+
+.about-intro .post-heatmap {
+    margin-bottom: 0;
+}
+
 .about-avatar {
     display: block;
     height: clamp(100px, 14vw, 140px);
     width: auto;
-    margin-bottom: 1.25rem;
+    flex-shrink: 0;
 }
 
 /* ----------------------------------------------------------------

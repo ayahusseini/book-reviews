@@ -7,6 +7,7 @@ from flask import Blueprint, abort, render_template
 from app.backend.models import Post
 from app.backend.markdown import render_markdown_to_safe_html
 from app.extensions import cache
+from app.routes.helper import recently_created_poem_ids
 
 poems_bp = Blueprint("poems", __name__)
 
@@ -19,7 +20,9 @@ def poem_list():
         .order_by(Post.post_updated_at.desc())
         .all()
     )
-    return render_template("poems.html", poems=poems)
+    return render_template(
+        "poems.html", poems=poems, new_poem_ids=recently_created_poem_ids()
+    )
 
 
 @poems_bp.route("/<string:slug>", methods=["GET"])

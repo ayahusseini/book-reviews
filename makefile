@@ -64,6 +64,7 @@ reset:
 	uv sync
 	rm -f site/instance/site.db
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) db upgrade --directory $(MIGRATIONS)
+	$(MAKE) seed
 	$(MAKE) sync
 
 # Delete all posts from the local DB and re-import from markdown.

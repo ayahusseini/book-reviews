@@ -1,7 +1,13 @@
 {% extends "base.html" %}
+{% from "_macros.html" import render_post_heatmap %}
 
 {% block main_content %}
-    <img src="{{ url_for('static', filename='img/waving_woman.svg') }}" alt="Waving woman" class="pixel-art about-avatar">
+    <div class="about-intro">
+        <img src="{{ url_for('static', filename='img/waving_woman.svg') }}" alt="Waving woman" class="pixel-art about-avatar">
+        {% if heatmap_cells %}
+            {{ render_post_heatmap(heatmap_cells) }}
+        {% endif %}
+    </div>
     <p>Hi! My Name's Aya. I'm a dead beat physicist, currently working as a Data Scientist. I love programming - specifically wrangling with a complex system using language.
         That is to say, I also love reading. I created this website to document book reviews. I wanted to do this for a few reasons:
         <ul>

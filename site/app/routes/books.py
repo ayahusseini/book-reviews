@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
-
 from flask import Blueprint, render_template
 from sqlalchemy import func, desc
 
@@ -11,7 +9,7 @@ from app.backend.models import Book, Post, Tag
 from app.extensions import db, cache
 from app.backend.markdown import render_markdown_to_safe_html
 
-NEW_REVIEW_DAYS = 30
+from app.routes.helper import recently_reviewed_book_ids
 
 books_bp = Blueprint("books", __name__)
 
@@ -21,22 +19,6 @@ def book_ids_with_posts() -> set[int]:
     rows = (
         db.session.query(Post.book_id)
         .filter(Post.book_id.isnot(None), Post.post_type != "quotes")
-        .distinct()
-        .all()
-    )
-    return {row[0] for row in rows}
-
-
-def recently_reviewed_book_ids() -> set[int]:
-    """Return book_ids whose review post was created within NEW_REVIEW_DAYS."""
-    cutoff = datetime.now(timezone.utc) - timedelta(days=NEW_REVIEW_DAYS)
-    rows = (
-        db.session.query(Post.book_id)
-        .filter(
-            Post.book_id.isnot(None),
-            Post.post_type == "review",
-            Post.post_created_at >= cutoff,
-        )
         .distinct()
         .all()
     )
