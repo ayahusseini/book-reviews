@@ -3,6 +3,7 @@ title: All The Pretty Horses calls me out
 author: Aya
 type: review
 book_ol_key: OL40882W
+enrich_book: true
 rating: 4.5
 tags:
   - fiction

@@ -85,7 +85,12 @@ def resolve_book(parsed: MarkdownPost) -> Book | None:
 
     book_data = _manual_book_data(parsed)
     if book_data is None:
-        return None
+        raise ValueError(
+            f"Post '{parsed.slug}': book key {key!r} is not in the database "
+            "and no manual book data (book_title, etc.) was supplied. "
+            "Set enrich_book: true to fetch from Open Library, or add "
+            "book_title (and optionally book_authors) to the frontmatter."
+        )
     return upsert_single_manual_book(book_data)
 
 

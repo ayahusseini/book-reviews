@@ -7,7 +7,7 @@ from flask import Blueprint, abort, render_template
 from app.backend.markdown import render_markdown_to_safe_html
 from app.backend.models import Post
 from app.extensions import cache
-from app.routes.helper import recently_created, post_frequency, heatmap_cells
+from app.routes.helper import recently_created
 
 posts_bp = Blueprint("posts", __name__)
 
@@ -56,12 +56,10 @@ def misc_post_list():
         if row.post_type in SHOWN_IN_POSTS
     }
     new_slugs = {p.post_slug for p in posts if p.post_id in recent_ids}
-    frequency = post_frequency(posts)
     return render_template(
         "posts.html",
         grouped_posts=_group_posts(posts),
         new_slugs=new_slugs,
-        heatmap_cells=heatmap_cells(frequency),
     )
 
 
