@@ -3,6 +3,7 @@ title: The Affirmation is great but it is slow
 author: Aya
 type: review
 book_ol_key: OL166482W
+enrich_book: true
 rating: 3.5
 tags:
   - Science-fiction

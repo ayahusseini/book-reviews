@@ -7,7 +7,7 @@ from app.extensions import db, cache
 from app.backend.models import Post
 
 NEW_POST_DAYS = 5
-HEATMAP_WEEKS = 13
+HEATMAP_WEEKS = 26
 
 
 @cache.cached()

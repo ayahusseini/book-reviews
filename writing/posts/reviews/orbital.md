@@ -3,6 +3,7 @@ title: "Samantha Harvey thinks I am stupid and xenophobic"
 author: "Aya"
 type: "review"
 book_ol_key: "OL35708581W"
+enrich_book: true
 rating: 0.5
 tags:
   - "space"

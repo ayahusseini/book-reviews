@@ -6,9 +6,6 @@
 {% endblock %}
 
 {% block main_content %}
-  {% if heatmap_cells %}
-    {{ render_post_heatmap(heatmap_cells) }}
-  {% endif %}
   {% if grouped_posts %}
     {% for label, posts in grouped_posts %}
       <h3>{{ label }}</h3>

@@ -3,6 +3,7 @@ title: Solidly Okay
 author: Aya
 type: review
 book_ol_key: OL106083W
+enrich_book: true
 rating: 3.5
 tags:
   - fiction
