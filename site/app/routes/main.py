@@ -1,8 +1,12 @@
-from flask import Blueprint, redirect, url_for, render_template, jsonify
+"""Routes for / (home, about, random quote)."""
+
 import random
-from app.database.models import Post
+
+from flask import Blueprint, redirect, url_for, render_template, jsonify
+
+from app.backend.models import Post
+from app.backend.markdown import render_markdown_to_safe_html
 from app.extensions import cache
-from content.markdown_posts import render_markdown_to_safe_html
 
 main_bp = Blueprint("homepage", __name__)
 

@@ -13,30 +13,18 @@ import bleach
 import markdown
 import yaml
 
-from content.extract_quotes import (
+from app.backend.extract_quotes import (
     Quote,
     extract_ad_quotes,
     replace_ad_quotes_with_blockquotes,
 )
+from app.backend.models import VALID_POST_TYPES
 
 # Matches ![[filename]] — Obsidian-style image embeds
 _IMAGE_WIKILINK_RE = re.compile(r"!\[\[([^\]]+?)\]\]")
 
 # Matches [[target]] and [[target|label]] — not preceded by !
 _WIKILINK_RE = re.compile(r"(?<!!)\[\[([^\]|]+?)(?:\|([^\]]+?))?\]\]")
-
-
-VALID_POST_TYPES = {
-    "review",
-    "essay",
-    "standalone",
-    "note",
-    "quotes",
-    "poem",
-    "designdoc",
-    "code",
-    "til",
-}
 
 
 @dataclass
@@ -125,6 +113,40 @@ class MarkdownPost:
     @property
     def book_ol_key(self) -> str | None:
         return self.metadata.get("book_ol_key")
+
+    @property
+    def book_key(self) -> str | None:
+        """Stable identifier for a book (stored in book_ol_key column).
+        Use book_ol_key for OL books, book_key for manually-supplied books."""
+        return self.metadata.get("book_key")
+
+    @property
+    def enrich_book(self) -> bool:
+        """If True, fetch book metadata from Open Library using the key."""
+        return bool(self.metadata.get("enrich_book", False))
+
+    @property
+    def book_title_manual(self) -> str | None:
+        return self.metadata.get("book_title")
+
+    @property
+    def book_authors(self) -> list[str]:
+        val = self.metadata.get("book_authors", [])
+        if isinstance(val, str):
+            return [val]
+        return [str(a) for a in val] if isinstance(val, list) else []
+
+    @property
+    def book_publication_year(self) -> int | None:
+        return self.metadata.get("book_publication_year")
+
+    @property
+    def book_page_count(self) -> int | None:
+        return self.metadata.get("book_page_count")
+
+    @property
+    def book_description(self) -> str | None:
+        return self.metadata.get("book_description")
 
     @staticmethod
     def _normalize_tag(tag: str) -> str:

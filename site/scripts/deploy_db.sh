@@ -20,6 +20,18 @@
 
 set -euo pipefail
 
+# ── Load .env ─────────────────────────────────────────────────────────────────
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+if [[ -f "$REPO_ROOT/.env" ]]; then
+    set -a
+    # shellcheck source=/dev/null
+    source "$REPO_ROOT/.env"
+    set +a
+fi
+
 # ── Argument parsing ──────────────────────────────────────────────────────────
 
 RESET_POSTS_ONLY=false
@@ -40,7 +52,17 @@ done
 
 LOCAL_DB="site/instance/site.db"
 REMOTE_DB="/var/www/book_reviews/site/instance/site.db"
-REMOTE_HOST="${POSITIONAL_ARGS[0]:-${DEPLOY_HOST:-}}"
+
+# Resolve host: positional arg > DEPLOY_HOST env var > VPS_USER@VPS_HOST from .env
+if [[ ${#POSITIONAL_ARGS[@]} -gt 0 ]]; then
+    REMOTE_HOST="${POSITIONAL_ARGS[0]}"
+elif [[ -n "${DEPLOY_HOST:-}" ]]; then
+    REMOTE_HOST="$DEPLOY_HOST"
+elif [[ -n "${VPS_USER:-}" && -n "${VPS_HOST:-}" ]]; then
+    REMOTE_HOST="${VPS_USER}@${VPS_HOST}"
+else
+    REMOTE_HOST=""
+fi
 
 # ── Validation ────────────────────────────────────────────────────────────────
 
@@ -53,7 +75,7 @@ fi
 
 if [[ ! -f "$LOCAL_DB" ]]; then
     echo "ERROR: local database not found at '$LOCAL_DB'."
-    echo "  Run 'make setup' or 'make seed' first."
+    echo "  Run 'make setup' or 'make reset' first."
     exit 1
 fi
 

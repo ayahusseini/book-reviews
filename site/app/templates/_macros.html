@@ -1,3 +1,26 @@
+{% macro render_post_heatmap(cells) %}
+  <div class="post-heatmap">
+    <div class="post-heatmap__label">posting activity</div>
+    <div class="post-heatmap__grid-scroll">
+    <div class="post-heatmap__grid">
+      {% for cell_date, count, level in cells %}
+        <div class="post-heatmap__cell"
+             data-level="{{ level }}"
+             title="{{ cell_date.strftime('%Y-%m-%d') }}{% if count %} — {{ count }} post{{ 's' if count != 1 }}{% endif %}">
+        </div>
+      {% endfor %}
+    </div>
+    </div>
+    <div class="post-heatmap__legend">
+      <span class="post-heatmap__legend-label">less</span>
+      {% for i in range(4) %}
+        <div class="post-heatmap__cell" data-level="{{ i }}"></div>
+      {% endfor %}
+      <span class="post-heatmap__legend-label">more</span>
+    </div>
+  </div>
+{% endmacro %}
+
 {% macro star_rating(rating, uid="") %}
   {% if rating is not none %}
     {% set rounded = (rating * 2) | round / 2 %}

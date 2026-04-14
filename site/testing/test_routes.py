@@ -7,7 +7,7 @@ fixture's database state) so test data is immediately visible to routes.
 
 import json
 import pytest
-from app.database.models import Book, Post
+from app.backend.models import Book, Post
 
 
 # ---------------------------------------------------------------------------

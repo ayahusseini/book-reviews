@@ -1,4 +1,4 @@
-"""Blueprint for /books."""
+"""Routes for /books."""
 
 from __future__ import annotations
 
@@ -7,9 +7,9 @@ from datetime import datetime, timedelta, timezone
 from flask import Blueprint, render_template
 from sqlalchemy import func, desc
 
-from app.database.models import Book, Post, Tag
+from app.backend.models import Book, Post, Tag
 from app.extensions import db, cache
-from content.markdown_posts import render_markdown_to_safe_html
+from app.backend.markdown import render_markdown_to_safe_html
 
 NEW_REVIEW_DAYS = 30
 

@@ -3,36 +3,90 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 import click
 from flask.cli import with_appcontext
 
-from content.markdown_posts import (
+from app.backend.markdown import (
     MarkdownPost,
     parse_markdown_with_frontmatter,
 )
-from content.extract_quotes import Quote
-from app.database.models import Book
-from app.database.upserts import (
+from app.backend.extract_quotes import Quote
+from app.backend.models import Book
+from app.backend.upserts import (
     attach_tags,
     upsert_books,
     upsert_post,
     upsert_single_book,
+    upsert_single_manual_book,
     upsert_tags,
 )
-from app.open_library import fetch_book_data
+from app.backend.open_library import AuthorData, BookData, fetch_book_data
 from app.extensions import cache, db
 
 DEFAULT_SEED_PATH = Path(__file__).parents[3] / "writing" / "book_seed.json"
 
 
-def resolve_book(parsed: MarkdownPost) -> Book | None:
-    """Return the Book for the post's book_ol_key, fetching from OL if
-    needed. Returns None for posts with no book_ol_key."""
-    if parsed.book_ol_key is None:
+def _slugify(text: str) -> str:
+    """Derive a stable slug: lowercase, alphanumeric and hyphens only."""
+    text = text.lower().strip()
+    text = re.sub(r"[^\w\s-]", "", text)
+    text = re.sub(r"[\s_]+", "-", text)
+    return re.sub(r"-+", "-", text)
+
+
+def _manual_book_data(parsed: MarkdownPost) -> BookData | None:
+    """Build a BookData from manual frontmatter fields.
+
+    Returns None if no key or title is available (no manual book intended).
+    """
+    key = parsed.book_ol_key or parsed.book_key
+    title = parsed.book_title_manual
+    if not key or not title:
         return None
-    return upsert_single_book(parsed.book_ol_key)
+    authors = [
+        AuthorData(ol_id=_slugify(name), name=name)
+        for name in parsed.book_authors
+    ]
+    return BookData(
+        ol_key=key,
+        title=title,
+        description=parsed.book_description,
+        publication_year=parsed.book_publication_year,
+        page_count=parsed.book_page_count,
+        authors=authors,
+    )
+
+
+def resolve_book(parsed: MarkdownPost) -> Book | None:
+    """Return the Book for this post.
+
+    If enrich_book=true, fetches metadata from Open Library (key must start
+    with 'OL'). Otherwise looks up the existing DB record and, if absent,
+    creates the book from any manually-supplied frontmatter fields.
+    Returns None when there is no book association.
+    """
+    key = parsed.book_ol_key or parsed.book_key
+    if not key:
+        return None
+
+    if parsed.enrich_book:
+        if not key.startswith("OL"):
+            raise click.ClickException(
+                f"enrich_book=true but key {key!r} does not start with 'OL'"
+            )
+        return upsert_single_book(key)
+
+    existing = Book.query.filter_by(book_ol_key=key).first()
+    if existing:
+        return existing
+
+    book_data = _manual_book_data(parsed)
+    if book_data is None:
+        return None
+    return upsert_single_manual_book(book_data)
 
 
 def sync_quotes(
@@ -42,12 +96,9 @@ def sync_quotes(
     book: Book | None,
     parent_slug: str | None,
 ) -> tuple[int, int]:
-
-    current_slugs: set[str] = set()
     created = updated = 0
 
     for quote in quotes:
-        current_slugs.add(quote.quote_slug)
         _, is_new = upsert_post(
             slug=quote.quote_slug,
             title=f"Quote ({quote.quote_slug})",
@@ -68,16 +119,20 @@ def sync_quotes(
 
 
 def import_post_file(path: Path) -> bool:
-    """Attempt to Updae/Insert all post files"""
+    """Upsert a single post file. Returns True if the post is new."""
     try:
         parsed = parse_markdown_with_frontmatter(path)
     except (ValueError, TypeError) as exc:
         raise click.ClickException(str(exc))
 
-    if parsed.post_type in {"review", "essay"} and not parsed.book_ol_key:
+    if (
+        parsed.post_type in {"review", "essay"}
+        and not parsed.book_ol_key
+        and not parsed.book_key
+    ):
         click.echo(
             f"WARNING {path.name}: type={parsed.post_type!r} "
-            "but no book_ol_key set. Post will be created as standalone."
+            "but no book_ol_key or book_key set. Standalone post."
         )
 
     book = resolve_book(parsed)
@@ -155,19 +210,14 @@ def import_posts_command(path_str: str) -> None:
     show_default=True,
     help="Path to book seed JSON file.",
 )
-@click.option(
-    "--refresh",
-    is_flag=True,
-    default=False,
-    help=(
-        "Re-fetch metadata from Open Library for books already in the DB. "
-        "Without this flag, existing books are not re-fetched but tags and "
-        "description overrides from the seed file are still applied."
-    ),
-)
 @with_appcontext
-def seed_books_command(path_str: str, refresh: bool) -> None:
-    """Seed or update books from a JSON seed file."""
+def seed_books_command(path_str: str) -> None:
+    """Seed or update books from a JSON seed file.
+
+    Each entry must have a 'key' field. Set 'enrich': true on an entry to
+    fetch its metadata from Open Library (key must start with 'OL').
+    Otherwise supply 'title', 'authors', etc. directly in the seed entry.
+    """
     seed_path = Path(path_str)
     if not seed_path.exists():
         raise click.ClickException(f"Seed file does not exist: {seed_path}")
@@ -179,67 +229,94 @@ def seed_books_command(path_str: str, refresh: bool) -> None:
         click.echo("Seed file is empty.")
         return
 
-    ol_keys = [s["olid"] for s in seeds]
-    tag_map = {s["olid"]: s.get("tags", []) for s in seeds}
-    rating_map = {s["olid"]: s.get("rating") for s in seeds}
-    title_overrides = {s["olid"]: s["title"] for s in seeds if "title" in s}
-    description_overrides = {
-        s["olid"]: s["description"] for s in seeds if "description" in s
-    }
+    # Fail fast on invalid enrich entries before any DB writes.
+    for s in seeds:
+        if s.get("enrich") and not (s.get("key") or "").startswith("OL"):
+            raise click.ClickException(
+                f"enrich=true for key {s.get('key')!r} "
+                "but key does not start with 'OL'"
+            )
 
-    if refresh:
-        keys_to_fetch = ol_keys
-    else:
-        existing_keys = {
-            b.book_ol_key
-            for b in Book.query.filter(Book.book_ol_key.in_(ol_keys)).all()
-        }
-        keys_to_fetch = [k for k in ol_keys if k not in existing_keys]
+    fetched = created = updated = skipped = 0
 
-    click.echo(
-        f"Fetching {len(keys_to_fetch)} book(s) from Open Library "
-        f"({len(ol_keys) - len(keys_to_fetch)} already in DB)."
-    )
+    for s in seeds:
+        key = s.get("key")
+        if not key:
+            click.echo(f"  WARNING: seed entry missing 'key', skipping: {s}")
+            skipped += 1
+            continue
 
-    book_datas = []
-    for ol_key in keys_to_fetch:
-        click.echo(f"  Fetching {ol_key}...")
-        try:
-            book_datas.append(fetch_book_data(ol_key))
-        except Exception as exc:  # noqa: BLE001
-            click.echo(f"  WARNING: could not fetch {ol_key}: {exc}")
+        tags: list[str] = s.get("tags", [])
+        rating: float | None = s.get("rating")
+        title_override: str | None = s.get("title")
+        description_override: str | None = s.get("description")
 
-    upsert_books(
-        book_datas,
-        tag_map=tag_map,
-        rating_map=rating_map,
-        description_overrides=description_overrides,
-        title_overrides=title_overrides,
-    )
-
-    # For books already in the DB (not re-fetched), still apply tag and
-    # description overrides from the seed file
-    if not refresh and existing_keys:
-        existing_books = {
-            b.book_ol_key: b
-            for b in Book.query.filter(
-                Book.book_ol_key.in_(existing_keys)
-            ).all()
-        }
-
-        for ol_key, book in existing_books.items():
-            if ol_key in description_overrides:
-                book.book_description = description_overrides[ol_key]
-            book.book_rating = rating_map[ol_key]
-            if ol_key in title_overrides:
-                book.book_title = title_overrides[ol_key]
-            attach_tags(book, tag_map.get(ol_key, []))
+        if s.get("enrich"):
+            click.echo(f"  Fetching {key} from Open Library...")
+            try:
+                book_data = fetch_book_data(key)
+            except Exception as exc:  # noqa: BLE001
+                click.echo(f"  WARNING: could not fetch {key}: {exc}")
+                skipped += 1
+                continue
+            upsert_books(
+                [book_data],
+                tag_map={key: tags},
+                rating_map={key: rating},
+                title_overrides={key: title_override}
+                if title_override
+                else {},
+                description_overrides={key: description_override}
+                if description_override
+                else {},
+            )
+            fetched += 1
+        else:
+            existing = Book.query.filter_by(book_ol_key=key).first()
+            if existing:
+                if title_override:
+                    existing.book_title = title_override
+                if description_override:
+                    existing.book_description = description_override
+                if rating is not None:
+                    existing.book_rating = rating
+                attach_tags(existing, tags)
+                updated += 1
+            else:
+                title = title_override
+                if not title:
+                    click.echo(
+                        f"  WARNING: {key!r} not in DB and no title, skipping."
+                    )
+                    skipped += 1
+                    continue
+                authors = [
+                    AuthorData(ol_id=_slugify(name), name=name)
+                    for name in s.get("authors", [])
+                ]
+                upsert_books(
+                    [
+                        BookData(
+                            ol_key=key,
+                            title=title,
+                            description=description_override,
+                            publication_year=s.get("publication_year"),
+                            page_count=s.get("page_count"),
+                            authors=authors,
+                        )
+                    ],
+                    tag_map={key: tags},
+                    rating_map={key: rating},
+                )
+                created += 1
 
     db.session.commit()
     click.echo(
         f"Seeded {len(seeds)} book(s): "
-        f"{len(keys_to_fetch)} fetched from Open Library, "
-        f"{len(ol_keys) - len(keys_to_fetch)} updated from seed file."
+        f"{fetched} fetched from Open Library, "
+        f"{created} created, "
+        f"{updated} updated, "
+        f"{skipped} skipped."
     )
 
 
@@ -345,7 +422,7 @@ def reset_posts_command(path_str: str) -> None:
 
     Books, authors, and tags are not touched.
     """
-    from app.database.models import Post
+    from app.backend.models import Post
 
     deleted = Post.query.delete()
     db.session.commit()

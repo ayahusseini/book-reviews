@@ -12,7 +12,7 @@ from app.config import (
     TestingConfig,
     check_config_safety,
 )
-from app.database import models as models
+from app.backend import models as models
 from app.extensions import db, migrate, cache
 from app.setup_logging import setup_logging
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -63,16 +63,13 @@ def create_app():
     setup_logging(app)
     app.logger.info(f"Starting app with config: {config_name}")
 
-    app.logger.info(f"Starting app with config: {config_obj}")
-    app.logger.info(f"Starting app with config: {config_name}")
-
     os.makedirs(app.instance_path, exist_ok=True)
 
-    from .blueprints.books import books_bp
-    from .blueprints.main import main_bp
-    from .blueprints.posts import posts_bp
-    from .blueprints.poems import poems_bp
-    from .blueprints.design import design_bp
+    from .routes.books import books_bp
+    from .routes.main import main_bp
+    from .routes.posts import posts_bp
+    from .routes.poems import poems_bp
+    from .routes.design import design_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(books_bp, url_prefix="/books")
@@ -90,7 +87,7 @@ def create_app():
 
     @app.context_processor
     def inject_random_quote():
-        from .blueprints.main import get_random_quote_data
+        from .routes.main import get_random_quote_data
 
         random_quote, quote_html, source_html = get_random_quote_data()
         if random_quote:

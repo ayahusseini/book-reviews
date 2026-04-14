@@ -13,7 +13,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 
-from app.database.models import (
+from app.backend.models import (
     Author,
     Book,
     BookToTagMapping,
@@ -21,7 +21,7 @@ from app.database.models import (
     Tag,
 )
 from app.extensions import db
-from app.open_library import AuthorData, BookData
+from app.backend.open_library import AuthorData, BookData
 
 
 # ---------------------------------------------------------------------------
@@ -278,6 +278,17 @@ def upsert_books(
     return result
 
 
+def upsert_single_manual_book(book_data: BookData) -> Book:
+    """Return the Book for book_data.ol_key, inserting from provided data
+    if absent. No OL fetch. Does not commit — caller is responsible.
+    """
+    book = Book.query.filter_by(book_ol_key=book_data.ol_key).first()
+    if book:
+        return book
+    books = upsert_books([book_data])
+    return books[book_data.ol_key]
+
+
 def upsert_single_book(ol_key: str) -> Book:
     """Return the Book for ol_key, or fetch from Open Library and create it.
 
@@ -288,7 +299,7 @@ def upsert_single_book(ol_key: str) -> Book:
     if book:
         return book
 
-    from app.open_library import fetch_book_data
+    from app.backend.open_library import fetch_book_data
 
     book_data = fetch_book_data(ol_key)
     books = upsert_books([book_data])

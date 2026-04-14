@@ -6,7 +6,7 @@ CODE    = writing/posts/other
 SEEDS   = writing/book_seed.json
 AUTHOR  = aya
 
-.PHONY: dev seed seed-refresh posts code sync test migrate shell setup reset reset-posts install tags deploy-db
+.PHONY: dev seed posts code sync test migrate shell setup reset reset-posts install tags deploy-db
 
 dev:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) run --debug
@@ -14,16 +14,13 @@ dev:
 seed:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) seed-books --path $(SEEDS)
 
-seed-refresh:
-	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) seed-books --path $(SEEDS) --refresh
-
 posts:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) import-posts --path $(POSTS)
 
 code:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) import-code --path $(CODE) --author "$(AUTHOR)"
 
-sync: seed posts code restart
+sync: posts code restart
 
 restart:
 	touch site/app/__init__.py
@@ -61,7 +58,8 @@ setup:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) db upgrade --directory $(MIGRATIONS)
 	$(MAKE) sync
 
-# Wipe the database and rebuild from scratch (re-fetches all OL data).
+# Wipe the database and rebuild from scratch.
+# OL metadata is re-fetched for seed entries that have "enrich": true.
 reset:
 	uv sync
 	rm -f site/instance/site.db
@@ -74,16 +72,10 @@ reset-posts:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) reset-posts --path $(POSTS)
 
 # Copy the local SQLite database to production and restart Gunicorn.
-# Set DEPLOY_HOST=user@host in your environment or pass it on the command line:
+# Host is read from .env (VPS_USER + VPS_HOST). Override with DEPLOY_HOST:
 #   make deploy-db DEPLOY_HOST=root@1.2.3.4
 deploy-db:
-	@if [ -z "$(DEPLOY_HOST)" ]; then \
-		echo "ERROR: DEPLOY_HOST is not set."; \
-		echo "  Usage:  make deploy-db DEPLOY_HOST=root@your_server_ip"; \
-		echo "  Or:     export DEPLOY_HOST=root@your_server_ip"; \
-		exit 1; \
-	fi
-	./site/scripts/deploy_db.sh $(DEPLOY_HOST)
+	./site/scripts/deploy_db.sh $(if $(DEPLOY_HOST),$(DEPLOY_HOST),)
  
 # Shorthand for flask manage-tags. Pass options via ARGS:
 #   make tags ARGS="--book OL42549900W --add fiction --remove 2025"

@@ -80,21 +80,20 @@ book_reviews/
     │   ├── config.py              ← DevelopmentConfig / TestingConfig / ProductionConfig
     │   ├── extensions.py          ← db, cache, migrate instances
     │   ├── cli.py                 ← seed-books and import-posts CLI commands
-    │   ├── open_library.py        ← Open Library HTTP client (pure, no Flask deps)
-    │   ├── blueprints/
-    │   │   ├── main.py            ← home redirect, about, random-quote endpoint
-    │   │   ├── books.py           ← /books routes
-    │   │   ├── posts.py           ← /posts routes
-    │   │   ├── poems.py           ← /poems routes
-    │   │   └── design.py          ← /design routes
-    │   ├── database/
+    │   ├── backend/               ← data layer (no Flask dependencies)
     │   │   ├── models.py          ← SQLAlchemy models
-    │   │   └── upserts.py         ← batch upsert helpers (never commit internally)
+    │   │   ├── upserts.py         ← DB write helpers (never commit internally)
+    │   │   ├── open_library.py    ← Open Library HTTP client
+    │   │   ├── markdown.py        ← frontmatter parser + HTML renderer
+    │   │   └── extract_quotes.py  ← ad-quote block extraction
+    │   ├── routes/                ← web layer (Flask route handlers)
+    │   │   ├── main.py            ← /, /about, /random-quote
+    │   │   ├── books.py           ← /books
+    │   │   ├── posts.py           ← /posts
+    │   │   ├── poems.py           ← /poems
+    │   │   └── design.py          ← /design
     │   ├── templates/
     │   └── static/
-    ├── content/
-    │   ├── markdown_posts.py      ← frontmatter parser + HTML renderer
-    │   └── extract_quotes.py      ← ad-quote block extraction
     ├── migrations/                ← Alembic migration history
     └── testing/                   ← pytest test suite
 ```
@@ -165,7 +164,7 @@ make tags ARGS="--book OL42549900W --add fiction"
 
 ## Database migrations
 
-When you change `site/app/database/models.py`, generate and apply a migration:
+When you change `site/app/backend/models.py`, generate and apply a migration:
 
 ```sh
 make migrate MSG="Describe what changed"

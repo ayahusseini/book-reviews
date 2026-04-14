@@ -18,6 +18,7 @@ VALID_POST_TYPES = {
     "quotes",
     "poem",
     "designdoc",
+    "code",
     "til",
 }
 
@@ -76,7 +77,7 @@ class Author(db.Model):
 
     author_id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     author_name = db.Column(db.String(750), nullable=False)
-    author_ol_id = db.Column(db.String(250), nullable=True, unique=True)
+    author_ol_id = db.Column(db.String(250), nullable=False, unique=True)
 
     books = db.relationship(
         "Book",

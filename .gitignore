@@ -16,7 +16,7 @@ wheels/
 htmlcov/
 
 *.log
-
+.obsidian/
 instance/
 writing/unpromoted_posts/**
 !writing/unpromoted_posts/.gitkeep

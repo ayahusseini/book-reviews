@@ -1,8 +1,12 @@
+"""Routes for /poems."""
+
 from __future__ import annotations
-from flask import Blueprint, render_template
-from app.database.models import Post
+
+from flask import Blueprint, abort, render_template
+
+from app.backend.models import Post
+from app.backend.markdown import render_markdown_to_safe_html
 from app.extensions import cache
-from content.markdown_posts import render_markdown_to_safe_html
 
 poems_bp = Blueprint("poems", __name__)
 
@@ -21,8 +25,6 @@ def poem_list():
 @poems_bp.route("/<string:slug>", methods=["GET"])
 @cache.cached()
 def poem_detail(slug: str):
-    from flask import abort
-
     poem = Post.query.filter_by(post_slug=slug, post_type="poem").first()
     if not poem:
         abort(404)

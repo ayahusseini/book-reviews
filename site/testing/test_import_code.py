@@ -7,7 +7,7 @@ exactly as it does in production.
 import pytest
 
 from app.cli import import_code_command
-from app.database.models import Post
+from app.backend.models import Post
 
 
 # ---------------------------------------------------------------------------
