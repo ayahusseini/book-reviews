@@ -185,8 +185,7 @@ class Post(db.Model):
     )
     post_created_at = db.Column(
         db.DateTime,
-        nullable=False,
-        default=lambda: datetime.now(timezone.utc),
+        nullable=True,
     )
 
     book = db.relationship("Book", back_populates="posts")
