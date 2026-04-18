@@ -103,32 +103,37 @@
   },
   {
     "key": "OL17914663W",
+    "title": "All Systems Red",
     "enrich": true,
     "rating": 2.5,
-    "tags": ["science-fiction", "fiction", "read-2026"]
+    "tags": ["science-fiction", "fiction"]
   },
   {
     "key": "OL40882W",
+    "title": "All the Pretty Horses",
     "enrich": true,
     "rating": 4.5,
-    "tags": ["fiction", "western", "read-2026"]
+    "tags": ["fiction", "western"]
   },
   {
     "key": "OL106083W",
+    "title": "Brighton Rock",
     "enrich": true,
     "rating": 3.5,
-    "tags": ["fiction", "crime", "read-2026"]
+    "tags": ["fiction", "crime"]
   },
   {
     "key": "OL35708581W",
+    "title": "Orbital",
     "enrich": true,
     "rating": 0.5,
-    "tags": ["space", "fiction", "booker-prize", "read-2026"]
+    "tags": ["space", "fiction", "booker-prize"]
   },
   {
     "key": "OL10834W",
+    "title": "Perfume: The Story of a Murderer",
     "enrich": true,
     "rating": 5,
-    "tags": ["fiction", "historical", "fantasy", "read-2026"]
+    "tags": ["fiction", "historical", "fantasy"]
   }
 ]
