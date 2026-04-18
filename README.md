@@ -29,7 +29,7 @@ Install [uv](https://docs.astral.sh/uv/getting-started/installation/) if you do 
 make setup
 ```
 
-This installs dependencies, applies migrations, seeds books, and imports posts. Books already in the database are not re-fetched from Open Library.
+This installs dependencies, applies migrations, seeds books, and resets posts. Books already in the database are not re-fetched from Open Library — only new entries trigger an OL fetch.
 
 To start the development server:
 
@@ -44,12 +44,11 @@ make dev
 | Target | What it does |
 |---|---|
 | `make dev` | Start Flask development server with auto-reload |
-| `make setup` | Install deps, apply migrations, seed books, import posts |
-| `make reset` | **Destructive.** Wipe the database and rebuild from scratch |
-| `make seed` | Seed/update books from `writing/book_seed.json` (skips OL fetch for existing books) |
-| `make seed-refresh` | Re-fetch all book metadata from Open Library |
-| `make posts` | Import/update all markdown posts from `writing/posts/` |
-| `make sync` | `seed` + `posts` |
+| `make setup` | Install deps, apply migrations, seed books, reset posts |
+| `make reset` | **Destructive.** Wipe the database and rebuild from scratch (re-fetches all OL books) |
+| `make seed` | Seed/update books from `writing/book_seed.json`. Only fetches from OL for books not yet in the database |
+| `make sync` | `seed` + `reset-posts` + `code` — full content refresh |
+| `make reset-posts` | Delete all posts from the DB and re-import from `writing/posts/` |
 | `make test` | Run the test suite |
 | `make migrate MSG="..."` | Generate a new Alembic migration and apply it |
 | `make upgrade` | Apply pending migrations without generating a new one |
@@ -68,7 +67,7 @@ book_reviews/
 ├── pyproject.toml
 ├── docs/                          ← architecture and workflow docs
 ├── writing/                       ← all user content (gitignored posts)
-│   ├── book_seed.json             ← book registry with OL keys and overrides
+│   ├── book_seed.json             ← book registry
 │   └── posts/
 │       ├── reviews/
 │       ├── poetry/
@@ -79,7 +78,7 @@ book_reviews/
     │   ├── __init__.py            ← Flask app factory (create_app)
     │   ├── config.py              ← DevelopmentConfig / TestingConfig / ProductionConfig
     │   ├── extensions.py          ← db, cache, migrate instances
-    │   ├── cli.py                 ← seed-books and import-posts CLI commands
+    │   ├── cli.py                 ← seed-books, reset-posts, import-code CLI commands
     │   ├── backend/               ← data layer (no Flask dependencies)
     │   │   ├── models.py          ← SQLAlchemy models
     │   │   ├── upserts.py         ← DB write helpers (never commit internally)
@@ -102,33 +101,49 @@ book_reviews/
 
 ## Adding books
 
-Books are registered in `writing/book_seed.json`. Each entry requires an Open Library works key (`olid`). All other fields are optional overrides.
+Books are registered in `writing/book_seed.json`. Each entry requires a `key` field.
+
+### With Open Library enrichment
+
+Set `"enrich": true` to fetch metadata automatically. The key must be an OL works key. The OL fetch only happens once — subsequent `make seed` runs skip it if the book is already in the database.
 
 ```json
-[
-  {
-    "olid": "OL42549900W",
-    "tags": ["2026", "fiction"]
-  },
-  {
-    "olid": "OL166482W",
-    "title": "My preferred title",
-    "description": "A custom description that overrides what Open Library returns.",
-    "rating": 4.5,
-    "tags": ["2025"]
-  }
-]
+{
+  "key": "OL42549900W",
+  "enrich": true,
+  "tags": ["read-2026", "fiction"],
+  "rating": 4.5
+}
+```
+
+### Without Open Library
+
+Omit `enrich` (or set it to `false`) and supply the metadata directly. Only `key` and `title` are required.
+
+```json
+{
+  "key": "my-custom-key",
+  "title": "The Book Title",
+  "authors": ["Author Name"],
+  "publication_year": 1997,
+  "tags": ["fiction"],
+  "rating": 4
+}
 ```
 
 | Field | Required | Description |
 |---|---|---|
-| `olid` | Yes | Open Library works key |
-| `tags` | No | List of tag names to attach to the book |
-| `title` | No | Overrides the title fetched from Open Library |
-| `description` | No | Overrides the description fetched from Open Library |
-| `rating` | No | Sets the book's displayed rating (0–5) |
+| `key` | Yes | Unique identifier. Must be an OL works key if `enrich: true` |
+| `enrich` | No | If `true`, fetch metadata from Open Library on first add |
+| `title` | Yes (manual) / No (enrich) | Title. Overrides OL title when used with `enrich: true` |
+| `authors` | No | List of author name strings (manual books only) |
+| `description` | No | Overrides the description |
+| `publication_year` | No | Publication year (manual books only) |
+| `page_count` | No | Page count (manual books only) |
+| `rating` | No | Displayed rating (0–5) |
+| `tags` | No | List of tag names to attach |
 
-Run `make seed` after editing the file. The `comment` field is not used — omit it. Books already in the database are not re-fetched from Open Library — only the overrides are applied. Use `make seed-refresh` to force a full re-fetch of all books.
+Run `make seed` (or `make sync`) after editing the file.
 
 ---
 
@@ -139,14 +154,16 @@ See **[docs/writing-posts.md](docs/writing-posts.md)** for a full guide, includi
 Short version:
 
 1. Create a `.md` file under `writing/posts/`.
-2. Run `make posts` to import it into the database.
+2. Run `make sync` to seed any new books and import posts.
 3. Run `make deploy-db` to push the updated database to production.
+
+To show the "New" seedling badge on a book, set `date:` in the review's frontmatter to today's date. Posts without a `date:` field are never badged as new.
 
 ---
 
 ## Managing tags
 
-Tags are attached to books automatically during `make seed` and `make posts`.
+Tags are attached to books automatically during `make seed` and `make sync`.
 
 For ad-hoc changes without re-importing, use `flask manage-tags` directly:
 

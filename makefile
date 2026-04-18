@@ -6,7 +6,7 @@ CODE    = writing/posts/other
 SEEDS   = writing/book_seed.json
 AUTHOR  = aya
 
-.PHONY: dev seed code sync test migrate shell setup reset reset-posts install tags deploy-db
+.PHONY: dev seed code sync test migrate upgrade stamp shell setup reset reset-posts deploy-db restart
 
 dev:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) run --debug
@@ -18,7 +18,7 @@ seed:
 code:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) import-code --path $(CODE) --author "$(AUTHOR)"
 
-sync: reset-posts code restart
+sync: seed reset-posts code restart
 
 restart:
 	touch site/app/__init__.py
@@ -46,9 +46,6 @@ stamp:
 shell:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) shell
 
-install:
-	uv sync
-
 # Apply any pending migrations and sync content. Safe to run repeatedly —
 # skips OL fetches for books already in the DB.
 setup:
@@ -62,7 +59,6 @@ reset:
 	uv sync
 	rm -f site/instance/site.db
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) db upgrade --directory $(MIGRATIONS)
-	$(MAKE) seed
 	$(MAKE) sync
 
 # Delete all posts from the local DB and re-import from markdown.
@@ -76,7 +72,3 @@ reset-posts:
 deploy-db:
 	./site/scripts/deploy_db.sh $(if $(DEPLOY_HOST),$(DEPLOY_HOST),)
  
-# Shorthand for flask manage-tags. Pass options via ARGS:
-#   make tags ARGS="--book OL42549900W --add fiction --remove 2025"
-tags:
-	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) manage-tags $(ARGS)
