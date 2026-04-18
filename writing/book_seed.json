@@ -1,8 +1,9 @@
 [
   {
     "key": "OL42549900W",
+    "title": "Flesh",
     "enrich": true,
-    "tags": ["read-2026"],
+    "tags": ["read-2026", "fiction"],
     "rating": 4.5
   },
   {
@@ -66,13 +67,6 @@
     "rating": 4,
     "tags": ["fiction"],
     "title": "The Trial"
-  },
-  {
-    "key": "OL42406155W",
-    "enrich": true,
-    "rating": 4,
-    "title": "Flesh",
-    "tags": ["fiction", "read-2026"]
   },
   {
     "key": "OL3171069W",
