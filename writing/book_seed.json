@@ -100,5 +100,35 @@
     "publication_year": 2025,
     "tags": ["short-story", "fiction", "read-2026"],
     "rating": 2.5
+  },
+  {
+    "key": "OL17914663W",
+    "enrich": true,
+    "rating": 2.5,
+    "tags": ["science-fiction", "fiction", "read-2026"]
+  },
+  {
+    "key": "OL40882W",
+    "enrich": true,
+    "rating": 4.5,
+    "tags": ["fiction", "western", "read-2026"]
+  },
+  {
+    "key": "OL106083W",
+    "enrich": true,
+    "rating": 3.5,
+    "tags": ["fiction", "crime", "read-2026"]
+  },
+  {
+    "key": "OL35708581W",
+    "enrich": true,
+    "rating": 0.5,
+    "tags": ["space", "fiction", "booker-prize", "read-2026"]
+  },
+  {
+    "key": "OL10834W",
+    "enrich": true,
+    "rating": 5,
+    "tags": ["fiction", "historical", "fantasy", "read-2026"]
   }
 ]
