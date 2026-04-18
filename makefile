@@ -6,7 +6,7 @@ CODE    = writing/posts/other
 SEEDS   = writing/book_seed.json
 AUTHOR  = aya
 
-.PHONY: dev seed posts code sync test migrate shell setup reset reset-posts install tags deploy-db
+.PHONY: dev seed code sync test migrate shell setup reset reset-posts install tags deploy-db
 
 dev:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) run --debug
@@ -14,13 +14,11 @@ dev:
 seed:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) seed-books --path $(SEEDS)
 
-posts:
-	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) import-posts --path $(POSTS)
 
 code:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) import-code --path $(CODE) --author "$(AUTHOR)"
 
-sync: posts code restart
+sync: reset-posts code restart
 
 restart:
 	touch site/app/__init__.py

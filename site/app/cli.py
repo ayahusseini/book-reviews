@@ -179,35 +179,6 @@ def _import_files(md_files: list[Path]) -> tuple[int, int, int]:
     return created, updated, errors
 
 
-@click.command("import-posts")
-@click.option(
-    "--path",
-    "path_str",
-    required=True,
-    help="Directory of markdown posts.",
-)
-@with_appcontext
-def import_posts_command(path_str: str) -> None:
-    """Import or update all markdown posts found under --path."""
-    posts_dir = Path(path_str)
-    if not posts_dir.exists():
-        raise click.ClickException(f"Posts dir does not exist: {posts_dir}")
-
-    md_files = sorted(p for p in posts_dir.rglob("*.md") if p.is_file())
-    if not md_files:
-        click.echo(f"No markdown files found under {posts_dir}")
-        return
-
-    created, updated, errors = _import_files(md_files)
-    db.session.commit()
-    click.echo(
-        f"Imported posts from {posts_dir}: "
-        f"created={created}, updated={updated}, errors={errors}"
-    )
-    cache.clear()
-    click.echo("Cache cleared.")
-
-
 @click.command("seed-books")
 @click.option(
     "--path",
@@ -515,7 +486,6 @@ def manage_tags_command(
 
 def init_app(app) -> None:
     """Register CLI commands with the Flask app."""
-    app.cli.add_command(import_posts_command)
     app.cli.add_command(import_code_command)
     app.cli.add_command(seed_books_command)
     app.cli.add_command(reset_posts_command)

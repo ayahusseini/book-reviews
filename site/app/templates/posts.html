@@ -14,7 +14,7 @@
           <li>
             <a href="{{ url_for('posts.post_detail', slug=post.post_slug) }}">{{ post.post_title }}</a>
             {% if post.post_slug in new_slugs %}<img src="{{ url_for('static', filename='img/seedling_pixel.svg') }}" alt="New" title="Recently added" class="seedling-icon pixel-art">{% endif %}
-            <small>{{ post.post_created_at.strftime('%Y-%m-%d') }}</small>
+            {% if post.post_created_at %}<small>{{ post.post_created_at.strftime('%Y-%m-%d') }}</small>{% endif %}
           </li>
         {% endfor %}
       </ul>
