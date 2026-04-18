@@ -46,7 +46,7 @@ make dev
 | `make dev` | Start Flask development server with auto-reload |
 | `make setup` | Install deps, apply migrations, seed books, reset posts |
 | `make reset` | **Destructive.** Wipe the database and rebuild from scratch (re-fetches all OL books) |
-| `make seed` | Seed/update books from `writing/book_seed.json`. Only fetches from OL for books not yet in the database |
+| `make seed` | Seed/update books from `writing/book_seed.json`. Only fetches from OL for books not yet in the database. Never deletes books — run `make reset` to remove a book |
 | `make sync` | `seed` + `reset-posts` + `code` — full content refresh |
 | `make reset-posts` | Delete all posts from the DB and re-import from `writing/posts/` |
 | `make test` | Run the test suite |
@@ -163,19 +163,7 @@ To show the "New" seedling badge on a book, set `date:` in the review's frontmat
 
 ## Managing tags
 
-Tags are attached to books automatically during `make seed` and `make sync`.
-
-For ad-hoc changes without re-importing, use `flask manage-tags` directly:
-
-```sh
-PYTHONPATH=site uv run flask --app site/app manage-tags --book OL42549900W --add "fiction" --remove "2025"
-```
-
-Or via the Makefile shorthand (avoid tag names with spaces or hyphens — make strips quoting):
-
-```sh
-make tags ARGS="--book OL42549900W --add fiction"
-```
+Tags are managed entirely through `writing/book_seed.json` and post frontmatter. Edit the relevant file and run `make sync` — seed tags are synced exactly (removals take effect), and post tags are added on top. There is no ad-hoc tag command.
 
 ---
 
