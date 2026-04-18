@@ -20,7 +20,6 @@ from app.backend.upserts import (
     sync_tags,
     upsert_books,
     upsert_post,
-    upsert_single_book,
     upsert_single_manual_book,
 )
 from app.backend.open_library import AuthorData, BookData, fetch_book_data
@@ -77,7 +76,13 @@ def resolve_book(parsed: MarkdownPost) -> Book | None:
             raise ValueError(
                 f"enrich_book=true but key {key!r} does not start with 'OL'"
             )
-        return upsert_single_book(key)
+        existing = Book.query.filter_by(book_ol_key=key).first()
+        if existing:
+            return existing
+        raise ValueError(
+            f"Post '{parsed.slug}': book {key!r} not in database. "
+            "Add it to book_seed.json and run 'make seed' first."
+        )
 
     existing = Book.query.filter_by(book_ol_key=key).first()
     if existing:

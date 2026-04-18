@@ -177,7 +177,27 @@ Body.
         with pytest.raises(ValueError, match="does not start with 'OL'"):
             resolve_book(parsed)
 
-    def test_enrich_true_with_ol_key_calls_upsert_single_book(
+    def test_enrich_true_with_ol_key_returns_db_book(self, tmp_path, session):
+        book = Book(book_ol_key="OL123W", book_title="Some Book")
+        session.add(book)
+        session.flush()
+
+        content = """\
+---
+title: My Review
+author: Aya
+type: review
+book_ol_key: OL123W
+enrich_book: true
+---
+Body.
+"""
+        path = write_post(tmp_path, content)
+        parsed = parse_markdown_with_frontmatter(path)
+        result = resolve_book(parsed)
+        assert result.book_ol_key == "OL123W"
+
+    def test_enrich_true_with_ol_key_raises_if_not_in_db(
         self, tmp_path, session
     ):
         content = """\
@@ -192,13 +212,8 @@ Body.
 """
         path = write_post(tmp_path, content)
         parsed = parse_markdown_with_frontmatter(path)
-        mock_book = MagicMock()
-        with patch(
-            "app.cli.upsert_single_book", return_value=mock_book
-        ) as mock:
-            result = resolve_book(parsed)
-            mock.assert_called_once_with("OL123W")
-            assert result is mock_book
+        with pytest.raises(ValueError, match="not in database"):
+            resolve_book(parsed)
 
     def test_returns_existing_db_book_without_enrich(self, tmp_path, session):
         book = Book(book_ol_key="OL999W", book_title="Existing Book")
