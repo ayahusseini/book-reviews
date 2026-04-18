@@ -6,12 +6,4 @@ slug: TIL-2026-04-13-stats-unfortuntately
 date: 2026-04-13
 ---
 
-
-
-# Likelihood and what it is 
-
-
-## Maximum likelihood 
-
-
-# What is an option 
+new
