@@ -87,7 +87,7 @@
     "title": "You Are the Führer's Unrequited Love",
     "authors": ["Jean-Noël Orengo"],
     "publication_year": 2026,
-    "tags": ["history", "autofiction", "biography"],
+    "tags": ["history", "biography", "read-2026"],
     "description" : "In 1969 Speer, Hitler’s favourite architect and Minister of Armaments and War Production, publishes his memoirs. Rewriting his own past, claiming to have known nothing about the Final Solution, he declares himself ‘collectively responsible, but not individually guilty’.",
     "rating": 3.5
   },
@@ -97,7 +97,7 @@
     "title": "Hunchback",
     "authors": ["Saō Ichikawa"],
     "publication_year": 2025,
-    "tags": ["short-story", "fiction"],
+    "tags": ["short-story", "fiction", "read-2026"],
     "rating": 2.5
   }
 ]

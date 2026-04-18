@@ -17,11 +17,11 @@ from app.backend.extract_quotes import Quote
 from app.backend.models import Book
 from app.backend.upserts import (
     attach_tags,
+    sync_tags,
     upsert_books,
     upsert_post,
     upsert_single_book,
     upsert_single_manual_book,
-    upsert_tags,
 )
 from app.backend.open_library import AuthorData, BookData, fetch_book_data
 from app.extensions import cache, db
@@ -148,7 +148,7 @@ def import_post_file(path: Path) -> bool:
         post_type=parsed.post_type,
         post_rating=parsed.rating,
         book=book,
-        created_at=parsed.date,  # default now()
+        created_at=parsed.date,
     )
 
     if book is not None:
@@ -229,25 +229,36 @@ def seed_books_command(path_str: str) -> None:
         description_override: str | None = s.get("description")
 
         if s.get("enrich"):
-            click.echo(f"  Fetching {key} from Open Library...")
-            try:
-                book_data = fetch_book_data(key)
-            except Exception as exc:  # noqa: BLE001
-                click.echo(f"  WARNING: could not fetch {key}: {exc}")
-                skipped += 1
-                continue
-            upsert_books(
-                [book_data],
-                tag_map={key: tags},
-                rating_map={key: rating},
-                title_overrides={key: title_override}
-                if title_override
-                else {},
-                description_overrides={key: description_override}
-                if description_override
-                else {},
-            )
-            fetched += 1
+            existing = Book.query.filter_by(book_ol_key=key).first()
+            if existing:
+                if title_override:
+                    existing.book_title = title_override
+                if description_override:
+                    existing.book_description = description_override
+                if rating is not None:
+                    existing.book_rating = rating
+                sync_tags(existing, tags)
+                updated += 1
+            else:
+                click.echo(f"  Fetching {key} from Open Library...")
+                try:
+                    book_data = fetch_book_data(key)
+                except Exception as exc:  # noqa: BLE001
+                    click.echo(f"  WARNING: could not fetch {key}: {exc}")
+                    skipped += 1
+                    continue
+                upsert_books(
+                    [book_data],
+                    tag_map={key: tags},
+                    rating_map={key: rating},
+                    title_overrides={key: title_override}
+                    if title_override
+                    else {},
+                    description_overrides={key: description_override}
+                    if description_override
+                    else {},
+                )
+                fetched += 1
         else:
             existing = Book.query.filter_by(book_ol_key=key).first()
             if existing:
@@ -257,7 +268,7 @@ def seed_books_command(path_str: str) -> None:
                     existing.book_description = description_override
                 if rating is not None:
                     existing.book_rating = rating
-                attach_tags(existing, tags)
+                sync_tags(existing, tags)
                 updated += 1
             else:
                 title = title_override
@@ -288,6 +299,7 @@ def seed_books_command(path_str: str) -> None:
                 created += 1
 
     db.session.commit()
+    cache.clear()
     click.echo(
         f"Seeded {len(seeds)} book(s): "
         f"{fetched} fetched from Open Library, "
@@ -424,69 +436,8 @@ def reset_posts_command(path_str: str) -> None:
     click.echo("Cache cleared.")
 
 
-@click.command("manage-tags")
-@click.option(
-    "--book",
-    "ol_key",
-    required=True,
-    help="Open Library works key of the book to modify (e.g. OL42549900W).",
-)
-@click.option(
-    "--add",
-    "add_tags",
-    multiple=True,
-    help="Tag name(s) to add to the book. Repeatable: --add foo --add bar.",
-)
-@click.option(
-    "--remove",
-    "remove_tags",
-    multiple=True,
-    help="Tag name(s) to remove from the book. Repeatable.",
-)
-@with_appcontext
-def manage_tags_command(
-    ol_key: str,
-    add_tags: tuple[str, ...],
-    remove_tags: tuple[str, ...],
-) -> None:
-    """Add, remove, rename, delete, or list tags."""
-    book = Book.query.filter_by(book_ol_key=ol_key.strip()).first()
-    if not book:
-        click.echo("Book not found")
-        return
-
-    made_changes = False
-
-    for raw in add_tags:
-        name = raw.strip().lower()
-        if any(t.tag_name == name for t in book.tags):
-            click.echo(f"  (already present) {name!r}")
-        else:
-            book.tags.append(upsert_tags([name])[name])
-            click.echo(f"  Added {name!r} to {book.book_title!r}.")
-            made_changes = True
-
-    for raw in remove_tags:
-        name = raw.strip().lower()
-        match = next((t for t in book.tags if t.tag_name == name), None)
-        if match is None:
-            click.echo(f"  (not present) {name!r} — skipped.")
-        else:
-            book.tags.remove(match)
-            click.echo(f"  Removed {name!r} from {book.book_title!r}.")
-            made_changes = True
-
-    if made_changes:
-        db.session.commit()
-        cache.clear()
-        click.echo("Changes committed and cache cleared.")
-    else:
-        click.echo("No changes made.")
-
-
 def init_app(app) -> None:
     """Register CLI commands with the Flask app."""
     app.cli.add_command(import_code_command)
     app.cli.add_command(seed_books_command)
     app.cli.add_command(reset_posts_command)
-    app.cli.add_command(manage_tags_command)

@@ -411,3 +411,22 @@ def attach_tags(book: Book, tag_names: list[str]) -> None:
             sqlite_insert(BookToTagMapping).on_conflict_do_nothing(),
             new_mappings,
         )
+
+
+def sync_tags(book: Book, tag_names: list[str]) -> None:
+    """Sync a book's tags to exactly tag_names, adding and removing as needed.
+
+    Used by the seed command so that removing a tag from the seed file
+    removes it from the book on the next sync.
+    """
+    desired = set(tag_names)
+    tag_name_map = upsert_tags(list(desired)) if desired else {}
+
+    for tag in list(book.tags):
+        if tag.tag_name not in desired:
+            book.tags.remove(tag)
+
+    existing_names = {t.tag_name for t in book.tags}
+    for name, tag in tag_name_map.items():
+        if name not in existing_names:
+            book.tags.append(tag)
