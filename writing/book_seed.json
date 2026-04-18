@@ -72,5 +72,32 @@
     "enrich": true,
     "rating": 4,
     "title": "The Haunting of Hill House"
+  },
+  {
+    "key": "fuhrers-unrequited-love",
+    "title": "The Fuhrer's Unrequited Love",
+    "authors": ["Roberto Alajmo"],
+    "publication_year": 1997,
+    "tags": ["fiction"],
+    "rating": 4
+  },
+  {
+    "key": "fuhrers-unrequited-love",
+    "enrich": false,
+    "title": "You Are the Führer's Unrequited Love",
+    "authors": ["Jean-Noël Orengo"],
+    "publication_year": 2026,
+    "tags": ["history", "autofiction", "biography"],
+    "description" : "In 1969 Speer, Hitler’s favourite architect and Minister of Armaments and War Production, publishes his memoirs. Rewriting his own past, claiming to have known nothing about the Final Solution, he declares himself ‘collectively responsible, but not individually guilty’.",
+    "rating": 3.5
+  },
+  {
+    "key": "hunchback",
+    "enrich": false,
+    "title": "Hunchback",
+    "authors": ["Saō Ichikawa"],
+    "publication_year": 2025,
+    "tags": ["short-story", "fiction"],
+    "rating": 2.5
   }
 ]

@@ -323,7 +323,6 @@ def upsert_post(
     post_parent = Post.query.filter_by(post_slug=post_parent_slug).first()
 
     is_new = post is None
-    post_date = created_at or datetime.now(timezone.utc)
 
     if post_type != "review" and post_rating is not None:
         raise ValueError(f"Post '{slug}' has rating but is not a review")
@@ -355,7 +354,7 @@ def upsert_post(
             post_type=post_type,
             post_author=author,
             book=book,
-            post_created_at=post_date,
+            post_created_at=created_at,
         )
 
         if post_parent:
@@ -376,6 +375,9 @@ def upsert_post(
 
         if content_changed:
             post.post_updated_at = datetime.now(timezone.utc)
+
+        if created_at is not None and post.post_created_at is None:
+            post.post_created_at = created_at
 
         if post_parent:
             post.parent_id = post_parent.post_id
