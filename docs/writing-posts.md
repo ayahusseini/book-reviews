@@ -19,7 +19,7 @@
 
 | Type | URL | Needs a book? | Notes |
 |---|---|---|---|
-| `review` | `/books/<id>` | Yes | One per book. Sets the book's rating. |
+| `review` | `/books/<id>` | Yes | One per book. Book rating is set in `book_seed.json`. |
 | `essay` | `/books/<id>` | Yes (recommended) | Longer piece about a book. |
 | `standalone` | `/posts/<slug>` | No | General post with no book link. |
 | `note` | `/posts/<slug>` | No | Short post with no book link. |
@@ -42,33 +42,10 @@ author: "Aya"                              # required
 type: "review"                             # required — see post types above
 slug: "wuthering-heights-review"           # optional, defaults to filename stem
 date: "2026-01-15"                         # optional creation date (YYYY-MM-DD)
-book_ol_key: "OL14933414W"                 # book identifier — use this for Open Library books
-enrich_book: true                          # fetch book metadata from Open Library (key must start with OL)
-rating: 4.5                                # review only, 0–5
-tags:
-  - "classics"
-  - "2026"
+book_key: "OL14933414W"                    # key matching the book's entry in book_seed.json
 ---
 
 Post body in Markdown...
-```
-
-For books not on Open Library, supply metadata directly instead of using `book_ol_key` + `enrich_book`:
-
-```yaml
----
-title: "My Review"
-author: "Aya"
-type: "review"
-book_key: "remains-of-the-day"             # stable identifier for the book (any unique slug)
-book_title: "The Remains of the Day"       # required when using book_key
-book_authors:                              # optional list of author names
-  - "Kazuo Ishiguro"
-book_publication_year: 1989               # optional
-book_page_count: 258                       # optional
-book_description: "..."                    # optional
-rating: 4.5
----
 ```
 
 ### Field notes
@@ -77,27 +54,30 @@ rating: 4.5
 - **`type`** must be one of the valid post types above.
 - **`slug`** defaults to the filename stem (`wuthering-heights.md` → `wuthering-heights`). The slug is the stable unique identifier — changing it creates a new post and orphans the old one.
 - **`date`** sets `post_created_at`. If omitted, it defaults to the time `make posts` is first run. Re-importing does not change this.
-- **`book_ol_key`** is the Open Library works key (e.g. `OL14933414W`). The book must either already be in the database or have `enrich_book: true` set.
-- **`enrich_book`** — set to `true` to fetch book metadata from Open Library on import. The key must start with `OL`. If the book is already in the database the fetch is skipped.
-- **`book_key`** — use instead of `book_ol_key` for books not on Open Library. Any unique slug (e.g. `remains-of-the-day`). Must be paired with `book_title`.
-- **`book_title`** — required when using `book_key`. The book's display title.
-- **`book_authors`** — list of author name strings. Used when creating the book from frontmatter.
-- **`book_publication_year`**, **`book_page_count`**, **`book_description`** — optional metadata for manually-supplied books.
-- **`rating`** is only valid on `review` posts and is ignored on all other types. Must be between 0 and 5.
-- **`tags`** are normalised to lowercase, deduplicated, and attached to the referenced book. New tags are created automatically.
+- **`book_key`** — the `key` value from the book's entry in `book_seed.json`. The book must already be seeded before the post is imported. Works for both Open Library keys (`OL14933414W`) and manual slugs (`remains-of-the-day`).
+
+All book metadata (title, authors, rating, tags, description) belongs in `book_seed.json`, not in post frontmatter. Using any of the old fields (`book_ol_key`, `enrich_book`, `rating`, `tags`, `book_title`, etc.) will raise an error on import.
 
 ---
 
 ## Writing a book review
 
+All book metadata (rating, tags, authors, description) is managed in `book_seed.json`. The review post only needs to know which book it belongs to.
+
 ### For a book on Open Library
 
 1. Find the book's Open Library works key. Go to [openlibrary.org](https://openlibrary.org), search for the book, open the Works page, and copy the key from the URL (e.g. `OL14933414W`).
 
-2. Add the book to `writing/book_seed.json` if you want it to appear in the book list before the review is written:
+2. Add the book to `writing/book_seed.json`:
 
    ```json
-   { "key": "OL14933414W", "enrich": true, "tags": ["2026"] }
+   {
+     "comment": "Wuthering Heights",
+     "key": "OL14933414W",
+     "enrich": true,
+     "rating": 4.5,
+     "tags": ["classics", "fiction"]
+   }
    ```
 
    Run `make seed` to fetch its metadata from Open Library and insert it into the database.
@@ -109,12 +89,8 @@ rating: 4.5
    title: "Wuthering Heights"
    author: "Aya"
    type: "review"
-   book_ol_key: "OL14933414W"
-   rating: 4.5
+   book_key: "OL14933414W"
    date: "2026-03-10"
-   tags:
-     - "classics"
-     - "2026"
    ---
 
    Opening thoughts...
@@ -126,11 +102,24 @@ rating: 4.5
    make posts
    ```
 
-   If the book was seeded first the import is instant. If not, add `enrich_book: true` to the frontmatter to have it fetched from Open Library on import.
-
 ### For a book not on Open Library
 
-Supply all metadata directly in the frontmatter — no seed file entry or API call needed:
+Add the book to `writing/book_seed.json` with all metadata supplied directly:
+
+```json
+{
+  "comment": "The Remains of the Day",
+  "key": "remains-of-the-day",
+  "title": "The Remains of the Day",
+  "authors": ["Kazuo Ishiguro"],
+  "publication_year": 1989,
+  "page_count": 258,
+  "rating": 4.5,
+  "tags": ["fiction"]
+}
+```
+
+Then create the review pointing at that key:
 
 ```yaml
 ---
@@ -138,39 +127,19 @@ title: "My Review"
 author: "Aya"
 type: "review"
 book_key: "remains-of-the-day"
-book_title: "The Remains of the Day"
-book_authors:
-  - "Kazuo Ishiguro"
-book_publication_year: 1989
-book_page_count: 258
-rating: 4.5
 date: "2026-03-10"
-tags:
-  - "fiction"
 ---
 
 Opening thoughts...
 ```
 
-`book_key` is the stable identifier stored in the database — choose a slug that won't change (e.g. a slugified title). `book_title` is required; all other book fields are optional.
-
-You can also seed a manual book before writing the review:
-
-```json
-{
-  "key": "remains-of-the-day",
-  "title": "The Remains of the Day",
-  "authors": ["Kazuo Ishiguro"],
-  "publication_year": 1989,
-  "tags": ["fiction"]
-}
-```
+`book_key` must match the `key` field in the seed exactly. Run `make seed` before `make posts` (or just `make sync` to do both).
 
 ---
 
 ## Writing a standalone post, note, or poem
 
-No book required — just omit `book_ol_key` and `rating`:
+No book required — just omit `book_key`:
 
 ```yaml
 ---

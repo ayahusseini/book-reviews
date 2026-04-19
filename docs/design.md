@@ -77,8 +77,8 @@ writing/posts/**/*.md   writing/book_seed.json
 
 | Type | Description |
 |---|---|
-| `review` | Book review. Must have a `book_ol_key`. Sets the book's rating. One per book. |
-| `essay` | Longer piece about a book. Should have a `book_ol_key`. |
+| `review` | Book review. Must have a `book_key`. Rating is set in `book_seed.json`. One per book. |
+| `essay` | Longer piece about a book. Should have a `book_key`. |
 | `standalone` | Any post not linked to a book. |
 | `note` | Short post not linked to a book. |
 | `poem` | Poem. Displayed at `/poems/`. |
@@ -92,8 +92,9 @@ writing/posts/**/*.md   writing/book_seed.json
 - **Posts can exist without a book.** `book_id` is nullable — standalone posts, poems, and design docs have no book link.
 - **Quote posts are children of their parent post.** `parent_id` is a self-referential FK. The random quote widget uses `parent.post_slug` to link back to the source.
 - **`post_updated_at` only changes on real edits.** Re-running `make posts` without changing content does not touch this field.
-- **`book_ol_key` is the stable book identifier** but it is not required to be an Open Library key. Manual books use any unique slug (e.g. `remains-of-the-day`). OL enrichment is opt-in per entry via `enrich: true` (seed) or `enrich_book: true` (post frontmatter).
+- **`book_ol_key` is the stable book identifier** but it is not required to be an Open Library key. Manual books use any unique slug (e.g. `remains-of-the-day`). OL enrichment is opt-in per seed entry via `enrich: true`.
 - **`author_ol_id` is the stable author identifier** and is non-nullable. OL-fetched authors use their OL author ID; manually-supplied authors use a slug derived from their name (e.g. `kazuo-ishiguro`).
+- **All book metadata belongs in `book_seed.json`.** Post frontmatter only carries `book_key` to reference a book. Rating, tags, title overrides, and author data are seeded, not inferred from posts.
 - **Open Library is optional.** The seed command and post importer never call the OL API unless explicitly asked. Books can be fully specified inline.
 
 ---
@@ -193,28 +194,24 @@ For a manual book: `{ "key": "my-slug", "title": "Title", "authors": ["Author Na
 1. Create writing/posts/reviews/my-review.md
         │
         ▼
-2. make posts
+2. make posts  (always run make seed first, or use make sync)
         │
         ▼
 3. parse_markdown_with_frontmatter(path)
         │
-        ├── extract YAML frontmatter (title, author, type, book_ol_key/book_key, ...)
+        ├── extract YAML frontmatter (title, author, type, book_key, ...)
         ├── extract ```ad-quote blocks → Quote objects
         └── replace ad-quote blocks with Markdown blockquotes
         │
         ▼
 4. resolve_book(parsed)
         │
-        ├── no key (book_ol_key or book_key)? ──► return None
+        ├── no book_key? ──────────────────────► return None (standalone post)
         │
-        ├── enrich_book: true?
-        │       ├── key starts with OL? ──► fetch from Open Library + upsert
-        │       └── key does NOT start with OL? ──► raise error immediately
-        │
-        └── enrich_book: false/absent?
-                ├── book already in DB? ──────────► return existing Book
-                ├── book not in DB, book_title set? ► upsert from frontmatter fields
-                └── book not in DB, no title? ───────► return None (standalone)
+        └── book_key set?
+                ├── book in DB? ───────────────► return existing Book
+                └── book NOT in DB? ───────────► raise error
+                                                  (add to book_seed.json + make seed first)
         │
         ▼
 5. upsert_post(...)
@@ -224,15 +221,12 @@ For a manual book: `{ "key": "my-slug", "title": "Title", "authors": ["Author Na
                            post_updated_at set only on real changes
         │
         ▼
-6. attach_tags(book, parsed.tags)
-        │
-        ▼
-7. sync_quotes(parsed.quotes, ...)
+6. sync_quotes(parsed.quotes, ...)
         │
         └── upsert_post() for each Quote object (post_type="quotes")
         │
         ▼
-8. session.commit()  ← happens once per file in import_posts_command
+7. session.commit()  ← happens once per file in import_posts_command
 ```
 
 ---
