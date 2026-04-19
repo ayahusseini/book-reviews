@@ -2,12 +2,7 @@
 title: "All Systems Red is a fun little book"
 author: "Aya"
 type: "review"
-book_ol_key: "OL17914663W"
-enrich_book: true
-rating: 2.5
-tags:
-  - "science-fiction"
-  - "fiction"
+book_key: "OL17914663W"
 date: 2026-03-01
 ---
 

@@ -2,13 +2,7 @@
 title: My favourite book of 2025
 author: Aya
 type: review
-book_ol_key: OL10834W
-enrich_book: true
-rating: 5
-tags:
-  - fiction
-  - historical
-  - fantasy
+book_key: OL10834W
 slug: perfume-story-of-a-murderer
 ---
 

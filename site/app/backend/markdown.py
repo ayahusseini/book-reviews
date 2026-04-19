@@ -36,6 +36,17 @@ class MarkdownPost:
     body_markdown: str
     quotes: list[Quote] = field(default_factory=list)
 
+    _REMOVED_FIELDS = {
+        "book_ol_key",
+        "enrich_book",
+        "book_title",
+        "book_authors",
+        "book_publication_year",
+        "book_page_count",
+        "book_description",
+        "rating",
+    }
+
     def __post_init__(self):
         self._err = f"MarkdownPost for {self.source_path}: "
         if "title" not in self.metadata:
@@ -47,6 +58,13 @@ class MarkdownPost:
                 self._err
                 + f"invalid type {self.metadata.get('type')!r}, "
                 + f"must be one of {sorted(VALID_POST_TYPES)}"
+            )
+        bad = self._REMOVED_FIELDS & self.metadata.keys()
+        if bad:
+            raise ValueError(
+                self._err
+                + f"disallowed frontmatter fields: {sorted(bad)}. "
+                + "Book metadata belongs in book_seed.json."
             )
 
     @property
@@ -75,26 +93,6 @@ class MarkdownPost:
         return self.source_path.stem
 
     @property
-    def rating(self) -> float | None:
-        """Return validated rating, or None.
-
-        Rating is only meaningful on review posts — callers are responsible
-        for ignoring it on other post types.
-        """
-        r = self.metadata.get("rating")
-        if r is None:
-            return None
-        if not isinstance(r, (int, float)):
-            raise TypeError(
-                self._err + f"'rating' must be a number, got {type(r)}"
-            )
-        if not 0 <= r <= 5:
-            raise ValueError(
-                self._err + f"'rating' must be between 0 and 5, got {r}"
-            )
-        return float(r)
-
-    @property
     def tags(self) -> list[str]:
         """Return normalised, deduplicated tags from frontmatter."""
         tag_vals = self.metadata.get("tags", [])
@@ -111,42 +109,9 @@ class MarkdownPost:
         )
 
     @property
-    def book_ol_key(self) -> str | None:
-        return self.metadata.get("book_ol_key")
-
-    @property
     def book_key(self) -> str | None:
-        """Stable identifier for a book (stored in book_ol_key column).
-        Use book_ol_key for OL books, book_key for manually-supplied books."""
+        """Key referencing the book's entry in book_seed.json."""
         return self.metadata.get("book_key")
-
-    @property
-    def enrich_book(self) -> bool:
-        """If True, fetch book metadata from Open Library using the key."""
-        return bool(self.metadata.get("enrich_book", False))
-
-    @property
-    def book_title_manual(self) -> str | None:
-        return self.metadata.get("book_title")
-
-    @property
-    def book_authors(self) -> list[str]:
-        val = self.metadata.get("book_authors", [])
-        if isinstance(val, str):
-            return [val]
-        return [str(a) for a in val] if isinstance(val, list) else []
-
-    @property
-    def book_publication_year(self) -> int | None:
-        return self.metadata.get("book_publication_year")
-
-    @property
-    def book_page_count(self) -> int | None:
-        return self.metadata.get("book_page_count")
-
-    @property
-    def book_description(self) -> str | None:
-        return self.metadata.get("book_description")
 
     @staticmethod
     def _normalize_tag(tag: str) -> str:
