@@ -163,7 +163,7 @@ To show the "New" seedling badge on a book, set `date:` in the review's frontmat
 
 ## Managing tags
 
-Tags are managed entirely through `writing/book_seed.json` and post frontmatter. Edit the relevant file and run `make sync` — seed tags are synced exactly (removals take effect), and post tags are added on top. There is no ad-hoc tag command.
+Tags are managed entirely through `writing/book_seed.json`. Edit the relevant entry and run `make sync` — tags are synced exactly, so removals take effect too. There is no ad-hoc tag command.
 
 ---
 

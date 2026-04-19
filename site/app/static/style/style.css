@@ -573,8 +573,7 @@ h3.post-title::before,
    BLOCKQUOTES  (general markdown content)
    ================================================================ */
 
-blockquote,
-blockquote p {
+blockquote {
     background: var(--bg-quote);
     padding: 0.85rem 0.85rem;
     font-family: var(--mono-font);
@@ -585,6 +584,17 @@ blockquote p {
     border: none;
 }
 
+blockquote p {
+    background: none;
+    padding: 0;
+    margin: 0;
+    max-width: none;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    border-radius: 0;
+}
+
 
 .quote-text,
 .quote-text p {
@@ -593,6 +603,11 @@ blockquote p {
     margin: 0;
     padding: 0;
     font-size: 0.75rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    line-clamp: 6;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 /* ================================================================
@@ -914,8 +929,7 @@ p code {
    BLOCKQUOTE — sharp corners, no decorative border
    ---------------------------------------------------------------- */
 
-blockquote,
-blockquote p {
+blockquote {
     border-radius: 0;
 }
 
