@@ -14,7 +14,7 @@ tags:
 
 
 ```ad-quote
-...a look men get watching sports, football, say, in support of a team that affirms them by winning and then straight away negates them, because the glory belongs to the team, not the man sitting on the sofa who will never, now, be on a team like that
+[he had] a look men get watching sports, football, say, in support of a team that affirms them by winning and then straight away negates them, because the glory belongs to the team, not the man sitting on the sofa who will never, now, be on a team like that
 ```
 
 
