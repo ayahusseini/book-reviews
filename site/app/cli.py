@@ -16,11 +16,9 @@ from app.backend.markdown import (
 from app.backend.extract_quotes import Quote
 from app.backend.models import Book
 from app.backend.upserts import (
-    attach_tags,
     sync_tags,
     upsert_books,
     upsert_post,
-    upsert_single_manual_book,
 )
 from app.backend.open_library import AuthorData, BookData, fetch_book_data
 from app.extensions import cache, db
@@ -36,67 +34,21 @@ def _slugify(text: str) -> str:
     return re.sub(r"-+", "-", text)
 
 
-def _manual_book_data(parsed: MarkdownPost) -> BookData | None:
-    """Build a BookData from manual frontmatter fields.
-
-    Returns None if no key or title is available (no manual book intended).
-    """
-    key = parsed.book_ol_key or parsed.book_key
-    title = parsed.book_title_manual
-    if not key or not title:
-        return None
-    authors = [
-        AuthorData(ol_id=_slugify(name), name=name)
-        for name in parsed.book_authors
-    ]
-    return BookData(
-        ol_key=key,
-        title=title,
-        description=parsed.book_description,
-        publication_year=parsed.book_publication_year,
-        page_count=parsed.book_page_count,
-        authors=authors,
-    )
-
-
 def resolve_book(parsed: MarkdownPost) -> Book | None:
-    """Return the Book for this post.
+    """Return the Book for this post, or None if no book_key is set.
 
-    If enrich_book=true, fetches metadata from Open Library (key must start
-    with 'OL'). Otherwise looks up the existing DB record and, if absent,
-    creates the book from any manually-supplied frontmatter fields.
-    Returns None when there is no book association.
+    The book must already exist in the database (seeded via book_seed.json).
     """
-    key = parsed.book_ol_key or parsed.book_key
+    key = parsed.book_key
     if not key:
         return None
-
-    if parsed.enrich_book:
-        if not key.startswith("OL"):
-            raise ValueError(
-                f"enrich_book=true but key {key!r} does not start with 'OL'"
-            )
-        existing = Book.query.filter_by(book_ol_key=key).first()
-        if existing:
-            return existing
+    book = Book.query.filter_by(book_ol_key=key).first()
+    if book is None:
         raise ValueError(
             f"Post '{parsed.slug}': book {key!r} not in database. "
             "Add it to book_seed.json and run 'make seed' first."
         )
-
-    existing = Book.query.filter_by(book_ol_key=key).first()
-    if existing:
-        return existing
-
-    book_data = _manual_book_data(parsed)
-    if book_data is None:
-        raise ValueError(
-            f"Post '{parsed.slug}': book key {key!r} is not in the database "
-            "and no manual book data (book_title, etc.) was supplied. "
-            "Set enrich_book: true to fetch from Open Library, or add "
-            "book_title (and optionally book_authors) to the frontmatter."
-        )
-    return upsert_single_manual_book(book_data)
+    return book
 
 
 def sync_quotes(
@@ -116,7 +68,6 @@ def sync_quotes(
             body=quote.quote_text,
             post_parent_slug=parent_slug,
             post_type="quotes",
-            post_rating=None,
             book=book,
         )
 
@@ -132,14 +83,10 @@ def import_post_file(path: Path) -> bool:
     """Upsert a single post file. Returns True if the post is new."""
     parsed = parse_markdown_with_frontmatter(path)
 
-    if (
-        parsed.post_type in {"review", "essay"}
-        and not parsed.book_ol_key
-        and not parsed.book_key
-    ):
+    if parsed.post_type in {"review", "essay"} and not parsed.book_key:
         click.echo(
             f"WARNING {path.name}: type={parsed.post_type!r} "
-            "but no book_ol_key or book_key set. Standalone post."
+            "but no book_key set. Standalone post."
         )
 
     book = resolve_book(parsed)
@@ -151,13 +98,9 @@ def import_post_file(path: Path) -> bool:
         post_parent_slug=parsed.parent_slug,
         body=parsed.body_markdown,
         post_type=parsed.post_type,
-        post_rating=parsed.rating,
         book=book,
         created_at=parsed.date,
     )
-
-    if book is not None:
-        attach_tags(book, parsed.tags)
 
     sync_quotes(
         quotes=parsed.quotes,
@@ -380,7 +323,6 @@ def import_code_command(path_str: str, author: str) -> None:
                 body=body,
                 post_parent_slug=None,
                 post_type="code",
-                post_rating=None,
                 book=None,
             )
             if is_new:

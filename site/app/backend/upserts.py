@@ -278,17 +278,6 @@ def upsert_books(
     return result
 
 
-def upsert_single_manual_book(book_data: BookData) -> Book:
-    """Return the Book for book_data.ol_key, inserting from provided data
-    if absent. No OL fetch. Does not commit — caller is responsible.
-    """
-    book = Book.query.filter_by(book_ol_key=book_data.ol_key).first()
-    if book:
-        return book
-    books = upsert_books([book_data])
-    return books[book_data.ol_key]
-
-
 def upsert_single_book(ol_key: str) -> Book:
     """Return the Book for ol_key, or fetch from Open Library and create it.
 
@@ -314,7 +303,6 @@ def upsert_post(
     body: str,
     post_parent_slug: str | None,
     post_type: str | None,
-    post_rating: float | None,
     book: Book | None,
     created_at: datetime | None = None,
 ) -> tuple[Post, bool]:
@@ -323,9 +311,6 @@ def upsert_post(
     post_parent = Post.query.filter_by(post_slug=post_parent_slug).first()
 
     is_new = post is None
-
-    if post_type != "review" and post_rating is not None:
-        raise ValueError(f"Post '{slug}' has rating but is not a review")
 
     if post_type == "review":
         if book is None:
@@ -342,9 +327,6 @@ def upsert_post(
                 f"Book '{book.book_title}' already has a review post "
                 f"('{existing_review.post_slug}')"
             )
-
-        if post_rating is not None:
-            book.book_rating = post_rating
 
     if is_new:
         post = Post(

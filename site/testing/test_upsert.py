@@ -10,7 +10,6 @@ from app.backend.upserts import (
     attach_tags,
     upsert_books,
     upsert_post,
-    upsert_single_manual_book,
     upsert_tags,
 )
 from app.backend.open_library import AuthorData, BookData
@@ -157,37 +156,6 @@ class TestUpsertBooks:
 
 
 # ---------------------------------------------------------------------------
-# upsert_single_manual_book
-# ---------------------------------------------------------------------------
-
-
-class TestUpsertSingleManualBook:
-    def test_creates_book_from_book_data(self, session):
-        data = make_book_data("my-manual-key", "A Manual Book")
-        book = upsert_single_manual_book(data)
-        assert book.book_ol_key == "my-manual-key"
-        assert book.book_title == "A Manual Book"
-
-    def test_returns_existing_book_without_creating_duplicate(self, session):
-        existing = make_book(session, "my-manual-key", "Existing Book")
-        result = upsert_single_manual_book(make_book_data("my-manual-key"))
-        assert result.book_id == existing.book_id
-        assert (
-            session.query(Book).filter_by(book_ol_key="my-manual-key").count()
-            == 1
-        )
-
-    def test_attaches_authors(self, session):
-        data = make_book_data(
-            "manual-key",
-            authors=[AuthorData(name="Some Author", ol_id="some-author")],
-        )
-        book = upsert_single_manual_book(data)
-        assert len(book.authors) == 1
-        assert book.authors[0].author_name == "Some Author"
-
-
-# ---------------------------------------------------------------------------
 # upsert_post
 # ---------------------------------------------------------------------------
 
@@ -201,7 +169,6 @@ class TestUpsertPost:
             body="Some content.",
             post_parent_slug=None,
             post_type="standalone",
-            post_rating=None,
             book=None,
         )
         assert is_new is True
@@ -216,7 +183,6 @@ class TestUpsertPost:
             body="updated body",
             post_parent_slug=None,
             post_type="standalone",
-            post_rating=None,
             book=None,
         )
         assert is_new is False
@@ -232,20 +198,6 @@ class TestUpsertPost:
                 body="body",
                 post_parent_slug=None,
                 post_type="review",
-                post_rating=4.0,
-                book=None,
-            )
-
-    def test_non_review_with_rating_raises(self, session):
-        with pytest.raises(ValueError, match="not a review"):
-            upsert_post(
-                slug="essay-with-rating",
-                title="Essay",
-                author="Aya",
-                body="body",
-                post_parent_slug=None,
-                post_type="essay",
-                post_rating=3.0,
                 book=None,
             )
 
@@ -260,24 +212,8 @@ class TestUpsertPost:
                 body="body",
                 post_parent_slug=None,
                 post_type="review",
-                post_rating=None,
                 book=book,
             )
-
-    def test_review_sets_book_rating(self, session):
-        book = make_book(session)
-        upsert_post(
-            slug="my-review",
-            title="My Review",
-            author="Aya",
-            body="Great book.",
-            post_parent_slug=None,
-            post_type="review",
-            post_rating=4.5,
-            book=book,
-        )
-        session.flush()
-        assert book.book_rating == 4.5
 
     def test_updated_at_changes_when_body_changes(self, session):
         post = make_post(session, "editable", body="original")
@@ -290,7 +226,6 @@ class TestUpsertPost:
             body="changed body",
             post_parent_slug=None,
             post_type="standalone",
-            post_rating=None,
             book=None,
         )
         session.flush()
@@ -307,7 +242,6 @@ class TestUpsertPost:
             body="same body",
             post_parent_slug=None,
             post_type="standalone",
-            post_rating=None,
             book=None,
         )
         session.flush()
@@ -322,7 +256,6 @@ class TestUpsertPost:
             body="A quoted passage.",
             post_parent_slug="parent-post",
             post_type="quotes",
-            post_rating=None,
             book=None,
         )
         session.flush()

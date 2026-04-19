@@ -1,5 +1,6 @@
 [
   {
+    "comment": "Flesh",
     "key": "OL42549900W",
     "title": "Flesh",
     "enrich": true,
@@ -31,11 +32,15 @@
     "rating": 3
   },
   {
+    "comment": "The Affirmation",
     "key": "OL166482W",
     "enrich": true,
+    "rating": 3.5,
+    "tags": ["science-fiction", "fiction"],
     "description": "Peter Sinclair's life falls apart - he loses his job, his home, and his relationship. He retreats to a friend's country home to seek solace. He decides to make sense of his life by writing it all down. This autobiography quickly gets redrafted into a fictional narrative set in the Dream Archipelago."
   },
   {
+    "comment": "Love in the Time of Cholera",
     "key": "OL274518W",
     "enrich": true,
     "title": "Love in the Time of Cholera",
@@ -43,6 +48,7 @@
     "tags": ["read-2026", "fiction"]
   },
   {
+    "comment": "Beautiful Star",
     "key": "OL25329395W",
     "enrich": true,
     "title": "Beautiful Star",
@@ -62,6 +68,7 @@
     "tags": ["fiction", "historical"]
   },
   {
+    "comment": "The Trial",
     "key": "OL498463W",
     "enrich": true,
     "rating": 4,
@@ -69,30 +76,26 @@
     "title": "The Trial"
   },
   {
+    "comment": "The Haunting of Hill House",
     "key": "OL3171069W",
     "enrich": true,
     "rating": 4,
+    "tags": ["horror", "fiction"],
     "title": "The Haunting of Hill House"
   },
   {
-    "key": "fuhrers-unrequited-love",
-    "title": "The Fuhrer's Unrequited Love",
-    "authors": ["Roberto Alajmo"],
-    "publication_year": 1997,
-    "tags": ["fiction"],
-    "rating": 4
-  },
-  {
+    "comment": "You Are the Führer's Unrequited Love",
     "key": "fuhrers-unrequited-love",
     "enrich": false,
     "title": "You Are the Führer's Unrequited Love",
     "authors": ["Jean-Noël Orengo"],
     "publication_year": 2026,
     "tags": ["history", "biography", "read-2026"],
-    "description" : "In 1969 Speer, Hitler’s favourite architect and Minister of Armaments and War Production, publishes his memoirs. Rewriting his own past, claiming to have known nothing about the Final Solution, he declares himself ‘collectively responsible, but not individually guilty’.",
+    "description": "In 1969 Speer, Hitler's favourite architect and Minister of Armaments and War Production, publishes his memoirs. Rewriting his own past, claiming to have known nothing about the Final Solution, he declares himself 'collectively responsible, but not individually guilty'.",
     "rating": 3.5
   },
   {
+    "comment": "Hunchback",
     "key": "hunchback",
     "enrich": false,
     "title": "Hunchback",
@@ -102,6 +105,7 @@
     "rating": 2.5
   },
   {
+    "comment": "All Systems Red",
     "key": "OL17914663W",
     "title": "All Systems Red",
     "enrich": true,
@@ -109,6 +113,7 @@
     "tags": ["science-fiction", "fiction"]
   },
   {
+    "comment": "All the Pretty Horses",
     "key": "OL40882W",
     "title": "All the Pretty Horses",
     "enrich": true,
@@ -116,6 +121,7 @@
     "tags": ["fiction", "western"]
   },
   {
+    "comment": "Brighton Rock",
     "key": "OL106083W",
     "title": "Brighton Rock",
     "enrich": true,
@@ -123,6 +129,7 @@
     "tags": ["fiction", "crime"]
   },
   {
+    "comment": "Orbital",
     "key": "OL35708581W",
     "title": "Orbital",
     "enrich": true,
@@ -130,6 +137,7 @@
     "tags": ["space", "fiction", "booker-prize"]
   },
   {
+    "comment": "Perfume: The Story of a Murderer",
     "key": "OL10834W",
     "title": "Perfume: The Story of a Murderer",
     "enrich": true,

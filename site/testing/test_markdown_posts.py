@@ -74,23 +74,21 @@ class TestMarkdownPostValidation:
         with pytest.raises(ValueError, match="invalid type"):
             parse_markdown_with_frontmatter(path)
 
-    def test_rating_must_be_a_number(self, tmp_path):
+    def test_disallowed_fields_raise(self, tmp_path):
         path = write_post(
             tmp_path,
-            "---\ntitle: T\nauthor: A\ntype: review\nrating: great\n---\nbody",
+            "---\ntitle: T\nauthor: A\ntype: review\nrating: 4\n---\nbody",
         )
-        with pytest.raises(TypeError, match="number"):
-            post = parse_markdown_with_frontmatter(path)
-            _ = post.rating  # property is evaluated lazily
+        with pytest.raises(ValueError, match="disallowed frontmatter fields"):
+            parse_markdown_with_frontmatter(path)
 
-    def test_rating_out_of_range_raises(self, tmp_path):
+    def test_book_ol_key_disallowed(self, tmp_path):
         path = write_post(
             tmp_path,
-            "---\ntitle: T\nauthor: A\ntype: review\nrating: 6\n---\nbody",
+            "---\ntitle: T\nauthor: A\ntype: review\nbook_ol_key: OL1W\n---\nbody",
         )
-        with pytest.raises(ValueError, match="between 0 and 5"):
-            post = parse_markdown_with_frontmatter(path)
-            _ = post.rating
+        with pytest.raises(ValueError, match="disallowed frontmatter fields"):
+            parse_markdown_with_frontmatter(path)
 
     def test_invalid_date_format_raises(self, tmp_path):
         path = write_post(
@@ -146,17 +144,6 @@ class TestMarkdownPostProperties:
         )
         assert len(parse_markdown_with_frontmatter(path).tags) == 1
 
-    def test_book_ol_key_absent_returns_none(self, tmp_path):
-        path = write_post(tmp_path, MINIMAL_FRONTMATTER)
-        assert parse_markdown_with_frontmatter(path).book_ol_key is None
-
-    def test_book_ol_key_present(self, tmp_path):
-        path = write_post(
-            tmp_path,
-            "---\ntitle: T\nauthor: A\ntype: review\nbook_ol_key: OL123W\n---\nbody",
-        )
-        assert parse_markdown_with_frontmatter(path).book_ol_key == "OL123W"
-
     def test_book_key_absent_returns_none(self, tmp_path):
         path = write_post(tmp_path, MINIMAL_FRONTMATTER)
         assert parse_markdown_with_frontmatter(path).book_key is None
@@ -167,89 +154,6 @@ class TestMarkdownPostProperties:
             "---\ntitle: T\nauthor: A\ntype: review\nbook_key: my-book\n---\nbody",
         )
         assert parse_markdown_with_frontmatter(path).book_key == "my-book"
-
-    def test_enrich_book_defaults_to_false(self, tmp_path):
-        path = write_post(tmp_path, MINIMAL_FRONTMATTER)
-        assert parse_markdown_with_frontmatter(path).enrich_book is False
-
-    def test_enrich_book_true_when_set(self, tmp_path):
-        path = write_post(
-            tmp_path,
-            "---\ntitle: T\nauthor: A\ntype: review\nbook_ol_key: OL1W\nenrich_book: true\n---\nbody",
-        )
-        assert parse_markdown_with_frontmatter(path).enrich_book is True
-
-    def test_book_title_manual_absent_returns_none(self, tmp_path):
-        path = write_post(tmp_path, MINIMAL_FRONTMATTER)
-        assert parse_markdown_with_frontmatter(path).book_title_manual is None
-
-    def test_book_title_manual_present(self, tmp_path):
-        path = write_post(
-            tmp_path,
-            "---\ntitle: T\nauthor: A\ntype: review\nbook_title: The Real Title\n---\nbody",
-        )
-        assert (
-            parse_markdown_with_frontmatter(path).book_title_manual
-            == "The Real Title"
-        )
-
-    def test_book_authors_empty_when_absent(self, tmp_path):
-        path = write_post(tmp_path, MINIMAL_FRONTMATTER)
-        assert parse_markdown_with_frontmatter(path).book_authors == []
-
-    def test_book_authors_returns_list(self, tmp_path):
-        path = write_post(
-            tmp_path,
-            "---\ntitle: T\nauthor: A\ntype: review\nbook_authors:\n  - Alice\n  - Bob\n---\nbody",
-        )
-        assert parse_markdown_with_frontmatter(path).book_authors == [
-            "Alice",
-            "Bob",
-        ]
-
-    def test_book_authors_single_string_wrapped_in_list(self, tmp_path):
-        path = write_post(
-            tmp_path,
-            "---\ntitle: T\nauthor: A\ntype: review\nbook_authors: Alice\n---\nbody",
-        )
-        assert parse_markdown_with_frontmatter(path).book_authors == ["Alice"]
-
-    def test_book_publication_year(self, tmp_path):
-        path = write_post(
-            tmp_path,
-            "---\ntitle: T\nauthor: A\ntype: review\nbook_publication_year: 1989\n---\nbody",
-        )
-        assert (
-            parse_markdown_with_frontmatter(path).book_publication_year == 1989
-        )
-
-    def test_book_page_count(self, tmp_path):
-        path = write_post(
-            tmp_path,
-            "---\ntitle: T\nauthor: A\ntype: review\nbook_page_count: 258\n---\nbody",
-        )
-        assert parse_markdown_with_frontmatter(path).book_page_count == 258
-
-    def test_book_description(self, tmp_path):
-        path = write_post(
-            tmp_path,
-            "---\ntitle: T\nauthor: A\ntype: review\nbook_description: A great novel.\n---\nbody",
-        )
-        assert (
-            parse_markdown_with_frontmatter(path).book_description
-            == "A great novel."
-        )
-
-    def test_valid_rating_returned_as_float(self, tmp_path):
-        path = write_post(
-            tmp_path,
-            "---\ntitle: T\nauthor: A\ntype: review\nrating: 4\n---\nbody",
-        )
-        assert parse_markdown_with_frontmatter(path).rating == 4.0
-
-    def test_missing_rating_returns_none(self, tmp_path):
-        path = write_post(tmp_path, MINIMAL_FRONTMATTER)
-        assert parse_markdown_with_frontmatter(path).rating is None
 
 
 # ---------------------------------------------------------------------------
