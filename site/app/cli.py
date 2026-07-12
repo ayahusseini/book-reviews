@@ -21,7 +21,7 @@ from app.backend.upserts import (
     upsert_poem,
     upsert_review,
 )
-from app.backend.open_library import AuthorData, BookData, fetch_book_data
+from app.backend.book_data import AuthorData, BookData
 from app.extensions import cache, db
 
 DEFAULT_SEED_PATH = Path(__file__).parents[3] / "writing" / "book_seed.json"
@@ -117,9 +117,9 @@ def _import_files(md_files: list[Path], importer) -> tuple[int, int, int]:
 def seed_books_command(path_str: str) -> None:
     """Seed or update books from a JSON seed file.
 
-    Each entry must have a 'key' field. Set 'enrich': true on an entry to
-    fetch its metadata from Open Library (key must start with 'OL').
-    Otherwise supply 'title', 'authors', etc. directly in the seed entry.
+    Each entry must have a 'key' and, for new books, a 'title'. All other
+    metadata ('authors', 'publication_year', 'page_count', 'description')
+    is optional and supplied directly in the seed entry.
     """
     seed_path = Path(path_str)
     if not seed_path.exists():
@@ -132,15 +132,7 @@ def seed_books_command(path_str: str) -> None:
         click.echo("Seed file is empty.")
         return
 
-    # Fail fast on invalid enrich entries before any DB writes.
-    for s in seeds:
-        if s.get("enrich") and not (s.get("key") or "").startswith("OL"):
-            raise click.ClickException(
-                f"enrich=true for key {s.get('key')!r} "
-                "but key does not start with 'OL'"
-            )
-
-    fetched = created = updated = skipped = 0
+    created = updated = skipped = 0
 
     for s in seeds:
         key = s.get("key")
@@ -154,81 +146,48 @@ def seed_books_command(path_str: str) -> None:
         title_override: str | None = s.get("title")
         description_override: str | None = s.get("description")
 
-        if s.get("enrich"):
-            existing = Book.query.filter_by(book_ol_key=key).first()
-            if existing:
-                if title_override:
-                    existing.book_title = title_override
-                if description_override:
-                    existing.book_description = description_override
-                if rating is not None:
-                    existing.book_rating = rating
-                sync_tags(existing, tags)
-                updated += 1
-            else:
-                click.echo(f"  Fetching {key} from Open Library...")
-                try:
-                    book_data = fetch_book_data(key)
-                except Exception as exc:  # noqa: BLE001
-                    click.echo(f"  WARNING: could not fetch {key}: {exc}")
-                    skipped += 1
-                    continue
-                upsert_books(
-                    [book_data],
-                    tag_map={key: tags},
-                    rating_map={key: rating},
-                    title_overrides={key: title_override}
-                    if title_override
-                    else {},
-                    description_overrides={key: description_override}
-                    if description_override
-                    else {},
-                )
-                fetched += 1
+        existing = Book.query.filter_by(book_ol_key=key).first()
+        if existing:
+            if title_override:
+                existing.book_title = title_override
+            if description_override:
+                existing.book_description = description_override
+            if rating is not None:
+                existing.book_rating = rating
+            sync_tags(existing, tags)
+            updated += 1
         else:
-            existing = Book.query.filter_by(book_ol_key=key).first()
-            if existing:
-                if title_override:
-                    existing.book_title = title_override
-                if description_override:
-                    existing.book_description = description_override
-                if rating is not None:
-                    existing.book_rating = rating
-                sync_tags(existing, tags)
-                updated += 1
-            else:
-                title = title_override
-                if not title:
-                    click.echo(
-                        f"  WARNING: {key!r} not in DB and no title, skipping."
-                    )
-                    skipped += 1
-                    continue
-                authors = [
-                    AuthorData(ol_id=_slugify(name), name=name)
-                    for name in s.get("authors", [])
-                ]
-                upsert_books(
-                    [
-                        BookData(
-                            ol_key=key,
-                            title=title,
-                            description=description_override,
-                            publication_year=s.get("publication_year"),
-                            page_count=s.get("page_count"),
-                            authors=authors,
-                        )
-                    ],
-                    tag_map={key: tags},
-                    rating_map={key: rating},
+            title = title_override
+            if not title:
+                click.echo(
+                    f"  WARNING: {key!r} not in DB and no title, skipping."
                 )
-                created += 1
+                skipped += 1
+                continue
+            authors = [
+                AuthorData(ol_id=_slugify(name), name=name)
+                for name in s.get("authors", [])
+            ]
+            upsert_books(
+                [
+                    BookData(
+                        ol_key=key,
+                        title=title,
+                        description=description_override,
+                        publication_year=s.get("publication_year"),
+                        page_count=s.get("page_count"),
+                        authors=authors,
+                    )
+                ],
+                tag_map={key: tags},
+                rating_map={key: rating},
+            )
+            created += 1
 
     db.session.commit()
     cache.clear()
     click.echo(
         f"Seeded {len(seeds)} book(s): "
-        f"{fetched} fetched from Open Library, "
         f"{created} created, "
         f"{updated} updated, "
         f"{skipped} skipped."

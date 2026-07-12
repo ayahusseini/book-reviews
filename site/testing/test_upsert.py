@@ -15,7 +15,7 @@ from app.backend.upserts import (
     upsert_review,
     upsert_tags,
 )
-from app.backend.open_library import AuthorData, BookData
+from app.backend.book_data import AuthorData, BookData
 
 
 # ---------------------------------------------------------------------------

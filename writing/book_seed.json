@@ -3,146 +3,300 @@
     "comment": "Flesh",
     "key": "OL42549900W",
     "title": "Flesh",
-    "enrich": true,
-    "tags": ["read-2026", "fiction"],
+    "authors": [
+      "David Szalay"
+    ],
+    "publication_year": 2025,
+    "page_count": 368,
+    "description": "Teenaged István lives with his mother in a quiet apartment complex in Hungary. Shy and new in town, he is a stranger to the social rituals practiced by his classmates and soon becomes isolated, with his neighbor—a married woman close to his mother’s age, whom he begrudgingly helps with errands—as his only companion. But as these periodical encounters shift into a clandestine relationship that István himself can barely understand, his life soon spirals out of control, ending in a violent accident that leaves a man dead.\r\n\r\nWhat follows is a rocky trajectory that sees István emigrate from Hungary to London, where he moves from job to job before finding steady work as a driver for London’s billionaire class. At each juncture, his life is affected by the goodwill or self-interest of strangers. Through it all, István is a calm, detached observer of his own life, and through his eyes we experience a tragic twist on an immigrant “success story,” brightened by moments of sensitivity, softness, and Szalay’s keen observation.",
+    "tags": [
+      "read-2026",
+      "fiction"
+    ],
     "rating": 4.5
   },
   {
-    "key": "OL28176642W",
-    "enrich": true,
-    "tags": ["read-2026", "fiction", "mystery"],
+    "comment": "The Passenger",
+    "key": "OL27731031W",
+    "title": "The Passenger",
+    "authors": [
+      "Cormac McCarthy"
+    ],
+    "publication_year": 2022,
+    "page_count": 424,
+    "description": "1980, PASS CHRISTIAN, MISSISSIPPI: It is three in the morning when Bobby Western zips the jacket of his wetsuit and plunges from the boat deck into darkness. His divelight illuminates the sunken jet, nine bodies still buckled in their seats, hair floating, eyes devoid of speculation. Missing from the crash site are the pilot’s flightbag, the plane’s black box, and the tenth passenger. But how? A collateral witness to machinations that can only bring him harm, Western is shadowed in body and spirit – by men with badges; by the ghost of his father, inventor of the bomb that melted glass and flesh in Hiroshima; and by his sister, the love and ruin of his soul.\r\n\r\nTraversing the American South, from the garrulous bar rooms of New Orleans to an abandoned oil rig off the Florida coast, The Passenger is a breathtaking novel of morality and science, the legacy of sin, and the madness that is human consciousness.",
+    "tags": [
+      "read-2026",
+      "fiction",
+      "mystery"
+    ],
     "rating": 4.5
   },
   {
     "key": "OL21177W",
-    "enrich": true,
-    "tags": ["read-2026", "fiction"],
+    "title": "Wuthering Heights",
+    "authors": [
+      "Emily Brontë"
+    ],
+    "publication_year": 1850,
+    "page_count": 311,
+    "description": "Wuthering Heights is an 1847 novel by Emily Brontë, initially published under the pseudonym Ellis Bell. It concerns two families of the landed gentry living on the West Yorkshire moors, the Earnshaws and the Lintons, and their turbulent relationships with Earnshaw's adopted son, Heathcliff. The novel was influenced by Romanticism and Gothic fiction.",
+    "tags": [
+      "read-2026",
+      "fiction"
+    ],
     "rating": 5
   },
   {
     "key": "OL34032834W",
-    "enrich": true,
-    "tags": ["read-2026", "non-fiction"],
+    "title": "A Day in the Life of Abed Salama",
+    "authors": [
+      "Nathan Thrall"
+    ],
+    "publication_year": 2023,
+    "description": "A gripping, intimate story of one heartbreaking day in Palestine that reveals lives, loves, enmities, and histories in violent collision.\r\n\r\nMilad is five years old and excited for his school trip to a theme park on the outskirts of Jerusalem, but tragedy awaits: his bus is involved in a horrific accident. His father, Abed, rushes to the chaotic site, only to find Milad has already been taken away. Abed sets off on a journey to learn Milad's fate, navigating a maze of physical, emotional, and bureaucratic obstacles he must face as a Palestinian.\r\n\r\nInterwoven with Abed's odyssey are the stories of Jewish and Palestinian characters whose lives and pasts unexpectedly converge: a kindergarten teacher and a mechanic who rescue children from the burning bus; an Israeli army commander and a Palestinian official who confront the aftermath at the scene of the crash; a settler paramedic; ultra-Orthodox emergency service workers; and two mothers who each hope to claim one severely injured boy.\r\n\r\nA Day in the Life of Abed Salama is a deeply immersive, stunningly detailed portrait of life in Israel and Palestine, and an illumination of the reality of one of the most contested places on earth.",
+    "tags": [
+      "read-2026",
+      "non-fiction"
+    ],
     "rating": 4
   },
   {
     "key": "OL66562W",
-    "enrich": true,
-    "tags": ["read-2026", "fiction"],
+    "title": "Sense and Sensibility",
+    "authors": [
+      "Jane Austen"
+    ],
+    "publication_year": 1811,
+    "page_count": 320,
+    "description": "When Mr. Dashwood dies, he must leave the bulk of his estate to the son by his first marriage, which leaves his second wife and three daughters (Elinor, Marianne, and Margaret) in straitened circumstances. They are taken in by a kindly cousin, but their lack of fortune affects the marriageability of both practical Elinor and romantic Marianne. When Elinor forms an attachment for the wealthy Edward Ferrars, his family disapproves and separates them. And though Mrs. Jennings tries to match the worthy (and rich) Colonel Brandon to her, Marianne finds the dashing and fiery Willoughby more to her taste. Both relationships are sorely tried. But this is a romance, and through the hardships and heartbreak, true love and a happy ending will find their way for both the sister who is all sense and the one who is all sensibility. - Publisher.",
+    "tags": [
+      "read-2026",
+      "fiction"
+    ],
     "rating": 3
   },
   {
     "comment": "The Affirmation",
     "key": "OL166482W",
-    "enrich": true,
-    "rating": 3.5,
-    "tags": ["science-fiction", "fiction"],
-    "description": "Peter Sinclair's life falls apart - he loses his job, his home, and his relationship. He retreats to a friend's country home to seek solace. He decides to make sense of his life by writing it all down. This autobiography quickly gets redrafted into a fictional narrative set in the Dream Archipelago."
+    "title": "The Affirmation",
+    "authors": [
+      "Christopher Priest"
+    ],
+    "publication_year": 1981,
+    "page_count": 292,
+    "description": "Peter Sinclair's life falls apart - he loses his job, his home, and his relationship. He retreats to a friend's country home to seek solace. He decides to make sense of his life by writing it all down. This autobiography quickly gets redrafted into a fictional narrative set in the Dream Archipelago.",
+    "tags": [
+      "science-fiction",
+      "fiction"
+    ],
+    "rating": 3.5
   },
   {
     "comment": "Love in the Time of Cholera",
     "key": "OL274518W",
-    "enrich": true,
     "title": "Love in the Time of Cholera",
-    "rating": 5,
-    "tags": ["read-2026", "fiction"]
+    "authors": [
+      "Gabriel García Márquez"
+    ],
+    "publication_year": 1985,
+    "page_count": 368,
+    "description": "De jóvenes, Florentino Ariza y Fermina Daza se enamoran apasionadamente, pero Fermina eventualmente decide casarse con un médico rico y de muy buena familia. Florentino está anonadado, pero es un romántico. Su carrera en los negocios florece, y aunque sostiene 622 pequeños romances, su corazón todavía pertenece a Fermina. Cuando al fin el esposo de ella muere, Florentino acude al funeral con toda intención. A los cincuenta años, nueve meses y cuatro días de haberle profesado amor a Fermina, lo hará una vez más.\r\nCon sagacidad humorística y depurado estilo, García Márquez traza la historia excepcional de un amor que no ha sido correspondido por medio siglo. Aunque nunca parece estar propiamente contenido, el amor fluye a través de la novela de mil maneras –alegre, melancólico, enriquecedor, siempre sorprendente-.",
+    "tags": [
+      "read-2026",
+      "fiction"
+    ],
+    "rating": 5
   },
   {
     "comment": "Beautiful Star",
     "key": "OL25329395W",
-    "enrich": true,
     "title": "Beautiful Star",
-    "rating": 2.5,
-    "tags": ["fiction"]
+    "authors": [
+      "三島由紀夫"
+    ],
+    "publication_year": 2022,
+    "page_count": 304,
+    "tags": [
+      "fiction"
+    ],
+    "rating": 2.5
   },
   {
     "key": "OL35710736W",
-    "enrich": true,
-    "rating": 3.5,
-    "tags": ["non-fiction", "finance", "biography"]
+    "title": "Going Infinite",
+    "authors": [
+      "Michael Lewis"
+    ],
+    "publication_year": 2023,
+    "page_count": 288,
+    "description": "The life of Sam Bankman-Fried up until a little after FTX/Alameda Research exploded.",
+    "tags": [
+      "non-fiction",
+      "finance",
+      "biography"
+    ],
+    "rating": 3.5
   },
   {
     "key": "OL3511458W",
-    "enrich": true,
-    "rating": 4,
-    "tags": ["fiction", "historical"]
+    "title": "Augustus",
+    "authors": [
+      "John Williams"
+    ],
+    "publication_year": 1972,
+    "page_count": 415,
+    "description": "A compelling fictional portrait of Augustus Caesar follows the ancient Roman leader from his youth to his rise to power following the murder of his uncle, Julius Caesar, in the midst of fierce competition, intrigue, and political machinations, in a new edition of the National Book Award-winning novel.",
+    "tags": [
+      "fiction",
+      "historical"
+    ],
+    "rating": 4
   },
   {
     "comment": "The Trial",
     "key": "OL498463W",
-    "enrich": true,
-    "rating": 4,
-    "tags": ["fiction"],
-    "title": "The Trial"
+    "title": "The Trial",
+    "authors": [
+      "Franz Kafka"
+    ],
+    "publication_year": 1825,
+    "page_count": 308,
+    "description": "Byzantine and claustrophobic novel of a man arrested by the secret police and charged with an unspecified crime. Unable to defend himself and disorientated by the legal process at work around him the man soon becomes apathetic and acquiescent, accepting his eventual sentence as inevitable.",
+    "tags": [
+      "fiction"
+    ],
+    "rating": 4
   },
   {
     "comment": "The Haunting of Hill House",
     "key": "OL3171069W",
-    "enrich": true,
-    "rating": 4,
-    "tags": ["horror", "fiction"],
-    "title": "The Haunting of Hill House"
+    "title": "The Haunting of Hill House",
+    "authors": [
+      "Shirley Jackson"
+    ],
+    "publication_year": 1959,
+    "page_count": 288,
+    "description": "First published in 1959, Shirley Jackson's The Haunting of Hill House has been hailed as a perfect work of unnerving terror. It is the story of four seekers who arrive at a notoriously unfriendly pile called Hill House: Dr. Montague, an occult scholar looking for solid evidence of a \"haunting\"; Theodora, his lighthearted assistant; Eleanor, a friendless, fragile young woman well acquainted with poltergeists; and Luke, the future heir of Hill House. At first, their stay seems destined to be merely a spooky encounter with inexplicable phenomena. But Hill House is gathering its powers— and soon, it will choose one of them to make its own.",
+    "tags": [
+      "horror",
+      "fiction"
+    ],
+    "rating": 4
   },
   {
     "comment": "You Are the Führer's Unrequited Love",
     "key": "fuhrers-unrequited-love",
-    "enrich": false,
     "title": "You Are the Führer's Unrequited Love",
-    "authors": ["Jean-Noël Orengo"],
+    "authors": [
+      "Jean-Noël Orengo"
+    ],
     "publication_year": 2026,
-    "tags": ["history", "biography", "read-2026"],
     "description": "In 1969 Speer, Hitler's favourite architect and Minister of Armaments and War Production, publishes his memoirs. Rewriting his own past, claiming to have known nothing about the Final Solution, he declares himself 'collectively responsible, but not individually guilty'.",
+    "tags": [
+      "history",
+      "biography",
+      "read-2026"
+    ],
     "rating": 3.5
   },
   {
     "comment": "Hunchback",
     "key": "hunchback",
-    "enrich": false,
     "title": "Hunchback",
-    "authors": ["Saō Ichikawa"],
+    "authors": [
+      "Saō Ichikawa"
+    ],
     "publication_year": 2025,
-    "tags": ["short-story", "fiction", "read-2026"],
-    "description":"Shaka Isawa is born with a congenital muscle disorder. She lives in a care home and spends her time ragebaiting on twitter and writing erotica. Her new carer reveals that he's read it all.",
+    "description": "Shaka Isawa is born with a congenital muscle disorder. She lives in a care home and spends her time ragebaiting on twitter and writing erotica. Her new carer reveals that he's read it all.",
+    "tags": [
+      "short-story",
+      "fiction",
+      "read-2026"
+    ],
     "rating": 2.5
   },
   {
     "comment": "All Systems Red",
     "key": "OL17914663W",
     "title": "All Systems Red",
-    "enrich": true,
-    "rating": 2.5,
-    "tags": ["science-fiction", "fiction"]
+    "authors": [
+      "Martha Wells"
+    ],
+    "publication_year": 2017,
+    "page_count": 168,
+    "description": "The series is about an artificial construct designed as a Security Unit, which manages to override its governor unit, thus enabling it to develop independence. It calls itself Murderbot, and likes to watch unrealistic soap operas. As it spends more time with some caring humans, it starts developing feelings that it does not care for.",
+    "tags": [
+      "science-fiction",
+      "fiction"
+    ],
+    "rating": 2.5
   },
   {
     "comment": "All the Pretty Horses",
     "key": "OL40882W",
     "title": "All the Pretty Horses",
-    "enrich": true,
-    "rating": 4.5,
-    "tags": ["fiction", "western"]
+    "authors": [
+      "Cormac McCarthy"
+    ],
+    "publication_year": 1992,
+    "page_count": 334,
+    "description": "*All the Pretty Horses* is a novel by American author Cormac McCarthy published by Alfred A. Knopf in 1992. Its romanticism (in contrast to the bleakness of McCarthy's earlier work) brought the writer much public attention. It was a bestseller, and it won both the U.S. National Book Award and the National Book Critics Circle Award.\r\n\r\nAlong with *The Crossing* (1994), and C*ities of the Plain* (1998), it constitues McCarthy's \"Border Trilogy\", an elegy for the American Frontier, written in an unconventional format which omits traditional Western punctuation (such as quotation marks) and makes use of polysyndetic syntax in a manner similar to that of Ernest Hemingway.\r\n\r\nThe book was adapted as a 2000 eponymous film, starring Matt Damon and Penélope Cruz, and directed by Billy Bob Thornton.\r\n\r\n(Main source: Wikipedia)",
+    "tags": [
+      "fiction",
+      "western"
+    ],
+    "rating": 4.5
   },
   {
     "comment": "Brighton Rock",
     "key": "OL106083W",
     "title": "Brighton Rock",
-    "enrich": true,
-    "rating": 3.5,
-    "tags": ["fiction", "crime"]
+    "authors": [
+      "Graham Greene",
+      "Richard Brown"
+    ],
+    "publication_year": 1938,
+    "page_count": 358,
+    "description": "An atmospheric crime thriller featuring a teenage sociopath intent on becoming the underworld boss of Brighton. Having murdered a man who had betrayed his gang the young gangster Pinky Brown tries to covers his tracks but circumstances never seem to go his way and he becomes ever more desperate, even going so far as to marry a young girl who witnessed the shooting,  it being the law at that time that a man’s wife could not be forced to testify against him.",
+    "tags": [
+      "fiction",
+      "crime"
+    ],
+    "rating": 3.5
   },
   {
     "comment": "Orbital",
     "key": "OL35708581W",
     "title": "Orbital",
-    "enrich": true,
-    "rating": 0.5,
-    "tags": ["space", "fiction", "booker-prize"]
+    "authors": [
+      "Samantha Harvey"
+    ],
+    "publication_year": 2023,
+    "page_count": 144,
+    "description": "A slender novel of epic power and the winner of the Booker Prize 2024, Orbital deftly snapshots one day in the lives of six women and men traveling through space. Selected for one of the last space station missions of its kind before the program is dismantled, these astronauts and cosmonauts—from America, Russia, Italy, Britain, and Japan—have left their lives behind to travel at a speed of over seventeen thousand miles an hour as the earth reels below. We glimpse moments of their earthly lives through brief communications with family, their photos and talismans; we watch them whip up dehydrated meals, float in gravity-free sleep, and exercise in regimented routines to prevent atrophying muscles; we witness them form bonds that will stand between them and utter solitude. Most of all, we are with them as they behold and record their silent blue planet. Their experiences of sixteen sunrises and sunsets and the bright, blinking constellations of the galaxy are at once breathtakingly awesome and surprisingly intimate.",
+    "tags": [
+      "space",
+      "fiction",
+      "booker-prize"
+    ],
+    "rating": 0.5
   },
   {
     "comment": "Perfume: The Story of a Murderer",
     "key": "OL10834W",
     "title": "Perfume: The Story of a Murderer",
-    "enrich": true,
-    "rating": 5,
-    "tags": ["fiction", "historical", "fantasy"]
+    "authors": [
+      "Patrick Süskind"
+    ],
+    "publication_year": 1985,
+    "page_count": 280,
+    "description": "INTERNATIONAL BESTSELLER • Set in eighteenth-century France, the classic novel that provokes a terrifying examination of what happens when one man’s indulgence in his greatest passion—his sense of smell—leads to murder.\r\n\r\nIn the slums of eighteenth-century France, the infant Jean-Baptiste Grenouille is born with one sublime gift—an absolute sense of smell. As a boy, he lives to decipher the odors of Paris, and apprentices himself to a prominent perfumer who teaches him the ancient art of mixing precious oils and herbs. But Grenouille’s genius is such that he is not satisfied to stop there, and he becomes obsessed with capturing the smells of objects such as brass doorknobs and fresh-cut wood. Then one day he catches a hint of a scent that will drive him on an ever-more-terrifying quest to create the “ultimate perfume”—the scent of a beautiful young virgin. Told with dazzling narrative brilliance, Perfume is a hauntingly powerful tale of murder and sensual depravity.",
+    "tags": [
+      "fiction",
+      "historical",
+      "fantasy"
+    ],
+    "rating": 5
   }
 ]
