@@ -184,9 +184,7 @@ The `alt` text defaults to the filename. Obsidian will display these images loca
 
 ## Deploying
 
-The recommended workflow keeps everything local — you never need to touch the server's filesystem or run seeds on the server.
-
-### Step 1: write and import locally
+### Step 1: write and check locally
 
 ```sh
 make seed            # upsert books from writing/book_seed.json
@@ -197,52 +195,38 @@ Or all at once: `make sync`
 
 Tags are managed entirely through `writing/book_seed.json` — edit the relevant entry's `tags` list and run `make seed` again.
 
-### Step 2: push the database
-
-```sh
-make deploy-db
-```
-
-`DEPLOY_HOST` is read from `.env` (e.g. `DEPLOY_HOST=root@your_server_ip`). You can also pass it inline: `make deploy-db DEPLOY_HOST=root@1.2.3.4`.
-
-This copies `site/instance/site.db` to the server via `scp` and restarts Gunicorn (which clears the in-process cache). Done.
-
-### When you also have code changes
-
-Push code first, then redeploy the database:
+### Step 2: commit, push, deploy
 
 ```sh
 git push
-# on the server:
-git pull && sudo systemctl restart gunicorn
-# back locally:
-make deploy-db
+./site/scripts/deploy.sh
 ```
 
-### Rebuilding the local database from scratch
+`deploy.sh` SSHes into the VPS (credentials from `.env`), pulls the pushed commits (`git reset --hard origin/main`), runs `make sync` on the server (which imports whatever's now in the server's `writing/` folder — the same files you just pushed), and restarts Gunicorn. Content and code deploy together in one step; there's no separate "push just the database" path.
 
-If the local database gets into a bad state, wipe and rebuild it:
+### Rebuilding the database from scratch (local or server)
 
 ```sh
 make reset
 ```
 
-This deletes `site/instance/site.db`, re-runs all migrations, re-seeds books from `writing/book_seed.json`, and re-imports all reviews and poems.
+This deletes `site/instance/site.db`, re-runs all migrations, re-seeds books from `writing/book_seed.json`, and re-imports all reviews and poems. Use this locally when your local DB gets into a bad state.
 
 ### When you have schema changes
 
-Generate and commit the migration locally, deploy code, then upgrade the server's database before pushing content:
+Generate and commit the migration locally as usual:
 
 ```sh
 make migrate MSG="describe change"
 git add site/migrations/versions/
 git commit -m "add migration"
 git push
-# on the server:
-git pull
-make upgrade
-sudo systemctl restart gunicorn
-# back locally:
-make reset-posts     # re-import with updated schema
-make deploy-db
 ```
+
+Then deploy with `--reset-database` so the server rebuilds its DB (applying the new migration) instead of just syncing content:
+
+```sh
+./site/scripts/deploy.sh --reset-database
+```
+
+It asks for confirmation before wiping the production database.

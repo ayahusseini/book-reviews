@@ -54,7 +54,6 @@ make dev
 | `make upgrade` | Apply pending migrations without generating a new one |
 | `make stamp` | Mark the DB as at the current migration head (no changes applied) |
 | `make shell` | Open a Flask shell with database access |
-| `make deploy-db` | Copy the local SQLite database to the production server |
 
 ---
 
@@ -142,8 +141,8 @@ See **[docs/writing-posts.md](docs/writing-posts.md)** for a full guide, includi
 Short version:
 
 1. Create a `.md` file under `writing/posts/reviews/` (needs `book_key` in frontmatter, matching an already-seeded book) or `writing/posts/poetry/` (no book needed).
-2. Run `make reset-posts` (or `make sync`, which also reseeds books first) to import it.
-3. Run `make deploy-db` to push the updated database to production.
+2. Run `make reset-posts` (or `make sync`, which also reseeds books first) to check it locally.
+3. Commit and push, then run `./site/scripts/deploy.sh` to deploy.
 
 To show the "New" seedling badge, set `date:` in the frontmatter to today's date. Reviews/poems without a `date:` field are never badged as new.
 
@@ -177,39 +176,24 @@ make stamp
 
 See **[docs/deployment.md](docs/deployment.md)** for full server setup instructions.
 
-### Routine content updates (recommended)
+There is one deploy path: `site/scripts/deploy.sh`. It SSHes into the VPS (credentials from `.env` — `VPS_HOST`, `VPS_USER`, `VPS_PASSWORD`, via `sshpass`) and:
 
-Write and import posts locally, then push the database file directly:
-
-```sh
-make deploy-db DEPLOY_HOST=root@your_server_ip
-```
-
-This copies `site/instance/site.db` to the server via `scp` and restarts Gunicorn to clear the in-process cache. No need to `scp` markdown files or run seeds on the server.
-
-### Code changes
+1. `git fetch origin main && git reset --hard origin/main && git clean -fd` — syncs the server's checkout to whatever you've pushed.
+2. `make sync` — reseeds books and re-imports reviews/poems from the server's own `writing/` (which just got updated by the git reset).
+3. `sudo systemctl restart gunicorn`.
 
 ```sh
-git push
-# on the server:
-git pull && sudo systemctl restart gunicorn
+git push                      # push your commits first
+./site/scripts/deploy.sh      # pull + sync + restart, in one step
 ```
 
-### Schema changes
-
-Generate and commit the migration locally, then on the server:
+For a schema change, apply the migration on the server before syncing content — pass `--reset-database` to have the script run `make reset` (wipes and rebuilds the DB) instead of `make sync`:
 
 ```sh
-git pull
-make upgrade
-sudo systemctl restart gunicorn
+./site/scripts/deploy.sh --reset-database
 ```
 
-### Full reset on the server
-
-```sh
-make reset   # wipes site/instance/site.db and rebuilds from scratch
-```
+It'll ask for confirmation since this wipes the production database.
 
 ---
 
