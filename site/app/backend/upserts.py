@@ -23,7 +23,7 @@ from app.backend.models import (
 )
 from app.backend.extract_quotes import ExtractedQuote
 from app.extensions import db
-from app.backend.open_library import AuthorData, BookData
+from app.backend.book_data import AuthorData, BookData
 
 
 # ---------------------------------------------------------------------------
