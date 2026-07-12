@@ -5,8 +5,11 @@
     <ul>
       {% for poem in poems %}
         <li>
-          <a href="{{ url_for('poems.poem_detail', slug=poem.post_slug) }}">{{ poem.post_title }}</a>
-          <small>— {{ poem.post_author }}</small>
+          <a href="{{ url_for('poems.poem_detail', slug=poem.poem_slug) }}">{{ poem.poem_title }}</a>
+          <small>— {{ poem.poem_author }}</small>
+          {% if poem.poem_id in new_poem_ids %}
+            <img src="{{ url_for('static', filename='img/seedling_pixel.svg') }}" alt="New" title="Recently added" class="seedling-icon pixel-art">
+          {% endif %}
         </li>
       {% endfor %}
     </ul>

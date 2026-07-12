@@ -14,11 +14,10 @@ import markdown
 import yaml
 
 from app.backend.extract_quotes import (
-    Quote,
+    ExtractedQuote,
     extract_ad_quotes,
     replace_ad_quotes_with_blockquotes,
 )
-from app.backend.models import VALID_POST_TYPES
 
 # Matches ![[filename]] — Obsidian-style image embeds
 _IMAGE_WIKILINK_RE = re.compile(r"!\[\[([^\]]+?)\]\]")
@@ -34,7 +33,7 @@ class MarkdownPost:
     source_path: Path
     metadata: dict[str, Any]
     body_markdown: str
-    quotes: list[Quote] = field(default_factory=list)
+    quotes: list[ExtractedQuote] = field(default_factory=list)
 
     _REMOVED_FIELDS = {
         "book_ol_key",
@@ -53,12 +52,6 @@ class MarkdownPost:
             raise ValueError(self._err + "missing frontmatter 'title'")
         if "author" not in self.metadata:
             raise ValueError(self._err + "missing frontmatter 'author'")
-        if self.metadata.get("type") not in VALID_POST_TYPES:
-            raise ValueError(
-                self._err
-                + f"invalid type {self.metadata.get('type')!r}, "
-                + f"must be one of {sorted(VALID_POST_TYPES)}"
-            )
         bad = self._REMOVED_FIELDS & self.metadata.keys()
         if bad:
             raise ValueError(
@@ -76,14 +69,6 @@ class MarkdownPost:
         return self.metadata["author"].strip()
 
     @property
-    def post_type(self) -> str:
-        return self.metadata["type"].strip()
-
-    @property
-    def parent_slug(self) -> str:
-        return self.metadata.get("parent_slug", "")
-
-    @property
     def slug(self) -> str:
         """Return frontmatter slug if set, otherwise fall back to
         the filename stem."""
@@ -93,29 +78,9 @@ class MarkdownPost:
         return self.source_path.stem
 
     @property
-    def tags(self) -> list[str]:
-        """Return normalised, deduplicated tags from frontmatter."""
-        tag_vals = self.metadata.get("tags", [])
-        if isinstance(tag_vals, str):
-            tag_vals = [tag_vals]
-        if not isinstance(tag_vals, list):
-            raise TypeError(self._err + "tags must be a list")
-        return list(
-            {
-                self._normalize_tag(t)
-                for t in tag_vals
-                if isinstance(t, str) and t.strip()
-            }
-        )
-
-    @property
     def book_key(self) -> str | None:
         """Key referencing the book's entry in book_seed.json."""
         return self.metadata.get("book_key")
-
-    @staticmethod
-    def _normalize_tag(tag: str) -> str:
-        return " ".join(tag.strip().split()).lower()
 
     @property
     def date(self) -> datetime | None:
@@ -188,12 +153,12 @@ def _expand_wikilinks(text: str) -> str:
     """Expand Obsidian-style wikilinks and image embeds.
 
     ![[image.png]]           → ![image.png](/static/img/image.png)
-    [[slug]]                 → [slug](/posts/slug)
-    [[slug|label]]           → [label](/posts/slug)
-    [[#heading]]             → [heading](#anchor)
-    [[#heading|label]]       → [label](#anchor)
-    [[slug#heading]]         → [slug#heading](/posts/slug#anchor)
-    [[slug#heading|label]]   → [label](/posts/slug#anchor)
+    [[#heading]]              → [heading](#anchor)
+    [[#heading|label]]        → [label](#anchor)
+
+    Cross-document wikilinks (e.g. [[some-slug]]) are not supported:
+    reviews and poems each have their own slug namespace, so there is no
+    single route a bare slug could resolve to.
     """
 
     def replace_image(m: re.Match) -> str:
@@ -206,23 +171,17 @@ def _expand_wikilinks(text: str) -> str:
         target = m.group(1).strip()
         label = (m.group(2) or "").strip()
 
-        if "#" in target:
-            parts = target.split("#", 1)
-            slug = parts[0].strip()
-            heading_path = parts[1].strip()
-            # Obsidian uses "Parent#Child" path syntax; only the leaf heading
-            # maps to an HTML anchor id.
+        if target.startswith("#"):
+            heading_path = target[1:].strip()
             leaf_heading = heading_path.rsplit("#", 1)[-1].strip()
             anchor = _heading_to_anchor(leaf_heading)
-            if slug:
-                display = label or target
-                return f"[{display}](/posts/{slug}#{anchor})"
-            else:
-                display = label or leaf_heading
-                return f"[{display}](#{anchor})"
-        else:
-            display = label or target
-            return f"[{display}](/posts/{target})"
+            display = label or leaf_heading
+            return f"[{display}](#{anchor})"
+
+        raise ValueError(
+            f"Cross-document wikilink [[{target}]] is not supported; "
+            "only [[#heading]] same-document anchors are."
+        )
 
     return _WIKILINK_RE.sub(replace, text)
 

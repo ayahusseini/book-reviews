@@ -52,23 +52,23 @@
 {% endblock %}
 
 {% block main_content %}
-  {% for post, post_html in rendered_posts %}
-    <article class="markdown-body" style="margin-bottom: 2.5rem;">
-      <h3 class="post-title">
-        {{ post.post_title }}
-        {% if post.post_type == "review" and book.book_rating %}
-          {{ star_rating(book.book_rating, uid=book.book_id) }}
-        {% endif %}
-      </h3>
-      <p style="margin-bottom: 0.75rem;"><small class="text-muted">{{ post.post_type }}{% if post.post_created_at %} - Created: {{ post.post_created_at.strftime('%Y-%m-%d') }}{% endif %}</small></p>
-
-      {% if post_html and post_html | trim %}
-        {{ post_html | safe }}
-      {% else %}
-        {% include "under_construction.html" %}
+  <article class="markdown-body" style="margin-bottom: 2.5rem;">
+    <h3 class="post-title">
+      Review
+      {% if book.book_rating %}
+        {{ star_rating(book.book_rating, uid=book.book_id) }}
       {% endif %}
-    </article>
-  {% endfor %}
+    </h3>
+    {% if book.review_created_at %}
+      <p style="margin-bottom: 0.75rem;"><small class="text-muted">Created: {{ book.review_created_at.strftime('%Y-%m-%d') }}</small></p>
+    {% endif %}
+
+    {% if review_html and review_html | trim %}
+      {{ review_html | safe }}
+    {% else %}
+      {% include "under_construction.html" %}
+    {% endif %}
+  </article>
 
   <p><a href="{{ url_for('books.book_list') }}">← Back to books</a></p>
 {% endblock %}

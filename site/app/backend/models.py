@@ -3,24 +3,12 @@
 Schema (from ERD):
     author          ←── book_author_mapping ──→ book
     book            ←── book_to_tag_map     ──→ tag
-    book            ──→ post
+    book            ──→ quote
 """
 
 from datetime import datetime, timezone
 from sqlalchemy import CheckConstraint
 from app.extensions import db
-
-VALID_POST_TYPES = {
-    "review",
-    "essay",
-    "standalone",
-    "note",
-    "quotes",
-    "poem",
-    "designdoc",
-    "code",
-    "til",
-}
 
 
 def get_registered_models(database=db) -> list[str]:
@@ -123,8 +111,12 @@ class Book(db.Model):
         lazy="select",
     )
 
-    posts = db.relationship(
-        "Post",
+    review_markdown = db.Column(db.Text, nullable=True)
+    review_created_at = db.Column(db.DateTime, nullable=True)
+    review_updated_at = db.Column(db.DateTime, nullable=True)
+
+    quotes = db.relationship(
+        "Quote",
         back_populates="book",
         lazy="select",
         cascade="all, delete-orphan",
@@ -153,48 +145,42 @@ class Tag(db.Model):
         return f"<Tag id={self.tag_id} name={self.tag_name!r}>"
 
 
-class Post(db.Model):
-    """Model containing post details."""
+class Poem(db.Model):
+    """Model containing poem details."""
 
-    __tablename__ = "post"
+    __tablename__ = "poem"
 
-    post_id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    poem_id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    poem_slug = db.Column(db.String(250), nullable=False, unique=True)
+    poem_title = db.Column(db.Text, nullable=False)
+    poem_body_markdown = db.Column(db.Text, nullable=False)
+    poem_author = db.Column(db.String, nullable=False)
 
-    parent_id = db.Column(
-        db.Integer,
-        db.ForeignKey("post.post_id", name="fk_post_parent_id"),
-        nullable=True,
-    )
-
-    post_slug = db.Column(db.String(250), nullable=False, unique=True)
-    book_id = db.Column(
-        db.Integer,
-        db.ForeignKey("book.book_id"),
-        nullable=True,
-    )
-
-    post_title = db.Column(db.Text, nullable=False)
-    post_body_markdown = db.Column(db.Text, nullable=False)
-    post_type = db.Column(db.String, nullable=True)
-    post_author = db.Column(db.String, nullable=False)
-
-    post_updated_at = db.Column(
+    poem_created_at = db.Column(db.DateTime, nullable=True)
+    poem_updated_at = db.Column(
         db.DateTime,
         nullable=False,
         default=lambda: datetime.now(timezone.utc),
     )
-    post_created_at = db.Column(
-        db.DateTime,
-        nullable=True,
-    )
-
-    book = db.relationship("Book", back_populates="posts")
-
-    parent = db.relationship("Post", remote_side=[post_id], backref="children")
 
     def __repr__(self):
-        return (
-            f"<Post id={self.post_id}"
-            f" title={self.post_title!r}"
-            f" type={self.post_type!r}>"
-        )
+        return f"<Poem id={self.poem_id} title={self.poem_title!r}>"
+
+
+class Quote(db.Model):
+    """Model containing a quote extracted from a book review."""
+
+    __tablename__ = "quote"
+
+    quote_id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    quote_slug = db.Column(db.String(250), nullable=False, unique=True)
+    quote_text = db.Column(db.Text, nullable=False)
+
+    book_id = db.Column(
+        db.Integer, db.ForeignKey("book.book_id"), nullable=False
+    )
+
+    book = db.relationship("Book", back_populates="quotes")
+
+    def __repr__(self):
+        return f"<Quote id={self.quote_id} slug={self.quote_slug!r}>"

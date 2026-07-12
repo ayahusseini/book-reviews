@@ -1,6 +1,6 @@
 """Tests for SQLAlchemy models."""
 
-from app.backend.models import get_registered_models, Author, Book, Post, Tag
+from app.backend.models import get_registered_models, Author, Book, Tag
 
 
 def test_get_registered_models(db):
@@ -9,7 +9,8 @@ def test_get_registered_models(db):
         "Book",
         "BookAuthorMapping",
         "BookToTagMapping",
-        "Post",
+        "Poem",
+        "Quote",
         "Tag",
     }
 

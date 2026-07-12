@@ -35,7 +35,6 @@ MINIMAL_FRONTMATTER = """\
 ---
 title: "My Post"
 author: "Aya"
-type: standalone
 ---
 
 Post body here.
@@ -54,30 +53,19 @@ class TestMarkdownPostValidation:
         assert post.title == "My Post"
 
     def test_missing_title_raises(self, tmp_path):
-        path = write_post(
-            tmp_path, "---\nauthor: Aya\ntype: standalone\n---\nbody"
-        )
+        path = write_post(tmp_path, "---\nauthor: Aya\n---\nbody")
         with pytest.raises(ValueError, match="title"):
             parse_markdown_with_frontmatter(path)
 
     def test_missing_author_raises(self, tmp_path):
-        path = write_post(
-            tmp_path, "---\ntitle: T\ntype: standalone\n---\nbody"
-        )
+        path = write_post(tmp_path, "---\ntitle: T\n---\nbody")
         with pytest.raises(ValueError, match="author"):
-            parse_markdown_with_frontmatter(path)
-
-    def test_invalid_type_raises(self, tmp_path):
-        path = write_post(
-            tmp_path, "---\ntitle: T\nauthor: A\ntype: blogpost\n---\nbody"
-        )
-        with pytest.raises(ValueError, match="invalid type"):
             parse_markdown_with_frontmatter(path)
 
     def test_disallowed_fields_raise(self, tmp_path):
         path = write_post(
             tmp_path,
-            "---\ntitle: T\nauthor: A\ntype: review\nrating: 4\n---\nbody",
+            "---\ntitle: T\nauthor: A\nrating: 4\n---\nbody",
         )
         with pytest.raises(ValueError, match="disallowed frontmatter fields"):
             parse_markdown_with_frontmatter(path)
@@ -85,7 +73,7 @@ class TestMarkdownPostValidation:
     def test_book_ol_key_disallowed(self, tmp_path):
         path = write_post(
             tmp_path,
-            "---\ntitle: T\nauthor: A\ntype: review\nbook_ol_key: OL1W\n---\nbody",
+            "---\ntitle: T\nauthor: A\nbook_ol_key: OL1W\n---\nbody",
         )
         with pytest.raises(ValueError, match="disallowed frontmatter fields"):
             parse_markdown_with_frontmatter(path)
@@ -93,7 +81,7 @@ class TestMarkdownPostValidation:
     def test_invalid_date_format_raises(self, tmp_path):
         path = write_post(
             tmp_path,
-            "---\ntitle: T\nauthor: A\ntype: standalone\ndate: 15-01-2026\n---\nbody",
+            "---\ntitle: T\nauthor: A\ndate: 15-01-2026\n---\nbody",
         )
         with pytest.raises(ValueError, match="YYYY-MM-DD"):
             post = parse_markdown_with_frontmatter(path)
@@ -109,7 +97,7 @@ class TestMarkdownPostProperties:
     def test_slug_from_frontmatter(self, tmp_path):
         path = write_post(
             tmp_path,
-            "---\ntitle: T\nauthor: A\ntype: standalone\nslug: my-custom-slug\n---\nbody",
+            "---\ntitle: T\nauthor: A\nslug: my-custom-slug\n---\nbody",
         )
         assert parse_markdown_with_frontmatter(path).slug == "my-custom-slug"
 
@@ -120,7 +108,7 @@ class TestMarkdownPostProperties:
     def test_date_parsed_from_string(self, tmp_path):
         path = write_post(
             tmp_path,
-            "---\ntitle: T\nauthor: A\ntype: standalone\ndate: 2026-03-15\n---\nbody",
+            "---\ntitle: T\nauthor: A\ndate: 2026-03-15\n---\nbody",
         )
         post = parse_markdown_with_frontmatter(path)
         assert post.date == datetime(2026, 3, 15, tzinfo=timezone.utc)
@@ -129,21 +117,6 @@ class TestMarkdownPostProperties:
         path = write_post(tmp_path, MINIMAL_FRONTMATTER)
         assert parse_markdown_with_frontmatter(path).date is None
 
-    def test_tags_normalised_to_lowercase(self, tmp_path):
-        path = write_post(
-            tmp_path,
-            "---\ntitle: T\nauthor: A\ntype: standalone\ntags:\n  - Fiction\n  - NON-FICTION\n---\nbody",
-        )
-        tags = parse_markdown_with_frontmatter(path).tags
-        assert set(tags) == {"fiction", "non-fiction"}
-
-    def test_tags_deduplicated(self, tmp_path):
-        path = write_post(
-            tmp_path,
-            "---\ntitle: T\nauthor: A\ntype: standalone\ntags:\n  - poetry\n  - poetry\n---\nbody",
-        )
-        assert len(parse_markdown_with_frontmatter(path).tags) == 1
-
     def test_book_key_absent_returns_none(self, tmp_path):
         path = write_post(tmp_path, MINIMAL_FRONTMATTER)
         assert parse_markdown_with_frontmatter(path).book_key is None
@@ -151,7 +124,7 @@ class TestMarkdownPostProperties:
     def test_book_key_present(self, tmp_path):
         path = write_post(
             tmp_path,
-            "---\ntitle: T\nauthor: A\ntype: review\nbook_key: my-book\n---\nbody",
+            "---\ntitle: T\nauthor: A\nbook_key: my-book\n---\nbody",
         )
         assert parse_markdown_with_frontmatter(path).book_key == "my-book"
 
@@ -169,7 +142,7 @@ class TestParseMarkdownWithFrontmatter:
 
     def test_file_without_frontmatter_raises(self, tmp_path):
         path = write_post(tmp_path, "Just plain text, no frontmatter.")
-        # No frontmatter means no title/author/type — should raise
+        # No frontmatter means no title/author — should raise
         with pytest.raises(ValueError):
             parse_markdown_with_frontmatter(path)
 
@@ -178,7 +151,6 @@ class TestParseMarkdownWithFrontmatter:
 ---
 title: T
 author: A
-type: standalone
 ---
 
 Some text.
@@ -199,7 +171,6 @@ More text.
 ---
 title: T
 author: A
-type: standalone
 ---
 
 ```ad-quote
@@ -216,7 +187,6 @@ Quoted text here.
 ---
 title: T
 author: A
-type: standalone
 ---
 
 ```ad-quote
@@ -238,24 +208,17 @@ Second quote.
 
 
 class TestExpandWikilinks:
-    def test_plain_wikilink_becomes_link(self):
-        result = _expand_wikilinks("See [[my-other-post]] for more.")
-        assert "[my-other-post](/posts/my-other-post)" in result
+    def test_cross_document_wikilink_raises(self):
+        with pytest.raises(ValueError, match="not supported"):
+            _expand_wikilinks("See [[my-other-post]] for more.")
 
-    def test_wikilink_with_display_text(self):
-        result = _expand_wikilinks("Read [[my-post|this post]] here.")
-        assert "[this post](/posts/my-post)" in result
+    def test_cross_document_wikilink_with_label_raises(self):
+        with pytest.raises(ValueError, match="not supported"):
+            _expand_wikilinks("Read [[my-post|this post]] here.")
 
     def test_no_wikilinks_text_unchanged(self):
         text = "No links in this paragraph."
         assert _expand_wikilinks(text) == text
-
-    def test_multiple_wikilinks_all_expanded(self):
-        text = "See [[post-a]] and [[post-b|Post B]]."
-        result = _expand_wikilinks(text)
-        assert "/posts/post-a" in result
-        assert "/posts/post-b" in result
-        assert "Post B" in result
 
     def test_image_embed_becomes_img_tag(self):
         result = _expand_wikilinks("![[my-photo.jpg]]")
@@ -263,7 +226,7 @@ class TestExpandWikilinks:
 
     def test_image_embed_not_treated_as_wikilink(self):
         result = _expand_wikilinks("![[my-photo.jpg]]")
-        assert "/posts/" not in result
+        assert result == "![my-photo.jpg](/static/img/my-photo.jpg)"
 
     def test_within_post_heading_link(self):
         result = _expand_wikilinks("See [[#Part Two]] for details.")
@@ -276,16 +239,6 @@ class TestExpandWikilinks:
     def test_heading_anchor_lowercased_with_hyphens(self):
         result = _expand_wikilinks("[[#My Big Section]]")
         assert "#my-big-section" in result
-
-    def test_cross_post_heading_link(self):
-        result = _expand_wikilinks("[[other-post#Section One]]")
-        assert (
-            "[other-post#Section One](/posts/other-post#section-one)" in result
-        )
-
-    def test_cross_post_heading_link_with_label(self):
-        result = _expand_wikilinks("[[other-post#Section One|read this]]")
-        assert "[read this](/posts/other-post#section-one)" in result
 
     def test_nested_heading_path_uses_leaf_anchor(self):
         # Obsidian uses [[#Parent#Child]] syntax; the HTML anchor is just the leaf
@@ -316,11 +269,6 @@ class TestRenderMarkdownToSafeHtml:
         html = render_markdown_to_safe_html("<script>alert('xss')</script>")
         assert "<script>" not in html
 
-    def test_wikilinks_expanded_before_rendering(self):
-        html = render_markdown_to_safe_html("See [[some-post|this post]].")
-        assert 'href="/posts/some-post"' in html
-        assert "this post" in html
-
     def test_blockquote_rendered(self):
         assert "<blockquote>" in render_markdown_to_safe_html("> A quote.")
 
@@ -332,9 +280,3 @@ class TestRenderMarkdownToSafeHtml:
     def test_within_post_heading_link_rendered(self):
         html = render_markdown_to_safe_html("See [[#My Section]] here.")
         assert 'href="#my-section"' in html
-
-    def test_cross_post_heading_link_rendered(self):
-        html = render_markdown_to_safe_html(
-            "See [[other-post#My Section|this]]."
-        )
-        assert 'href="/posts/other-post#my-section"' in html

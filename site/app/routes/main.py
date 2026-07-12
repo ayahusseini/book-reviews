@@ -4,7 +4,7 @@ import random
 
 from flask import Blueprint, redirect, url_for, render_template, jsonify
 
-from app.backend.models import Post
+from app.backend.models import Quote
 from app.backend.markdown import render_markdown_to_safe_html
 from app.extensions import cache
 from app.routes.helper import all_heatmap_cells
@@ -24,26 +24,16 @@ def about():
 
 @cache.memoize()
 def _get_all_rendered_quotes() -> list[tuple[str, str]]:
-    """Fetch and render all quote posts,
-    returning (quote_html, source_html) pairs.
+    """Fetch and render all quotes, returning (quote_html, source_html) pairs.
 
     Result is cached; cache is cleared on content import.
     """
-    quotes = Post.query.filter_by(post_type="quotes").all()
+    quotes = Quote.query.all()
     result = []
     for quote in quotes:
-        quote_html = render_markdown_to_safe_html(quote.post_body_markdown)
-        source_html = ""
-        if quote.book:
-            book_url = url_for("books.book_detail", book_id=quote.book.book_id)
-            source_html = f'— <a href="{book_url}">{quote.book.book_title}</a>'
-        elif quote.parent:
-            parent_url = url_for(
-                "posts.post_detail", slug=quote.parent.post_slug
-            )
-            source_html = (
-                f'— <a href="{parent_url}">{quote.parent.post_title}</a>'
-            )
+        quote_html = render_markdown_to_safe_html(quote.quote_text)
+        book_url = url_for("books.book_detail", book_id=quote.book.book_id)
+        source_html = f'— <a href="{book_url}">{quote.book.book_title}</a>'
         result.append((quote_html, source_html))
     return result
 
