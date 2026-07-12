@@ -13,17 +13,21 @@ from app.backend.markdown import (
     MarkdownPost,
     parse_markdown_with_frontmatter,
 )
-from app.backend.extract_quotes import Quote
 from app.backend.models import Book
 from app.backend.upserts import (
+    sync_quotes_for_book,
     sync_tags,
     upsert_books,
-    upsert_post,
+    upsert_poem,
+    upsert_review,
 )
 from app.backend.open_library import AuthorData, BookData, fetch_book_data
 from app.extensions import cache, db
 
 DEFAULT_SEED_PATH = Path(__file__).parents[3] / "writing" / "book_seed.json"
+DEFAULT_POSTS_PATH = Path(__file__).parents[3] / "writing" / "posts"
+REVIEWS_SUBDIR = "reviews"
+POEMS_SUBDIR = "poetry"
 
 
 def _slugify(text: str) -> str:
@@ -51,73 +55,47 @@ def resolve_book(parsed: MarkdownPost) -> Book | None:
     return book
 
 
-def sync_quotes(
-    *,
-    quotes: list[Quote],
-    author: str,
-    book: Book | None,
-    parent_slug: str | None,
-) -> tuple[int, int]:
-    created = updated = 0
-
-    for quote in quotes:
-        _, is_new = upsert_post(
-            slug=quote.quote_slug,
-            title=f"Quote ({quote.quote_slug})",
-            author=author,
-            body=quote.quote_text,
-            post_parent_slug=parent_slug,
-            post_type="quotes",
-            book=book,
-        )
-
-        if is_new:
-            created += 1
-        else:
-            updated += 1
-
-    return created, updated
-
-
-def import_post_file(path: Path) -> bool:
-    """Upsert a single post file. Returns True if the post is new."""
+def import_review_file(path: Path) -> bool:
+    """Upsert a single review file. Returns True if the review is new."""
     parsed = parse_markdown_with_frontmatter(path)
 
-    if parsed.post_type in {"review", "essay"} and not parsed.book_key:
-        click.echo(
-            f"WARNING {path.name}: type={parsed.post_type!r} "
-            "but no book_key set. Standalone post."
-        )
+    if not parsed.book_key:
+        raise ValueError(f"Review '{parsed.slug}' has no book_key set.")
 
     book = resolve_book(parsed)
 
-    _, is_new = upsert_post(
-        slug=parsed.slug,
-        title=parsed.title,
-        author=parsed.author,
-        post_parent_slug=parsed.parent_slug,
-        body=parsed.body_markdown,
-        post_type=parsed.post_type,
+    _, is_new = upsert_review(
         book=book,
+        body=parsed.body_markdown,
         created_at=parsed.date,
     )
 
-    sync_quotes(
-        quotes=parsed.quotes,
+    sync_quotes_for_book(book, parsed.quotes)
+
+    return is_new
+
+
+def import_poem_file(path: Path) -> bool:
+    """Upsert a single poem file. Returns True if the poem is new."""
+    parsed = parse_markdown_with_frontmatter(path)
+
+    _, is_new = upsert_poem(
+        slug=parsed.slug,
+        title=parsed.title,
         author=parsed.author,
-        book=book,
-        parent_slug=parsed.slug,
+        body=parsed.body_markdown,
+        created_at=parsed.date,
     )
 
     return is_new
 
 
-def _import_files(md_files: list[Path]) -> tuple[int, int, int]:
-    """Run import_post_file over a list of paths, tallying results."""
+def _import_files(md_files: list[Path], importer) -> tuple[int, int, int]:
+    """Run importer over a list of paths, tallying results."""
     created = updated = errors = 0
     for path in md_files:
         try:
-            if import_post_file(path):
+            if importer(path):
                 created += 1
             else:
                 updated += 1
@@ -257,127 +235,66 @@ def seed_books_command(path_str: str) -> None:
     )
 
 
-_EXT_TO_LANG: dict[str, str] = {
-    ".sql": "sql",
-    ".py": "python",
-    ".js": "javascript",
-    ".ts": "typescript",
-    ".sh": "bash",
-    ".json": "json",
-    ".yaml": "yaml",
-    ".yml": "yaml",
-    ".html": "html",
-    ".css": "css",
-    ".r": "r",
-    ".rb": "ruby",
-    ".go": "go",
-    ".rs": "rust",
-    ".c": "c",
-    ".cpp": "cpp",
-    ".java": "java",
-}
-
-
-@click.command("import-code")
-@click.option(
-    "--path",
-    "path_str",
-    required=True,
-    help="Directory containing code files (.sql, .py, etc.).",
-)
-@click.option(
-    "--author",
-    required=True,
-    help="Author name to assign to all imported code posts.",
-)
-@with_appcontext
-def import_code_command(path_str: str, author: str) -> None:
-    """Import code files as code-type posts."""
-    code_dir = Path(path_str)
-    if not code_dir.exists():
-        raise click.ClickException(f"Directory does not exist: {code_dir}")
-
-    code_files = sorted(
-        p
-        for p in code_dir.rglob("*")
-        if p.is_file() and p.suffix.lower() in _EXT_TO_LANG
-    )
-
-    if not code_files:
-        click.echo(f"No supported code files found under {code_dir}")
-        return
-
-    created = updated = errors = 0
-    for path in code_files:
-        try:
-            lang = _EXT_TO_LANG[path.suffix.lower()]
-            content = path.read_text(encoding="utf-8")
-            body = f"```{lang}\n{content}\n```"
-            slug = path.name
-            title = path.name
-
-            _, is_new = upsert_post(
-                slug=slug,
-                title=title,
-                author=author,
-                body=body,
-                post_parent_slug=None,
-                post_type="code",
-                book=None,
-            )
-            if is_new:
-                created += 1
-                click.echo(f"  Created: {path.name}")
-            else:
-                updated += 1
-                click.echo(f"  Updated: {path.name}")
-        except Exception as exc:  # noqa: BLE001
-            click.echo(f"ERROR {path.name}: {exc}")
-            errors += 1
-
-    db.session.commit()
-    click.echo(
-        f"Imported code from {code_dir}: "
-        f"created={created}, updated={updated}, errors={errors}"
-    )
-    cache.clear()
-    click.echo("Cache cleared.")
-
-
 @click.command("reset-posts")
 @click.option(
     "--path",
     "path_str",
-    default=str(Path(__file__).parents[3] / "writing" / "posts"),
+    default=str(DEFAULT_POSTS_PATH),
     show_default=True,
-    help="Directory of markdown posts to re-import after reset.",
+    help="Directory containing 'reviews/' and 'poetry/' subdirectories.",
 )
 @with_appcontext
 def reset_posts_command(path_str: str) -> None:
-    """Delete all posts from the database and re-import from --path.
+    """Clear all reviews, poems, and quotes, then re-import from --path.
 
     Books, authors, and tags are not touched.
     """
-    from app.backend.models import Post
+    from app.backend.models import Poem, Quote
 
-    deleted = Post.query.delete()
+    deleted_poems = Poem.query.delete()
+    deleted_quotes = Quote.query.delete()
+    for book in Book.query.filter(Book.review_markdown.isnot(None)).all():
+        book.review_markdown = None
+        book.review_created_at = None
+        book.review_updated_at = None
     db.session.commit()
-    click.echo(f"Deleted {deleted} post(s) from the database.")
+    click.echo(
+        f"Cleared reviews, {deleted_poems} poem(s), "
+        f"and {deleted_quotes} quote(s) from the database."
+    )
 
     posts_dir = Path(path_str)
     if not posts_dir.exists():
         raise click.ClickException(f"Posts dir does not exist: {posts_dir}")
 
-    md_files = sorted(p for p in posts_dir.rglob("*.md") if p.is_file())
-    if not md_files:
-        click.echo(f"No markdown files found under {posts_dir}")
-        return
+    reviews_dir = posts_dir / REVIEWS_SUBDIR
+    poems_dir = posts_dir / POEMS_SUBDIR
 
-    created, updated, errors = _import_files(md_files)
+    review_files = (
+        sorted(p for p in reviews_dir.rglob("*.md") if p.is_file())
+        if reviews_dir.exists()
+        else []
+    )
+    poem_files = (
+        sorted(p for p in poems_dir.rglob("*.md") if p.is_file())
+        if poems_dir.exists()
+        else []
+    )
+
+    r_created, r_updated, r_errors = _import_files(
+        review_files, import_review_file
+    )
+    p_created, p_updated, p_errors = _import_files(
+        poem_files, import_poem_file
+    )
     db.session.commit()
     click.echo(
-        f"Re-imported posts from {posts_dir}: "
-        f"created={created}, updated={updated}, errors={errors}"
+        f"Reviews from {reviews_dir}: "
+        f"created={r_created}, updated={r_updated}, errors={r_errors}"
+    )
+    click.echo(
+        f"Poems from {poems_dir}: "
+        f"created={p_created}, updated={p_updated}, errors={p_errors}"
     )
     cache.clear()
     click.echo("Cache cleared.")
@@ -385,6 +302,5 @@ def reset_posts_command(path_str: str) -> None:
 
 def init_app(app) -> None:
     """Register CLI commands with the Flask app."""
-    app.cli.add_command(import_code_command)
     app.cli.add_command(seed_books_command)
     app.cli.add_command(reset_posts_command)

@@ -17,9 +17,11 @@ from app.backend.models import (
     Author,
     Book,
     BookToTagMapping,
-    Post,
+    Poem,
+    Quote,
     Tag,
 )
+from app.backend.extract_quotes import ExtractedQuote
 from app.extensions import db
 from app.backend.open_library import AuthorData, BookData
 
@@ -278,121 +280,82 @@ def upsert_books(
     return result
 
 
-def upsert_single_book(ol_key: str) -> Book:
-    """Return the Book for ol_key, or fetch from Open Library and create it.
+def upsert_review(
+    *,
+    book: Book,
+    body: str,
+    created_at: datetime | None = None,
+) -> tuple[Book, bool]:
+    """Set a book's review content, tracking created/updated timestamps.
 
-    Used by the post importer when a referenced book is not in the DB.
     Does not commit — caller is responsible.
     """
-    book = Book.query.filter_by(book_ol_key=ol_key).first()
-    if book:
-        return book
+    is_new = book.review_markdown is None
+    content_changed = book.review_markdown != body
 
-    from app.backend.open_library import fetch_book_data
+    book.review_markdown = body
 
-    book_data = fetch_book_data(ol_key)
-    books = upsert_books([book_data])
-    return books[ol_key]
+    if content_changed:
+        book.review_updated_at = datetime.now(timezone.utc)
+
+    if created_at is not None and book.review_created_at is None:
+        book.review_created_at = created_at
+
+    return book, is_new
 
 
-def upsert_post(
+def upsert_poem(
     *,
     slug: str,
     title: str,
     author: str,
     body: str,
-    post_parent_slug: str | None,
-    post_type: str | None,
-    book: Book | None,
     created_at: datetime | None = None,
-) -> tuple[Post, bool]:
-
-    post = Post.query.filter_by(post_slug=slug).first()
-    post_parent = Post.query.filter_by(post_slug=post_parent_slug).first()
-
-    is_new = post is None
-
-    if post_type == "review":
-        if book is None:
-            raise ValueError(f"Review post '{slug}' must have a book")
-
-        existing_review = (
-            Post.query.filter_by(book_id=book.book_id, post_type="review")
-            .filter(Post.post_slug != slug)
-            .first()
-        )
-
-        if existing_review:
-            raise ValueError(
-                f"Book '{book.book_title}' already has a review post "
-                f"('{existing_review.post_slug}')"
-            )
+) -> tuple[Poem, bool]:
+    """Insert or update a poem by slug. Does not commit."""
+    poem = Poem.query.filter_by(poem_slug=slug).first()
+    is_new = poem is None
 
     if is_new:
-        post = Post(
-            post_slug=slug,
-            post_title=title,
-            post_body_markdown=body,
-            post_type=post_type,
-            post_author=author,
-            book=book,
-            post_created_at=created_at,
+        poem = Poem(
+            poem_slug=slug,
+            poem_title=title,
+            poem_body_markdown=body,
+            poem_author=author,
+            poem_created_at=created_at,
         )
-
-        if post_parent:
-            post.parent_id = post_parent.post_id
-
-        db.session.add(post)
-
+        db.session.add(poem)
     else:
         content_changed = (
-            post.post_body_markdown != body or post.post_title != title
+            poem.poem_body_markdown != body or poem.poem_title != title
         )
-        post.post_title = title
-        post.post_parent = post_parent
-        post.post_body_markdown = body
-        post.post_type = post_type
-        post.post_author = author
-        post.book = book
+        poem.poem_title = title
+        poem.poem_body_markdown = body
+        poem.poem_author = author
 
         if content_changed:
-            post.post_updated_at = datetime.now(timezone.utc)
+            poem.poem_updated_at = datetime.now(timezone.utc)
 
-        if created_at is not None and post.post_created_at is None:
-            post.post_created_at = created_at
+        if created_at is not None and poem.poem_created_at is None:
+            poem.poem_created_at = created_at
 
-        if post_parent:
-            post.parent_id = post_parent.post_id
-
-    return post, is_new
+    return poem, is_new
 
 
-def attach_tags(book: Book, tag_names: list[str]) -> None:
-    """Add any missing tags to a book via a single bulk junction insert.
-
-    Used by the post importer to attach per-post tags to the book.
-    """
-    if not tag_names:
-        return
-
-    tag_name_map = upsert_tags(tag_names)
-
-    existing_tag_ids = {
-        m.tag_id
-        for m in BookToTagMapping.query.filter_by(book_id=book.book_id).all()
-    }
-
-    new_mappings = [
-        {"book_id": book.book_id, "tag_id": tag.tag_id}
-        for tag in tag_name_map.values()
-        if tag.tag_id not in existing_tag_ids
-    ]
-
-    if new_mappings:
-        db.session.execute(
-            sqlite_insert(BookToTagMapping).on_conflict_do_nothing(),
-            new_mappings,
-        )
+def sync_quotes_for_book(book: Book, quotes: list[ExtractedQuote]) -> None:
+    """Upsert quotes by slug, attached to book."""
+    for extracted in quotes:
+        quote = Quote.query.filter_by(quote_slug=extracted.quote_slug).first()
+        if quote is None:
+            quote = Quote(
+                quote_slug=extracted.quote_slug,
+                quote_text=extracted.quote_text,
+                book=book,
+            )
+            db.session.add(quote)
+        else:
+            quote.quote_text = extracted.quote_text
+            quote.book = book
 
 
 def sync_tags(book: Book, tag_names: list[str]) -> None:

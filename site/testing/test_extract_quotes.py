@@ -1,7 +1,7 @@
 """Tests for site/content/extract_quotes.py."""
 
 from app.backend.extract_quotes import (
-    Quote,
+    ExtractedQuote,
     extract_ad_quotes,
     replace_ad_quotes_with_blockquotes,
 )
@@ -50,7 +50,7 @@ class TestReplaceAdQuotesWithBlockquotes:
         assert "> Line two." in result
 
     def test_text_outside_blocks_preserved(self):
-        body = "Before.\n```ad-quote\nQuote.\n```\nAfter."
+        body = "Before.\n```ad-quote\nExtractedQuote.\n```\nAfter."
         result = replace_ad_quotes_with_blockquotes(body)
         assert "Before." in result
         assert "After." in result
@@ -62,18 +62,18 @@ class TestReplaceAdQuotesWithBlockquotes:
 
 class TestQuoteSlug:
     def test_slug_has_quote_prefix(self):
-        q = Quote(quote_text="Some text.")
+        q = ExtractedQuote(quote_text="Some text.")
         assert q.quote_slug.startswith("quote-")
 
     def test_slug_is_deterministic(self):
-        q1 = Quote(quote_text="Same text.")
-        q2 = Quote(quote_text="Same text.")
+        q1 = ExtractedQuote(quote_text="Same text.")
+        q2 = ExtractedQuote(quote_text="Same text.")
         assert q1.quote_slug == q2.quote_slug
 
     def test_different_text_different_slug(self):
         assert (
-            Quote(quote_text="Text A.").quote_slug
-            != Quote(quote_text="Text B.").quote_slug
+            ExtractedQuote(quote_text="Text A.").quote_slug
+            != ExtractedQuote(quote_text="Text B.").quote_slug
         )
 
     def test_slug_uses_only_first_100_chars(self):
@@ -85,6 +85,6 @@ class TestQuoteSlug:
         different_suffix_1 = same_prefix + "X"
         different_suffix_2 = same_prefix + "Y"
         assert (
-            Quote(quote_text=different_suffix_1).quote_slug
-            == Quote(quote_text=different_suffix_2).quote_slug
+            ExtractedQuote(quote_text=different_suffix_1).quote_slug
+            == ExtractedQuote(quote_text=different_suffix_2).quote_slug
         )

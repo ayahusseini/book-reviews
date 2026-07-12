@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block header %}
-  <h2>{{ poem.post_title }}</h2>
+  <h2>{{ poem.poem_title }}</h2>
 {% endblock %}
 {% block main_content %}
-  <p class="markdown-body">By {{ poem.post_author }}</p>
+  <p class="markdown-body">By {{ poem.poem_author }}</p>
   <article class="poem-body">
     {{ poem_html | safe }}
   </article>

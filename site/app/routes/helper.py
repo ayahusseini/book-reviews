@@ -4,47 +4,39 @@ from collections import Counter
 from datetime import date, datetime, timezone, timedelta
 
 from app.extensions import db, cache
-from app.backend.models import Post
+from app.backend.models import Book, Poem
 
 NEW_POST_DAYS = 5
 HEATMAP_WEEKS = 26
 
 
 @cache.cached()
-def recently_created() -> list:
-    """Return (book_id, post_id, post_type) rows for recent posts."""
-    cutoff = datetime.now(timezone.utc) - timedelta(days=NEW_POST_DAYS)
-    return (
-        db.session.query(Post.book_id, Post.post_id, Post.post_type)
-        .filter(Post.post_created_at >= cutoff)
-        .distinct()
-        .all()
-    )
-
-
 def recently_reviewed_book_ids() -> set[int]:
-    """Return book_ids whose review post was created within NEW_POST_DAYS."""
+    """Return book_ids whose review was created within NEW_POST_DAYS."""
+    cutoff = datetime.now(timezone.utc) - timedelta(days=NEW_POST_DAYS)
     return {
         row.book_id
-        for row in recently_created()
-        if row.post_type == "review" and row.book_id is not None
+        for row in db.session.query(Book.book_id)
+        .filter(Book.review_created_at >= cutoff)
+        .all()
     }
 
 
+@cache.cached()
 def recently_created_poem_ids() -> set[int]:
-    """Return post_ids of poem posts created within NEW_POST_DAYS."""
+    """Return poem_ids of poems created within NEW_POST_DAYS."""
+    cutoff = datetime.now(timezone.utc) - timedelta(days=NEW_POST_DAYS)
     return {
-        row.post_id for row in recently_created() if row.post_type == "poem"
+        row.poem_id
+        for row in db.session.query(Poem.poem_id)
+        .filter(Poem.poem_created_at >= cutoff)
+        .all()
     }
 
 
-def post_frequency(posts: list[Post]) -> dict[date, int]:
-    """Return a {date: count} mapping of posts by publication date."""
-    return Counter(
-        p.post_created_at.date()
-        for p in posts
-        if p.post_created_at is not None
-    )
+def _frequency(created_dates: list[datetime]) -> dict[date, int]:
+    """Return a {date: count} mapping of creation dates."""
+    return Counter(d.date() for d in created_dates if d is not None)
 
 
 def heatmap_cells(
@@ -74,6 +66,17 @@ def heatmap_cells(
 
 @cache.cached()
 def all_heatmap_cells() -> list[tuple[date, int, int]]:
-    """Return heatmap cells across all post types."""
-    posts = Post.query.filter(Post.post_created_at.isnot(None)).all()
-    return heatmap_cells(post_frequency(posts))
+    """Return heatmap cells across books (reviews) and poems."""
+    review_dates = [
+        row.review_created_at
+        for row in db.session.query(Book.review_created_at)
+        .filter(Book.review_created_at.isnot(None))
+        .all()
+    ]
+    poem_dates = [
+        row.poem_created_at
+        for row in db.session.query(Poem.poem_created_at)
+        .filter(Poem.poem_created_at.isnot(None))
+        .all()
+    ]
+    return heatmap_cells(_frequency(review_dates + poem_dates))

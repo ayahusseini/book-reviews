@@ -13,7 +13,7 @@ AD_QUOTE_RE = re.compile(
 
 
 @dataclass
-class Quote:
+class ExtractedQuote:
     quote_text: str
 
     @staticmethod
@@ -26,14 +26,14 @@ class Quote:
 
     @property
     def quote_slug(self) -> str:
-        """Return a slug for a quote post."""
+        """Return a slug for a quote."""
         return f"quote-{self.quote_hash(self.quote_text)}"
 
 
-def extract_ad_quotes(body: str) -> list[Quote]:
+def extract_ad_quotes(body: str) -> list[ExtractedQuote]:
     """Return the text content of every ```ad-quote block in body."""
     return [
-        Quote(quote_text=m.group(1).strip())
+        ExtractedQuote(quote_text=m.group(1).strip())
         for m in AD_QUOTE_RE.finditer(body)
     ]
 

@@ -4,12 +4,15 @@ Each test focuses on one behaviour. Database state is rolled back after
 every test via the session fixture, so tests are fully isolated.
 """
 
-import pytest
-from app.backend.models import Book, Post, Tag
+from datetime import datetime, timezone
+
+from app.backend.extract_quotes import ExtractedQuote
+from app.backend.models import Book, Poem, Quote, Tag
 from app.backend.upserts import (
-    attach_tags,
+    sync_quotes_for_book,
     upsert_books,
-    upsert_post,
+    upsert_poem,
+    upsert_review,
     upsert_tags,
 )
 from app.backend.open_library import AuthorData, BookData
@@ -38,18 +41,16 @@ def make_book(session, ol_key="OL1W", title="A Book"):
     return book
 
 
-def make_post(session, slug, post_type="standalone", book=None, **kwargs):
-    post = Post(
-        post_slug=slug,
-        post_title=kwargs.get("title", "A Post"),
-        post_body_markdown=kwargs.get("body", "body text"),
-        post_type=post_type,
-        post_author=kwargs.get("author", "Aya"),
-        book=book,
+def make_poem(session, slug, **kwargs):
+    poem = Poem(
+        poem_slug=slug,
+        poem_title=kwargs.get("title", "A Poem"),
+        poem_body_markdown=kwargs.get("body", "body text"),
+        poem_author=kwargs.get("author", "Aya"),
     )
-    session.add(post)
+    session.add(poem)
     session.flush()
-    return post
+    return poem
 
 
 # ---------------------------------------------------------------------------
@@ -156,133 +157,125 @@ class TestUpsertBooks:
 
 
 # ---------------------------------------------------------------------------
-# upsert_post
+# upsert_review
 # ---------------------------------------------------------------------------
 
 
-class TestUpsertPost:
-    def test_creates_new_post(self, session):
-        _, is_new = upsert_post(
-            slug="my-post",
-            title="My Post",
-            author="Aya",
-            body="Some content.",
-            post_parent_slug=None,
-            post_type="standalone",
-            book=None,
-        )
-        assert is_new is True
-        assert session.query(Post).filter_by(post_slug="my-post").count() == 1
-
-    def test_updates_existing_post_by_slug(self, session):
-        make_post(session, "existing", title="Old Title")
-        _, is_new = upsert_post(
-            slug="existing",
-            title="New Title",
-            author="Aya",
-            body="updated body",
-            post_parent_slug=None,
-            post_type="standalone",
-            book=None,
-        )
-        assert is_new is False
-        post = session.query(Post).filter_by(post_slug="existing").first()
-        assert post.post_title == "New Title"
-
-    def test_review_without_book_raises(self, session):
-        with pytest.raises(ValueError, match="must have a book"):
-            upsert_post(
-                slug="review-no-book",
-                title="Review",
-                author="Aya",
-                body="body",
-                post_parent_slug=None,
-                post_type="review",
-                book=None,
-            )
-
-    def test_duplicate_review_for_same_book_raises(self, session):
+class TestUpsertReview:
+    def test_creates_new_review(self, session):
         book = make_book(session)
-        make_post(session, "first-review", post_type="review", book=book)
-        with pytest.raises(ValueError, match="already has a review"):
-            upsert_post(
-                slug="second-review",
-                title="Second Review",
-                author="Aya",
-                body="body",
-                post_parent_slug=None,
-                post_type="review",
-                book=book,
-            )
+        _, is_new = upsert_review(book=book, body="Some content.")
+        assert is_new is True
+        assert book.review_markdown == "Some content."
+
+    def test_updates_existing_review(self, session):
+        book = make_book(session)
+        upsert_review(book=book, body="Old review.")
+        _, is_new = upsert_review(book=book, body="New review.")
+        assert is_new is False
+        assert book.review_markdown == "New review."
+
+    def test_created_at_set_only_once(self, session):
+        book = make_book(session)
+        first = datetime(2026, 1, 1, tzinfo=timezone.utc)
+        second = datetime(2026, 2, 1, tzinfo=timezone.utc)
+        upsert_review(book=book, body="v1", created_at=first)
+        upsert_review(book=book, body="v2", created_at=second)
+        assert book.review_created_at == first
 
     def test_updated_at_changes_when_body_changes(self, session):
-        post = make_post(session, "editable", body="original")
-        original_updated_at = post.post_updated_at
+        book = make_book(session)
+        upsert_review(book=book, body="original")
+        original_updated_at = book.review_updated_at
 
-        upsert_post(
-            slug="editable",
-            title="A Post",
-            author="Aya",
-            body="changed body",
-            post_parent_slug=None,
-            post_type="standalone",
-            book=None,
-        )
+        upsert_review(book=book, body="changed body")
         session.flush()
-        assert post.post_updated_at > original_updated_at
+        assert book.review_updated_at > original_updated_at
 
     def test_updated_at_unchanged_when_body_same(self, session):
-        post = make_post(session, "stable", body="same body")
-        original_updated_at = post.post_updated_at
+        book = make_book(session)
+        upsert_review(book=book, body="same body")
+        original_updated_at = book.review_updated_at
 
-        upsert_post(
-            slug="stable",
-            title="A Post",
-            author="Aya",
-            body="same body",
-            post_parent_slug=None,
-            post_type="standalone",
-            book=None,
-        )
+        upsert_review(book=book, body="same body")
         session.flush()
-        assert post.post_updated_at == original_updated_at
-
-    def test_quote_child_links_to_parent(self, session):
-        make_post(session, "parent-post")
-        upsert_post(
-            slug="child-quote",
-            title="Quote",
-            author="Aya",
-            body="A quoted passage.",
-            post_parent_slug="parent-post",
-            post_type="quotes",
-            book=None,
-        )
-        session.flush()
-        child = session.query(Post).filter_by(post_slug="child-quote").first()
-        parent = session.query(Post).filter_by(post_slug="parent-post").first()
-        assert child.parent_id == parent.post_id
+        assert book.review_updated_at == original_updated_at
 
 
 # ---------------------------------------------------------------------------
-# attach_tags
+# upsert_poem
 # ---------------------------------------------------------------------------
 
 
-class TestAttachTags:
-    def test_adds_tags_to_book(self, session):
-        book = make_book(session)
-        attach_tags(book, ["history", "biography"])
-        tag_names = {t.tag_name for t in book.tags}
-        assert tag_names == {"history", "biography"}
+class TestUpsertPoem:
+    def test_creates_new_poem(self, session):
+        _, is_new = upsert_poem(
+            slug="my-poem", title="My Poem", author="Aya", body="line one"
+        )
+        assert is_new is True
+        assert session.query(Poem).filter_by(poem_slug="my-poem").count() == 1
 
-    def test_does_not_duplicate_existing_tags(self, session):
-        book = make_book(session)
-        attach_tags(book, ["fiction"])
-        attach_tags(book, ["fiction"])
-        assert len(book.tags) == 1
+    def test_updates_existing_poem_by_slug(self, session):
+        make_poem(session, "existing", title="Old Title")
+        _, is_new = upsert_poem(
+            slug="existing", title="New Title", author="Aya", body="updated"
+        )
+        assert is_new is False
+        poem = session.query(Poem).filter_by(poem_slug="existing").first()
+        assert poem.poem_title == "New Title"
 
-    def test_empty_list_is_safe(self, session):
+    def test_updated_at_changes_when_body_changes(self, session):
+        poem = make_poem(session, "editable", body="original")
+        original_updated_at = poem.poem_updated_at
+
+        upsert_poem(
+            slug="editable", title="A Poem", author="Aya", body="changed body"
+        )
+        session.flush()
+        assert poem.poem_updated_at > original_updated_at
+
+    def test_updated_at_unchanged_when_body_same(self, session):
+        poem = make_poem(session, "stable", body="same body")
+        original_updated_at = poem.poem_updated_at
+
+        upsert_poem(
+            slug="stable", title="A Poem", author="Aya", body="same body"
+        )
+        session.flush()
+        assert poem.poem_updated_at == original_updated_at
+
+
+# ---------------------------------------------------------------------------
+# sync_quotes_for_book
+# ---------------------------------------------------------------------------
+
+
+class TestSyncQuotesForBook:
+    def test_creates_quote_linked_to_book(self, session):
         book = make_book(session)
-        attach_tags(book, [])
-        assert book.tags == []
+        sync_quotes_for_book(
+            book, [ExtractedQuote(quote_text="A quoted passage.")]
+        )
+        session.flush()
+        quote = session.query(Quote).first()
+        assert quote is not None
+        assert quote.book_id == book.book_id
+        assert quote.quote_text == "A quoted passage."
+
+    def test_updates_existing_quote_text_for_same_slug(self, session):
+        # quote_slug is derived from the first 100 chars of the text, so
+        # a 100-char-identical prefix with a different suffix maps to the
+        # same slug — this exercises the update-in-place path.
+        prefix = "A" * 100
+        book = make_book(session)
+        sync_quotes_for_book(book, [ExtractedQuote(quote_text=prefix)])
+        session.flush()
+
+        sync_quotes_for_book(
+            book, [ExtractedQuote(quote_text=prefix + " extended")]
+        )
+        session.flush()
+
+        assert session.query(Quote).count() == 1
+        quote = session.query(Quote).first()
+        assert quote.quote_text == prefix + " extended"
