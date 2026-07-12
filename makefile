@@ -2,11 +2,10 @@ APP     = site/app
 PYPATH  = site
 MIGRATIONS = site/migrations
 POSTS   = writing/posts
-CODE    = writing/posts/other
 SEEDS   = writing/book_seed.json
 AUTHOR  = aya
 
-.PHONY: dev seed code sync test migrate upgrade stamp shell setup reset reset-posts deploy-db restart
+.PHONY: dev seed sync test migrate upgrade stamp shell setup reset reset-posts deploy-db restart
 
 dev:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) run --debug
@@ -14,11 +13,7 @@ dev:
 seed:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) seed-books --path $(SEEDS)
 
-
-code:
-	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) import-code --path $(CODE) --author "$(AUTHOR)"
-
-sync: seed reset-posts code restart
+sync: seed reset-posts restart
 
 restart:
 	touch site/app/__init__.py
@@ -61,8 +56,8 @@ reset:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) db upgrade --directory $(MIGRATIONS)
 	$(MAKE) sync
 
-# Delete all posts from the local DB and re-import from markdown.
-# Books, authors, and tags are not touched.
+# Clear reviews, poems, and quotes from the local DB and re-import from
+# writing/posts/{reviews,poetry}. Books, authors, and tags are not touched.
 reset-posts:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) reset-posts --path $(POSTS)
 

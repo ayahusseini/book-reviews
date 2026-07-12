@@ -261,7 +261,7 @@ from flask import current_app
 We can define blueprints in a `blueprints/` folder:
 
 ```python
-# app/blueprints/books.py
+# app/routes/books.py
 from flask import Blueprint
 
 books_bp = Blueprint("books", __name__, url_prefix="/books")

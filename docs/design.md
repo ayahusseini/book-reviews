@@ -6,7 +6,7 @@
 2. [Data model](#data-model)
 3. [Where to edit what](#where-to-edit-what)
 4. [Data flow: adding a book](#data-flow-adding-a-book)
-5. [Data flow: importing a post](#data-flow-importing-a-post)
+5. [Data flow: importing a review or poem](#data-flow-importing-a-review-or-poem)
 6. [Configuration environments](#configuration-environments)
 
 ---
@@ -16,20 +16,20 @@
 The site is a Flask application backed by a single SQLite database. There is no API layer — all content is loaded from markdown files and a JSON seed file via CLI commands, then stored in the database. Flask serves read-only HTML pages from that database.
 
 ```
-writing/posts/**/*.md   writing/book_seed.json
-      │                       │
-      ▼                       ▼
- import-posts CLI         seed-books CLI
-      │                       │
-      └──────────┬────────────┘
-                 ▼
-           SQLite database
-                 │
-                 ▼
-         Flask blueprints
-                 │
-                 ▼
-           HTML responses
+writing/posts/{reviews,poetry}/*.md   writing/book_seed.json
+      │                                       │
+      ▼                                       ▼
+   reset-posts CLI                       seed-books CLI
+      │                                       │
+      └──────────────────┬────────────────────┘
+                         ▼
+                   SQLite database
+                         │
+                         ▼
+                 Flask blueprints
+                         │
+                         ▼
+                   HTML responses
 ```
 
 ---
@@ -46,56 +46,43 @@ writing/posts/**/*.md   writing/book_seed.json
 │ author_name        │                                   │ book_ol_key (unique)     │
 │ author_ol_id       │                                   │ book_title               │
 └────────────────────┘                                   │ book_description         │
-                                                         │ book_publication_year    │
-                                                         │ book_rating              │
+                                                          │ book_publication_year    │
+                                                          │ book_rating              │
          book_to_tag_map                                 │ book_page_count          │
-┌─────────────────┐                                      └──────────────────────────┘
-│      tag        │ ◄────────────────────────────────────────────┘
-├─────────────────┤
-│ tag_id (PK)     │
-│ tag_name        │
-└─────────────────┘
-
-
-┌──────────────────────────┐
-│           post           │
-├──────────────────────────┤
-│ post_id (PK)             │
-│ parent_id (FK → post_id) │  ← quote posts point to their parent post
-│ book_id (FK → book, NULL)│
-│ post_slug (unique)       │
-│ post_title               │
-│ post_body_markdown       │
-│ post_type                │
-│ post_author              │
-│ post_created_at          │
-│ post_updated_at          │  ← only updated when content actually changes
+┌─────────────────┐                                      │ review_markdown          │
+│      tag        │ ◄─────────────────────────────────── │ review_created_at        │
+├─────────────────┤                                      │ review_updated_at        │
+│ tag_id (PK)     │                                       └──────────┬───────────────┘
+│ tag_name        │                                                  │
+└─────────────────┘                                                  │
+                                                                      │ quote.book_id (FK)
+┌──────────────────────────┐                              ┌──────────▼───────────────┐
+│           poem           │                              │          quote           │
+├──────────────────────────┤                              ├──────────────────────────┤
+│ poem_id (PK)             │                               │ quote_id (PK)            │
+│ poem_slug (unique)       │                               │ quote_slug (unique)      │
+│ poem_title               │                               │ quote_text               │
+│ poem_body_markdown       │                               │ book_id (FK → book)      │
+│ poem_author              │                               └──────────────────────────┘
+│ poem_created_at          │
+│ poem_updated_at          │  ← only updated when content actually changes
 └──────────────────────────┘
 ```
 
-### Valid post types
-
-| Type | Description |
-|---|---|
-| `review` | Book review. Must have a `book_key`. Rating is set in `book_seed.json`. One per book. |
-| `essay` | Longer piece about a book. Should have a `book_key`. |
-| `standalone` | Any post not linked to a book. |
-| `note` | Short post not linked to a book. |
-| `poem` | Poem. Displayed at `/poems/`. |
-| `designdoc` | Site design documentation. Displayed at `/design/`. |
-| `quotes` | Auto-generated child post for each `ad-quote` block. Never created manually. |
+There is no polymorphic "post" table. A book's review lives directly on the `book` row (it's always exactly one review per book), poems get their own table, and quotes always belong to a book — never a poem.
 
 ### Design decisions
 
 - **Books and authors are many-to-many.** A book can have multiple authors; an author can have multiple books. Resolved via `book_author_mapping`.
-- **Books and tags are many-to-many.** Resolved via `book_to_tag_map`. Tags are created on the fly from `book_seed.json` and post frontmatter.
-- **Posts can exist without a book.** `book_id` is nullable — standalone posts, poems, and design docs have no book link.
-- **Quote posts are children of their parent post.** `parent_id` is a self-referential FK. The random quote widget uses `parent.post_slug` to link back to the source.
-- **`post_updated_at` only changes on real edits.** Re-running `make posts` without changing content does not touch this field.
-- **`book_ol_key` is the stable book identifier** but it is not required to be an Open Library key. Manual books use any unique slug (e.g. `remains-of-the-day`). OL enrichment is opt-in per seed entry via `enrich: true`.
-- **`author_ol_id` is the stable author identifier** and is non-nullable. OL-fetched authors use their OL author ID; manually-supplied authors use a slug derived from their name (e.g. `kazuo-ishiguro`).
-- **All book metadata belongs in `book_seed.json`.** Post frontmatter only carries `book_key` to reference a book. Rating, tags, title overrides, and author data are seeded, not inferred from posts.
-- **Open Library is optional.** The seed command and post importer never call the OL API unless explicitly asked. Books can be fully specified inline.
+- **Books and tags are many-to-many.** Resolved via `book_to_tag_map`. Tags are created on the fly from `book_seed.json`.
+- **Review content is columns on `Book`, not a separate table.** Since a book can have at most one review, there's no upside to a join — `upsert_review` just sets `review_markdown`/`review_created_at`/`review_updated_at` in place, so "one review per book" is structurally guaranteed rather than enforced by a uniqueness check.
+- **Poems are independent of books.** No book link at all.
+- **Quotes always belong to a book.** `quote.book_id` is non-nullable. Quotes are only ever extracted from `ad-quote` blocks inside a review body, never from poems.
+- **`poem_updated_at`/`review_updated_at` only change on real edits.** Re-running `reset-posts` without changing content does not touch these fields.
+- **`book_ol_key` is the stable book identifier.** The name is a holdover — it's just any unique slug (e.g. `remains-of-the-day`) supplied in `book_seed.json`; there is no Open Library integration anymore.
+- **`author_ol_id` is the stable author identifier** and is non-nullable. It's a slug derived from the author's name (e.g. `kazuo-ishiguro`), assigned when the author is first seeded.
+- **All book metadata belongs in `book_seed.json`.** Review/poem frontmatter only carries `book_key` (reviews) to reference a book. Rating, tags, title, authors, and description are all seeded directly, not fetched or inferred from posts.
+- **Cross-document wikilinks are not supported.** Reviews and poems don't share a slug namespace, so `[[some-slug]]` has no single route to resolve to. Only `[[#heading]]` same-document anchors work.
 
 ---
 
@@ -103,47 +90,35 @@ writing/posts/**/*.md   writing/book_seed.json
 
 ### I want to add a book to the site
 
-→ Edit `writing/book_seed.json` and run `make seed`.
+→ Edit `writing/book_seed.json` and run `make seed`. See the README's [Adding books](../README.md#adding-books) section for the full flow.
 
-For an Open Library book: `{ "key": "OL14933414W", "enrich": true, "tags": ["2026"] }` — fetches metadata from OL on first seed.
+### I want to write a review or poem
 
-For a manual book: `{ "key": "my-slug", "title": "Title", "authors": ["Author Name"], ... }` — no API call, insert directly.
-
-### I want to write a review or post
-
-→ Create a `.md` file in `writing/posts/`, run `make posts`. See [writing-posts.md](writing-posts.md) for the full workflow.
+→ Create a `.md` file in `writing/posts/reviews/` or `writing/posts/poetry/`, run `make reset-posts`. See [writing-posts.md](writing-posts.md) for the full workflow.
 
 ### I want to change how books are listed or sorted
 
-→ `site/app/blueprints/books.py` — `book_list()` builds the query and passes data to the template.
+→ `site/app/routes/books.py` — `book_list()` builds the query and passes data to the template.
 
 ### I want to change how a book's detail page looks
 
-→ `site/app/templates/book_detail.html` for layout, `site/app/blueprints/books.py:book_detail()` for the data query.
-
-### I want to change what posts appear on the posts page
-
-→ `site/app/blueprints/posts.py` — `SHOWN_IN_POSTS` controls which post types are shown on `/posts/misc_posts`. `post_list()` controls `/posts/`.
+→ `site/app/templates/book_detail.html` for layout, `site/app/routes/books.py:book_detail()` for the data query.
 
 ### I want to change how the book list item looks (title, stars, tags)
 
 → `site/app/templates/_macros.html` — the `book_item` macro.
 
-### I want to add a new post type
+### I want to change how poems are listed or displayed
 
-→ Add it to `VALID_POST_TYPES` in both `site/app/database/models.py` and `site/content/markdown_posts.py`. Add a blueprint/template if it needs its own page.
+→ `site/app/routes/poems.py` and `site/app/templates/poems.html` / `poem_detail.html`.
 
-### I want to change Open Library fetch behaviour
+### I want to change how reviews, poems, or quotes are stored or upserted
 
-→ `site/app/open_library.py` — pure HTTP client, no Flask or SQLAlchemy imports. `fetch_book_data()` is the main entry point.
-
-### I want to change how posts are stored or upserted
-
-→ `site/app/database/upserts.py` — all write logic lives here. Functions never call `session.commit()` directly; callers (CLI commands) are responsible.
+→ `site/app/backend/upserts.py` — all write logic lives here. Functions never call `session.commit()` directly; callers (CLI commands) are responsible.
 
 ### I want to change the database schema
 
-→ Edit `site/app/database/models.py`, then run `make migrate MSG="describe change"`.
+→ Edit `site/app/backend/models.py`, then run `make migrate MSG="describe change"`.
 
 ### I want to change site-wide config
 
@@ -155,78 +130,64 @@ For a manual book: `{ "key": "my-slug", "title": "Title", "authors": ["Author Na
 
 ```
 1. Edit book_seed.json
+   { "key": "my-slug", "title": "...", "authors": [...], "tags": ["2026"] }
         │
-        ├─ OL book  { "key": "OL123W", "enrich": true, "tags": ["2026"] }
-        │      │
-        │      ▼
-        │  make seed
-        │      │
-        │      ├─ Book already in DB? ──Yes──► apply overrides (title/desc/rating/tags) only
-        │      │                                                no HTTP request made
-        │      └─ Book not in DB? ──────────► fetch_book_data(key)
-        │                                           │
-        │                                     Open Library API
-        │                                     /works/{id}.json
-        │                                     /works/{id}/editions.json
-        │                                     /authors/{id}.json  (per author)
-        │                                           │
-        │                                     upsert_books(...)
-        │                                           │
-        │                                     INSERT book, authors, tags, mappings
+        ▼
+   make seed
         │
-        └─ Manual book  { "key": "my-slug", "title": "...", "authors": [...] }
-               │
-               ▼
-           make seed
-               │
-               ├─ Book already in DB? ──Yes──► apply overrides (title/desc/rating/tags)
-               └─ Book not in DB? ──────────► upsert_books(BookData from seed entry)
-                                                    │
-                                              INSERT book, authors, tags, mappings
-                                              (no HTTP request)
+        ├─ Book already in DB? ──Yes──► apply overrides (title/desc/rating/tags)
+        └─ Book not in DB? ──────────► upsert_books(BookData from seed entry)
+                                             │
+                                       INSERT book, authors, tags, mappings
 ```
+
+Note: on updates to an already-seeded book, only `title`, `description`, `rating`, and `tags` are refreshed. `authors`, `publication_year`, and `page_count` are set once at creation and not re-synced afterward — to change those on an existing book, edit the database directly or `make reset`.
 
 ---
 
-## Data flow: importing a post
+## Data flow: importing a review or poem
 
 ```
-1. Create writing/posts/reviews/my-review.md
+1. Create writing/posts/reviews/my-review.md or writing/posts/poetry/my-poem.md
         │
         ▼
-2. make posts  (always run make seed first, or use make sync)
+2. make reset-posts  (always run make seed first, or use make sync)
         │
         ▼
-3. parse_markdown_with_frontmatter(path)
+3. reset_posts_command dispatches by directory:
         │
-        ├── extract YAML frontmatter (title, author, type, book_key, ...)
-        ├── extract ```ad-quote blocks → Quote objects
+        ├── writing/posts/reviews/*.md  ──► import_review_file(path)
+        └── writing/posts/poetry/*.md   ──► import_poem_file(path)
+        │
+        ▼
+4. parse_markdown_with_frontmatter(path)
+        │
+        ├── extract YAML frontmatter (title, author, book_key, ...)
+        ├── extract ```ad-quote blocks → ExtractedQuote objects
         └── replace ad-quote blocks with Markdown blockquotes
         │
         ▼
-4. resolve_book(parsed)
+5a. Review path:                          5b. Poem path:
+        │                                         │
+   resolve_book(parsed)                      upsert_poem(...)
+        │                                         │
+   ├── no book_key? ──► raise error           ├── new? ──► INSERT
+   ├── book in DB? ───► use it                └── existing? ──► UPDATE only if content changed
+   └── not in DB? ────► raise error
         │
-        ├── no book_key? ──────────────────────► return None (standalone post)
+   upsert_review(book, body, ...)
         │
-        └── book_key set?
-                ├── book in DB? ───────────────► return existing Book
-                └── book NOT in DB? ───────────► raise error
-                                                  (add to book_seed.json + make seed first)
-        │
-        ▼
-5. upsert_post(...)
-        │
-        ├── new post? ──► INSERT
-        └── existing?  ──► UPDATE only if content changed
-                           post_updated_at set only on real changes
+   ├── new? ──► set review_markdown/review_created_at
+   └── existing? ──► overwrite review_markdown,
+                      bump review_updated_at only if content changed
         │
         ▼
-6. sync_quotes(parsed.quotes, ...)
+6. sync_quotes_for_book(book, parsed.quotes)   ← reviews only, poems never sync quotes
         │
-        └── upsert_post() for each Quote object (post_type="quotes")
+        └── upsert Quote rows by quote_slug, linked to book
         │
         ▼
-7. session.commit()  ← happens once per file in import_posts_command
+7. session.commit()  ← happens once per file in reset_posts_command
 ```
 
 ---

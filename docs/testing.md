@@ -32,7 +32,7 @@ site/testing/
 ├── test_app_init.py         ← app factory and config mapping
 ├── test_logging.py          ← logging setup
 ├── test_models.py           ← SQLAlchemy model reprs and registration
-├── test_open_library.py     ← Open Library API client (parsing functions)
+├── test_cli.py              ← _slugify, resolve_book, import_review_file, import_poem_file
 ├── test_extract_quotes.py   ← ad-quote block extraction
 ├── test_markdown_posts.py   ← frontmatter parsing, wikilinks, HTML rendering
 ├── test_upsert.py           ← database write operations (upsert_*)
@@ -63,7 +63,7 @@ A clean database for one test. Creates all tables before the test, drops them af
 
 ```python
 def test_something(db):
-    from app.database.models import Book
+    from app.backend.models import Book
     book = Book(book_ol_key="OL1W", book_title="Dune")
     db.session.add(book)
     db.session.commit()
@@ -75,7 +75,7 @@ A **transactional** database session. All changes are rolled back automatically 
 
 ```python
 def test_something(session):
-    from app.database.models import Tag
+    from app.backend.models import Tag
     tag = Tag(tag_name="fiction")
     session.add(tag)
     session.flush()  # makes the tag visible within this transaction
@@ -89,7 +89,7 @@ A Flask test client for making HTTP requests. Depends on `session`, so routes ca
 
 ```python
 def test_something(client, session):
-    from app.database.models import Book
+    from app.backend.models import Book
     book = Book(book_ol_key="OL1W", book_title="Dune")
     session.add(book)
     session.flush()
@@ -153,7 +153,7 @@ The built-in `tmp_path` fixture gives you a temporary directory. Write `.md` fil
 ```python
 def test_missing_title_raises(self, tmp_path):
     path = tmp_path / "post.md"
-    path.write_text("---\nauthor: Aya\ntype: standalone\n---\nbody")
+    path.write_text("---\nauthor: Aya\n---\nbody")
     with pytest.raises(ValueError, match="title"):
         parse_markdown_with_frontmatter(path)
 ```
@@ -165,8 +165,8 @@ In tests that use the `session` fixture, call `session.flush()` to make objects 
 ### 6. Name tests as sentences
 
 ```python
-def test_review_without_book_raises()        # ✓ clear
-def test_upsert_post_review_validation()     # ✗ vague
+def test_review_without_book_key_raises()    # ✓ clear
+def test_upsert_review_validation()          # ✗ vague
 ```
 
 ---
@@ -177,7 +177,7 @@ Focus on logic that is easy to get wrong and hard to notice without a test:
 
 - **Validation** — what happens when required fields are missing or invalid
 - **Edge cases** — empty inputs, duplicate slugs, missing optional fields
-- **Side effects** — does `upsert_post` actually set `book.book_rating`?
+- **Side effects** — does `upsert_review` actually set `book.review_markdown`?
 - **Route status codes** — does `/books/999` return 404 and not 500?
 - **Content in responses** — does the book detail page show the title?
 
@@ -186,9 +186,8 @@ Focus on logic that is easy to get wrong and hard to notice without a test:
 ## What not to test
 
 - **Flask and SQLAlchemy internals** — don't test that `db.session.add()` works
-- **Open Library HTTP requests** — the `test_open_library.py` tests cover the parsing logic; network calls are not made in tests
 - **Template layout and CSS** — testing that a `<div>` has a specific class is brittle and not worth it
-- **Obvious one-liners** — a function that just returns `works_data["title"]` doesn't need a test
+- **Obvious one-liners** — a function that just returns a dataclass field doesn't need a test
 
 ---
 
