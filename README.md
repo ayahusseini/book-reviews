@@ -1,6 +1,6 @@
 # HusseiniReads
 
-A Flask application for displaying book reviews and personal writing, backed by SQLite and Open Library.
+A Flask application for book reviews and poetry, backed by SQLite.
 
 Live at: https://husseinireads.com/books/
 
@@ -29,7 +29,7 @@ Install [uv](https://docs.astral.sh/uv/getting-started/installation/) if you do 
 make setup
 ```
 
-This installs dependencies, applies migrations, seeds books, and resets posts. Books already in the database are not re-fetched from Open Library — only new entries trigger an OL fetch.
+This installs dependencies, applies migrations, seeds books, and imports reviews and poems.
 
 To start the development server:
 
@@ -45,16 +45,15 @@ make dev
 |---|---|
 | `make dev` | Start Flask development server with auto-reload |
 | `make setup` | Install deps, apply migrations, seed books, reset posts |
-| `make reset` | **Destructive.** Wipe the database and rebuild from scratch (re-fetches all OL books) |
-| `make seed` | Seed/update books from `writing/book_seed.json`. Only fetches from OL for books not yet in the database. Never deletes books — run `make reset` to remove a book |
-| `make sync` | `seed` + `reset-posts` + `code` — full content refresh |
-| `make reset-posts` | Delete all posts from the DB and re-import from `writing/posts/` |
+| `make reset` | **Destructive.** Wipe the database and rebuild from scratch |
+| `make seed` | Seed/update books from `writing/book_seed.json`. Never deletes books — run `make reset` to remove a book |
+| `make sync` | `seed` + `reset-posts` — full content refresh |
+| `make reset-posts` | Clear reviews, poems, and quotes from the DB and re-import from `writing/posts/{reviews,poetry}/` |
 | `make test` | Run the test suite |
 | `make migrate MSG="..."` | Generate a new Alembic migration and apply it |
 | `make upgrade` | Apply pending migrations without generating a new one |
 | `make stamp` | Mark the DB as at the current migration head (no changes applied) |
 | `make shell` | Open a Flask shell with database access |
-| `make tags ARGS="..."` | Shorthand for `flask manage-tags` |
 | `make deploy-db` | Copy the local SQLite database to the production server |
 
 ---
@@ -66,31 +65,28 @@ book_reviews/
 ├── makefile
 ├── pyproject.toml
 ├── docs/                          ← architecture and workflow docs
-├── writing/                       ← all user content (gitignored posts)
-│   ├── book_seed.json             ← book registry
-│   └── posts/
-│       ├── reviews/
-│       ├── poetry/
-│       ├── TILs/
-│       └── design_docs/
+├── writing/                       ← all user content
+│   ├── book_seed.json             ← book registry (source of truth for book metadata)
+│   ├── posts/
+│   │   ├── reviews/                ← imported into Book.review_markdown
+│   │   └── poetry/                 ← imported into the Poem table
+│   └── unpromoted_posts/          ← drafts; gitignored, never imported
 └── site/
     ├── app/
     │   ├── __init__.py            ← Flask app factory (create_app)
     │   ├── config.py              ← DevelopmentConfig / TestingConfig / ProductionConfig
     │   ├── extensions.py          ← db, cache, migrate instances
-    │   ├── cli.py                 ← seed-books, reset-posts, import-code CLI commands
+    │   ├── cli.py                 ← seed-books, reset-posts CLI commands
     │   ├── backend/               ← data layer (no Flask dependencies)
-    │   │   ├── models.py          ← SQLAlchemy models
+    │   │   ├── models.py          ← SQLAlchemy models (Book, Poem, Quote, Tag, Author)
     │   │   ├── upserts.py         ← DB write helpers (never commit internally)
-    │   │   ├── open_library.py    ← Open Library HTTP client
+    │   │   ├── book_data.py       ← plain AuthorData/BookData containers
     │   │   ├── markdown.py        ← frontmatter parser + HTML renderer
     │   │   └── extract_quotes.py  ← ad-quote block extraction
     │   ├── routes/                ← web layer (Flask route handlers)
     │   │   ├── main.py            ← /, /about, /random-quote
     │   │   ├── books.py           ← /books
-    │   │   ├── posts.py           ← /posts
-    │   │   ├── poems.py           ← /poems
-    │   │   └── design.py          ← /design
+    │   │   └── poems.py           ← /poems
     │   ├── templates/
     │   └── static/
     ├── migrations/                ← Alembic migration history
@@ -101,24 +97,11 @@ book_reviews/
 
 ## Adding books
 
-Books are registered in `writing/book_seed.json`. Each entry requires a `key` field.
+Adding a book to the site is two independent steps: **register the book**, then **write the review**. A book can exist with no review (it shows up unlinked in the book list); a review always requires the book to be registered first.
 
-### With Open Library enrichment
+### Step 1: register the book
 
-Set `"enrich": true` to fetch metadata automatically. The key must be an OL works key. The OL fetch only happens once — subsequent `make seed` runs skip it if the book is already in the database.
-
-```json
-{
-  "key": "OL42549900W",
-  "enrich": true,
-  "tags": ["read-2026", "fiction"],
-  "rating": 4.5
-}
-```
-
-### Without Open Library
-
-Omit `enrich` (or set it to `false`) and supply the metadata directly. Only `key` and `title` are required.
+Books are registered in `writing/book_seed.json`. Each entry requires a `key` (any unique slug — it doesn't need to mean anything external) and a `title`:
 
 ```json
 {
@@ -126,6 +109,8 @@ Omit `enrich` (or set it to `false`) and supply the metadata directly. Only `key
   "title": "The Book Title",
   "authors": ["Author Name"],
   "publication_year": 1997,
+  "page_count": 320,
+  "description": "A short description.",
   "tags": ["fiction"],
   "rating": 4
 }
@@ -133,17 +118,20 @@ Omit `enrich` (or set it to `false`) and supply the metadata directly. Only `key
 
 | Field | Required | Description |
 |---|---|---|
-| `key` | Yes | Unique identifier. Must be an OL works key if `enrich: true` |
-| `enrich` | No | If `true`, fetch metadata from Open Library on first add |
-| `title` | Yes (manual) / No (enrich) | Title. Overrides OL title when used with `enrich: true` |
-| `authors` | No | List of author name strings (manual books only) |
-| `description` | No | Overrides the description |
-| `publication_year` | No | Publication year (manual books only) |
-| `page_count` | No | Page count (manual books only) |
+| `key` | Yes | Unique identifier for the book |
+| `title` | Yes | Book title |
+| `authors` | No | List of author name strings |
+| `description` | No | Book description |
+| `publication_year` | No | Publication year |
+| `page_count` | No | Page count |
 | `rating` | No | Displayed rating (0–5) |
 | `tags` | No | List of tag names to attach |
 
-Run `make seed` (or `make sync`) after editing the file.
+Run `make seed` (or `make sync`) after editing the file. On every run, **existing books only get `title`, `description`, `rating`, and `tags` refreshed** from the seed entry — `authors`, `publication_year`, and `page_count` are set once at creation and never updated afterward (edit the database directly, or `make reset`, to change those on an existing book).
+
+### Step 2: write the review (optional)
+
+See [Writing posts](#writing-posts) below — a review's frontmatter references the book via `book_key`, which must match the `key` from step 1.
 
 ---
 
@@ -153,11 +141,11 @@ See **[docs/writing-posts.md](docs/writing-posts.md)** for a full guide, includi
 
 Short version:
 
-1. Create a `.md` file under `writing/posts/`.
-2. Run `make sync` to seed any new books and import posts.
+1. Create a `.md` file under `writing/posts/reviews/` (needs `book_key` in frontmatter, matching an already-seeded book) or `writing/posts/poetry/` (no book needed).
+2. Run `make reset-posts` (or `make sync`, which also reseeds books first) to import it.
 3. Run `make deploy-db` to push the updated database to production.
 
-To show the "New" seedling badge on a book, set `date:` in the review's frontmatter to today's date. Posts without a `date:` field are never badged as new.
+To show the "New" seedling badge, set `date:` in the frontmatter to today's date. Reviews/poems without a `date:` field are never badged as new.
 
 ---
 
