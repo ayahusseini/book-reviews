@@ -3,9 +3,8 @@ PYPATH  = site
 MIGRATIONS = site/migrations
 POSTS   = writing/posts
 SEEDS   = writing/book_seed.json
-AUTHOR  = aya
 
-.PHONY: dev seed sync test migrate upgrade stamp shell setup reset reset-posts deploy-db restart
+.PHONY: dev seed sync test migrate upgrade stamp shell setup reset reset-posts restart
 
 dev:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) run --debug
@@ -41,15 +40,13 @@ stamp:
 shell:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) shell
 
-# Apply any pending migrations and sync content. Safe to run repeatedly —
-# skips OL fetches for books already in the DB.
+# Apply any pending migrations and sync content. Safe to run repeatedly.
 setup:
 	uv sync
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) db upgrade --directory $(MIGRATIONS)
 	$(MAKE) sync
 
 # Wipe the database and rebuild from scratch.
-# OL metadata is re-fetched for seed entries that have "enrich": true.
 reset:
 	uv sync
 	rm -f site/instance/site.db
@@ -61,9 +58,5 @@ reset:
 reset-posts:
 	PYTHONPATH=$(PYPATH) uv run flask --app $(APP) reset-posts --path $(POSTS)
 
-# Copy the local SQLite database to production and restart Gunicorn.
-# Host is read from .env (VPS_USER + VPS_HOST). Override with DEPLOY_HOST:
-#   make deploy-db DEPLOY_HOST=root@1.2.3.4
-deploy-db:
-	./site/scripts/deploy_db.sh $(if $(DEPLOY_HOST),$(DEPLOY_HOST),)
- 
+# Deploy to production: see site/scripts/deploy.sh
+# ./site/scripts/deploy.sh [--reset-database]
