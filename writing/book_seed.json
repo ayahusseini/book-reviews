@@ -15,6 +15,20 @@
     "rating": 4.5
   },
   {
+    "key": "the-trading-game",
+    "title": "The Trading Game",
+    "authors": [
+      "Gary Stevenson"
+    ],
+    "description": "Gary Stevenson wins a trading game and gets a job at Citibank.",
+    "tags": [
+      "read-2026", 
+      "autobiography", 
+      "finance"
+    ],
+    "rating": 3.0
+  },
+  {
     "key": "great-gatsby",
     "title": "The Great Gatsby",
     "authors": [
@@ -235,7 +249,7 @@
     ],
     "publication_year": 2017,
     "page_count": 168,
-    "description": "An security unit called Murderbot manages to override its governor unit, thus enabling it to develop independence.",
+    "description": "A security unit called Murderbot manages to override its governor unit, thus enabling it to develop independence.",
     "tags": [
       "science-fiction",
       "fiction"
