@@ -2,24 +2,7 @@
 
 A Flask application for book reviews and poetry, backed by SQLite.
 
-Live at: https://husseinireads.com/books/
-
-![main-page](docs/img/main_page_sh.png)
-
----
-
-## Table of contents
-1. [Quick start](#quick-start)
-2. [Make targets](#make-targets)
-3. [Project structure](#project-structure)
-4. [Adding books](#adding-books)
-5. [Writing posts](#writing-posts)
-6. [Managing tags](#managing-tags)
-7. [Database migrations](#database-migrations)
-8. [Deploying](#deploying)
-9. [Further reading](#further-reading)
-
----
+Live at: [https://husseinireads.com/books/](https://husseinireads.com/books/)
 
 ## Quick start
 
@@ -41,19 +24,21 @@ make dev
 
 ## Make targets
 
-| Target | What it does |
-|---|---|
-| `make dev` | Start Flask development server with auto-reload |
-| `make setup` | Install deps, apply migrations, seed books, reset posts |
-| `make reset` | **Destructive.** Wipe the database and rebuild from scratch |
-| `make seed` | Seed/update books from `writing/book_seed.json`. Never deletes books — run `make reset` to remove a book |
-| `make sync` | `seed` + `reset-posts` — full content refresh |
-| `make reset-posts` | Clear reviews, poems, and quotes from the DB and re-import from `writing/posts/{reviews,poetry}/` |
-| `make test` | Run the test suite |
-| `make migrate MSG="..."` | Generate a new Alembic migration and apply it |
-| `make upgrade` | Apply pending migrations without generating a new one |
-| `make stamp` | Mark the DB as at the current migration head (no changes applied) |
-| `make shell` | Open a Flask shell with database access |
+
+| Target                   | What it does                                                                                             |
+| ------------------------ | -------------------------------------------------------------------------------------------------------- |
+| `make dev`               | Start Flask development server with auto-reload                                                          |
+| `make setup`             | Install deps, apply migrations, seed books, reset posts                                                  |
+| `make reset`             | **Destructive.** Wipe the database and rebuild from scratch                                              |
+| `make seed`              | Seed/update books from `writing/book_seed.json`. Never deletes books — run `make reset` to remove a book |
+| `make sync`              | `seed` + `reset-posts` — full content refresh                                                            |
+| `make reset-posts`       | Clear reviews, poems, and quotes from the DB and re-import from `writing/posts/{reviews,poetry}/`        |
+| `make test`              | Run the test suite                                                                                       |
+| `make migrate MSG="..."` | Generate a new Alembic migration and apply it                                                            |
+| `make upgrade`           | Apply pending migrations without generating a new one                                                    |
+| `make stamp`             | Mark the DB as at the current migration head (no changes applied)                                        |
+| `make shell`             | Open a Flask shell with database access                                                                  |
+
 
 ---
 
@@ -115,18 +100,20 @@ Books are registered in `writing/book_seed.json`. Each entry requires a `key` (a
 }
 ```
 
-| Field | Required | Description |
-|---|---|---|
-| `key` | Yes | Unique identifier for the book |
-| `title` | Yes | Book title |
-| `authors` | No | List of author name strings |
-| `description` | No | Book description |
-| `publication_year` | No | Publication year |
-| `page_count` | No | Page count |
-| `rating` | No | Displayed rating (0–5) |
-| `tags` | No | List of tag names to attach |
 
-Run `make seed` (or `make sync`) after editing the file. On every run, **existing books only get `title`, `description`, `rating`, and `tags` refreshed** from the seed entry — `authors`, `publication_year`, and `page_count` are set once at creation and never updated afterward (edit the database directly, or `make reset`, to change those on an existing book).
+| Field              | Required | Description                    |
+| ------------------ | -------- | ------------------------------ |
+| `key`              | Yes      | Unique identifier for the book |
+| `title`            | Yes      | Book title                     |
+| `authors`          | No       | List of author name strings    |
+| `description`      | No       | Book description               |
+| `publication_year` | No       | Publication year               |
+| `page_count`       | No       | Page count                     |
+| `rating`           | No       | Displayed rating (0–5)         |
+| `tags`             | No       | List of tag names to attach    |
+
+
+Run `make seed` (or `make sync`) after editing the file. On every run, **existing books only get** `title`**,** `description`**,** `rating`**, and** `tags` **refreshed** from the seed entry — `authors`, `publication_year`, and `page_count` are set once at creation and never updated afterward (edit the database directly, or `make reset`, to change those on an existing book).
 
 ### Step 2: write the review (optional)
 
@@ -202,6 +189,6 @@ It'll ask for confirmation since this wipes the production database.
 - [Architecture and data model](docs/design.md) — how the pieces fit together, where to edit what
 - [Writing and deploying posts](docs/writing-posts.md) — post types, frontmatter, quotes, deployment workflow
 - [Testing](docs/testing.md) — test structure, fixtures, and how to add tests
-- [Deployment setup](docs/deployment.md) — provisioning a VPS, Nginx, Gunicorn, systemd
 - [Flask notes](docs/flask.md) — application factory, blueprints, extensions
 - [SQLAlchemy notes](docs/sqlalchemy.md) — ORM patterns used in this project
+
