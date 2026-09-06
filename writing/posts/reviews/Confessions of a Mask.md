@@ -2,7 +2,7 @@
 title: Confessions of a Mask
 author: Aya
 type: review
-book_ol_key: confessions_of_a_mask
+book_key: confessions_of_a_mask
 slug: confessions-of-a-mask
 ---
 
