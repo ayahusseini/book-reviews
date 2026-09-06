@@ -30,9 +30,9 @@ He feels guilty and isolated from everyone else. As the war progresses, he strug
 As part of my system of self-discipline, dating from childhood, I constantly told myself it would be better to die than become a lukewarm person, an unmanly person, a person who does not clearly know his likes and dislikes, a person who wants only to be loved without knowing how to love
 ```
 
-Playing up his frailty, he avoids seeing any military action during the war. Instead, he's stuck doing administrative work for he-man military men. During this episode, he almost marries a woman called Sonoko, but panics and backs out of an engagement. Sonoko is treated like an object of experimentation. He hopes to use her to see if normalcy can be achieved, and quickly falls into a depression when he fails. It's hard to tell whether the narrator feels any remorse over this. The mask he wears is also an avoidance of guilt. It seems like he maintains that habit for the 
+Playing up his frailty, he avoids seeing any military action during the war. Instead, he's stuck doing administrative work for he-man military men. During this episode, he almost marries a woman called Sonoko, but panics and backs out of an engagement. Sonoko is treated like an object of experimentation. He hopes to use her to see if normalcy can be achieved, and quickly falls into a depression when he fails. It's hard to tell whether the narrator feels any remorse over this. The mask he wears is also an avoidance of guilt. 
 
-The book closes with them having a dance, and he begins to feel some peace before getting distracted by a man and fantasising about plunging a dagger through his belly. 
+Sonoko ends up marrying another man. The book closes with them having a dance, and he begins to feel some peace before getting distracted by a man and fantasising about plunging a dagger through his belly. 
 
 ```ad-quote 
 I had forgotten Sonoko's existence. I was thiking of but one thing: Of his going out onto the streets of high summer just as he was, half naked, and getting into a fight with a rival gang. Of a sharp dagger cutting through his belly-band
