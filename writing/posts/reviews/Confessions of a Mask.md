@@ -34,7 +34,7 @@ Playing up his frailty, he avoids seeing any military action during the war. Ins
 
 Sonoko ends up marrying another man. The book closes with them having a dance, and he begins to feel some peace before getting distracted by a man and fantasising about plunging a dagger through his belly. 
 
-```ad-quote 
+```ad-quote
 I had forgotten Sonoko's existence. I was thiking of but one thing: Of his going out onto the streets of high summer just as he was, half naked, and getting into a fight with a rival gang. Of a sharp dagger cutting through his belly-band
 ```
 
@@ -47,4 +47,4 @@ The book deals with themes of choice and desire. He feels condemned to this life
 
 It's also about a man entrapped by shame and by his own behaviour: should he accept himself, or fix himself? I've read other books that answer cleanly "just accept yourself," with the shame reframed as coming from a society we now see as regressive. Confessions of a Mask refuses that comfort. Many will find themselves quietly begging the narrator to just **please conform**: *just marry Sonoko! Please don't kill any men!*. It feels wrong and almost dangerous for a man drawn to this kind of violence not to suffer for it. So what is he to do?
 
-I had my first Mishima experience with "Beautiful Star," and it was disappointing: a lot of rambling, trying to get at something without ever quite landing it. I gave him a second chance with Confessions of a Mask. It was still a slog, but an emotional and heavy one — and a good reminder of what fiction is actually for. It doesn't answer the Big Questions it raises; Mishima never tells you whether Kochan should have accepted himself or fought himself; he just hands you the mess of it. But it does something else. It hands you a life and a set of instincts entirely unlike your own, and asks you to sit inside them and to please **feel some empathy**. How else could I, a left-winger in a Western country with no murderous tendencies, find so much emotional overlap in a story about a homicidal post-war Japanese fascist?
+I had my first Mishima experience with "Beautiful Star," and it was disappointing: a lot of rambling, trying to get at something without ever quite landing it. I gave him a second chance with Confessions of a Mask. It was still a slog, but an emotional and heavy one — and a good reminder of what fiction is actually for. It doesn't answer the Big Questions it raises; Mishima never tells you whether Kochan should have accepted himself or fought himself; It hands you a life and a set of instincts entirely unlike your own, and asks you to sit inside them and to please **feel some empathy**. How else could I, a left-winger in a Western country with no murderous tendencies, find so much emotional overlap in a story about a homicidal post-war Japanese fascist?
