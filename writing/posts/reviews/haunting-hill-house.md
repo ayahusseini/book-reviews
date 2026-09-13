@@ -4,6 +4,7 @@ author: Aya
 type: review
 book_key: OL3171069W
 slug: haunting-hill-house
+date: 2026-01-02
 ---
 
 ```ad-quote

@@ -3,7 +3,7 @@ title: Nothing
 author: John Cooper Clarke
 type: poem
 slug: john-cooper-clarke-nothing
-date: 2026-04-05
+date: 2026-06-10
 ---
 nothing isn’t anything
 it’s tasteless and it’s flat 

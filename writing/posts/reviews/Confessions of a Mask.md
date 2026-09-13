@@ -4,6 +4,7 @@ author: Aya
 type: review
 book_key: confessions_of_a_mask
 slug: confessions-of-a-mask
+date: 2026-09-06
 ---
 
 ```ad-quote 

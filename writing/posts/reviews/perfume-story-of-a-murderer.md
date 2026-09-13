@@ -4,6 +4,7 @@ author: Aya
 type: review
 book_key: OL10834W
 slug: perfume-story-of-a-murderer
+date: 2026-04-09
 ---
 
 **No spoilers!**
