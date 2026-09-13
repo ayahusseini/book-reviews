@@ -18,5 +18,6 @@ htmlcov/
 *.log
 .obsidian/
 instance/
+docs/local/
 writing/unpromoted_posts/**
 !writing/unpromoted_posts/.gitkeep
