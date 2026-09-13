@@ -140,6 +140,4 @@ git push   # Cloudflare Pages builds and deploys automatically
 - [Architecture and data model](docs/design.md) — how the pieces fit together, where to edit what
 - [Writing and deploying posts](docs/writing-posts.md) — post types, frontmatter, quotes, deployment workflow
 - [Testing](docs/testing.md) — test structure, fixtures, and how to add tests
-- [Flask notes](docs/flask.md) — application factory, blueprints, extensions
-- [SQLAlchemy notes](docs/sqlalchemy.md) — ORM patterns used in this project
 
