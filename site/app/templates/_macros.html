@@ -72,14 +72,10 @@
       {{ book.authors[0].author_name if book.authors else 'Unknown' }}
     </span>
 
-    {# Tags — exclude year tags #}
-    {% set display_tags = book.tags
-        | rejectattr('tag_name', 'in', ['read-2026', 'read-2025', 'read-2024', 'read-2023'])
-        | list
-    %}
-    {% if display_tags %}
+    {# Tags #}
+    {% if book.tags %}
       <span class="book-list__tags">
-        {% for tag in display_tags %}
+        {% for tag in book.tags %}
           <span class="tag">{{ tag.tag_name }}</span>
         {% endfor %}
       </span>

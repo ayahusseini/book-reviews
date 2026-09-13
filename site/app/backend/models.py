@@ -96,6 +96,7 @@ class Book(db.Model):
     book_publication_year = db.Column(db.Integer(), nullable=True)
     book_rating = db.Column(db.Float(), nullable=True)
     book_page_count = db.Column(db.Integer(), nullable=True)
+    book_date_read = db.Column(db.Date, nullable=True)
 
     authors = db.relationship(
         "Author",

@@ -122,6 +122,7 @@ def _book_to_row(
         "book_description": description_overrides.get(b.ol_key, b.description),
         "book_publication_year": b.publication_year,
         "book_page_count": b.page_count,
+        "book_date_read": b.date_read,
         "book_rating": rating_map.get(b.ol_key),
     }
 
@@ -164,6 +165,7 @@ def _update_books(
         book.book_description = row["book_description"]
         book.book_publication_year = row["book_publication_year"]
         book.book_page_count = row["book_page_count"]
+        book.book_date_read = row["book_date_read"]
         if row["book_rating"] is not None:
             book.book_rating = row["book_rating"]
 

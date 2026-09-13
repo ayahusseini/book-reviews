@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import re
+from datetime import date
 from pathlib import Path
 
 import click
@@ -28,6 +29,17 @@ DEFAULT_SEED_PATH = Path(__file__).parents[3] / "writing" / "book_seed.json"
 DEFAULT_POSTS_PATH = Path(__file__).parents[3] / "writing" / "posts"
 REVIEWS_SUBDIR = "reviews"
 POEMS_SUBDIR = "poetry"
+
+
+def _parse_date_read(value: object) -> date | None:
+    """Parse an ISO date string from a seed entry, or return None."""
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        raise click.ClickException(
+            f"date_read must be an ISO date string or null, got {value!r}"
+        )
+    return date.fromisoformat(value)
 
 
 def _slugify(text: str) -> str:
@@ -145,6 +157,9 @@ def seed_books_command(path_str: str) -> None:
         rating: float | None = s.get("rating")
         title_override: str | None = s.get("title")
         description_override: str | None = s.get("description")
+        date_read: date | None = (
+            _parse_date_read(s["date_read"]) if "date_read" in s else None
+        )
 
         existing = Book.query.filter_by(book_ol_key=key).first()
         if existing:
@@ -154,6 +169,8 @@ def seed_books_command(path_str: str) -> None:
                 existing.book_description = description_override
             if rating is not None:
                 existing.book_rating = rating
+            if "date_read" in s:
+                existing.book_date_read = date_read
             sync_tags(existing, tags)
             updated += 1
         else:
@@ -176,6 +193,7 @@ def seed_books_command(path_str: str) -> None:
                         description=description_override,
                         publication_year=s.get("publication_year"),
                         page_count=s.get("page_count"),
+                        date_read=date_read,
                         authors=authors,
                     )
                 ],
