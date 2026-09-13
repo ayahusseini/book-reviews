@@ -1,5 +1,5 @@
 [
-    {
+  {
     "key": "confessions_of_a_mask",
     "title": "Confessions of a Mask",
     "authors": [
@@ -9,10 +9,10 @@
     "page_count": 254,
     "description": "An adolescent boy becomes very fascinated with Saint Sebastian.",
     "tags": [
-      "read-2026",
       "fiction"
     ],
-    "rating": 5
+    "rating": 5,
+    "date_read": "2026-01-01"
   },
   {
     "key": "OL42549900W",
@@ -24,10 +24,10 @@
     "page_count": 368,
     "description": "As a teenager, István is groomed by an older woman and his life spirals out of control.",
     "tags": [
-      "read-2026",
       "fiction"
     ],
-    "rating": 4.5
+    "rating": 4.5,
+    "date_read": "2026-01-01"
   },
   {
     "key": "the-trading-game",
@@ -37,11 +37,11 @@
     ],
     "description": "Gary Stevenson wins a trading game and gets a job at Citibank.",
     "tags": [
-      "read-2026", 
-      "autobiography", 
+      "autobiography",
       "finance"
     ],
-    "rating": 3.0
+    "rating": 3.0,
+    "date_read": "2026-01-01"
   },
   {
     "key": "great-gatsby",
@@ -53,10 +53,10 @@
     "page_count": 216,
     "description": "God forbid a man is nouveau riche.",
     "tags": [
-      "read-2026",
       "fiction"
     ],
-    "rating": 4
+    "rating": 4,
+    "date_read": "2026-01-01"
   },
   {
     "comment": "The Passenger",
@@ -69,11 +69,11 @@
     "page_count": 424,
     "description": "Bobby Western is a diver and he was always down.",
     "tags": [
-      "read-2026",
       "fiction",
       "mystery"
     ],
-    "rating": 4.5
+    "rating": 4.5,
+    "date_read": "2026-01-01"
   },
   {
     "key": "OL21177W",
@@ -85,10 +85,10 @@
     "page_count": 311,
     "description": "This novel follows two families on the West Yorkshire moors, the Earnshaws and the Lintons, and their relationship(s) with Earnshaw's adopted son, Heathcliff.",
     "tags": [
-      "read-2026",
       "fiction"
     ],
-    "rating": 5
+    "rating": 5,
+    "date_read": "2026-01-01"
   },
   {
     "key": "OL34032834W",
@@ -98,10 +98,10 @@
     ],
     "publication_year": 2023,
     "tags": [
-      "read-2026",
       "non-fiction"
     ],
-    "rating": 4
+    "rating": 4,
+    "date_read": "2026-01-01"
   },
   {
     "key": "OL66562W",
@@ -113,10 +113,10 @@
     "page_count": 320,
     "description": "When Mr. Dashwood dies, he must leave the bulk of his estate to the son by his first marriage, which leaves his second wife and three daughters in straitened circumstances.",
     "tags": [
-      "read-2026",
       "fiction"
     ],
-    "rating": 3
+    "rating": 3,
+    "date_read": "2026-01-01"
   },
   {
     "key": "OL166482W",
@@ -131,7 +131,8 @@
       "science-fiction",
       "fiction"
     ],
-    "rating": 3.5
+    "rating": 3.5,
+    "date_read": null
   },
   {
     "comment": "Love in the Time of Cholera",
@@ -143,10 +144,10 @@
     "publication_year": 1985,
     "page_count": 368,
     "tags": [
-      "read-2026",
       "fiction"
     ],
-    "rating": 5
+    "rating": 5,
+    "date_read": "2026-01-01"
   },
   {
     "comment": "Beautiful Star",
@@ -160,7 +161,8 @@
     "tags": [
       "fiction"
     ],
-    "rating": 2.5
+    "rating": 2.5,
+    "date_read": null
   },
   {
     "key": "OL35710736W",
@@ -176,7 +178,8 @@
       "finance",
       "biography"
     ],
-    "rating": 3.5
+    "rating": 3.5,
+    "date_read": null
   },
   {
     "key": "OL3511458W",
@@ -191,7 +194,8 @@
       "fiction",
       "historical"
     ],
-    "rating": 4
+    "rating": 4,
+    "date_read": null
   },
   {
     "key": "OL498463W",
@@ -205,7 +209,8 @@
     "tags": [
       "fiction"
     ],
-    "rating": 4
+    "rating": 4,
+    "date_read": null
   },
   {
     "comment": "The Haunting of Hill House",
@@ -221,7 +226,8 @@
       "horror",
       "fiction"
     ],
-    "rating": 4
+    "rating": 4,
+    "date_read": null
   },
   {
     "comment": "You Are the Führer's Unrequited Love",
@@ -234,10 +240,10 @@
     "description": "Albert Speer, Hitler's favourite architect, published a bestselling memoir claiming to have known nothing about the Final Solution. This is a metafictional account of what actually happened, and the nature of narratives.",
     "tags": [
       "history",
-      "biography",
-      "read-2026"
+      "biography"
     ],
-    "rating": 3.5
+    "rating": 3.5,
+    "date_read": "2026-01-01"
   },
   {
     "comment": "Hunchback",
@@ -250,10 +256,10 @@
     "description": "Shaka Isawa is born with a congenital muscle disorder. She lives in a care home and spends her time writing erotica. Her new carer reveals that he's read it all.",
     "tags": [
       "short-story",
-      "fiction",
-      "read-2026"
+      "fiction"
     ],
-    "rating": 2.5
+    "rating": 2.5,
+    "date_read": "2026-01-01"
   },
   {
     "comment": "All Systems Red",
@@ -269,7 +275,8 @@
       "science-fiction",
       "fiction"
     ],
-    "rating": 2.5
+    "rating": 2.5,
+    "date_read": null
   },
   {
     "comment": "All the Pretty Horses",
@@ -285,7 +292,8 @@
       "fiction",
       "western"
     ],
-    "rating": 4.5
+    "rating": 4.5,
+    "date_read": null
   },
   {
     "comment": "Brighton Rock",
@@ -302,7 +310,8 @@
       "fiction",
       "crime"
     ],
-    "rating": 3.5
+    "rating": 3.5,
+    "date_read": null
   },
   {
     "comment": "Orbital",
@@ -319,7 +328,8 @@
       "fiction",
       "booker-prize"
     ],
-    "rating": 0.5
+    "rating": 0.5,
+    "date_read": null
   },
   {
     "comment": "Perfume: The Story of a Murderer",
@@ -336,6 +346,7 @@
       "historical",
       "fantasy"
     ],
-    "rating": 5
+    "rating": 5,
+    "date_read": null
   }
 ]

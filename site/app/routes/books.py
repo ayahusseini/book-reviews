@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
-from flask import Blueprint, render_template
+from datetime import date
 
-from app.backend.models import Book, Tag
+from flask import Blueprint, render_template
+from sqlalchemy import extract, or_
+
+from app.backend.models import Book
 from app.extensions import cache, db
 from app.backend.markdown import render_markdown_to_safe_html
 
@@ -26,20 +29,24 @@ def book_ids_with_reviews() -> set[int]:
 @books_bp.route("/", methods=["GET"])
 @cache.cached()
 def book_list():
-    tag_2026 = Tag.query.filter_by(tag_name="read-2026").first()
-    books_2026 = []
-    if tag_2026:
-        books_2026 = (
-            Book.query.filter(Book.tags.any(Tag.tag_id == tag_2026.tag_id))
-            .order_by(
-                Book.review_updated_at.desc().nulls_last(),
-                Book.book_title.asc(),
-            )
-            .all()
+    current_year = date.today().year
+
+    books_2026 = (
+        Book.query.filter(extract("year", Book.book_date_read) == current_year)
+        .order_by(
+            Book.review_updated_at.desc().nulls_last(),
+            Book.book_title.asc(),
         )
+        .all()
+    )
 
     books_previous = (
-        Book.query.filter(~Book.tags.any(Tag.tag_name == "read-2026"))
+        Book.query.filter(
+            or_(
+                Book.book_date_read.is_(None),
+                extract("year", Book.book_date_read) != current_year,
+            )
+        )
         .order_by(
             Book.review_updated_at.desc().nulls_last(), Book.book_title.asc()
         )

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from datetime import date
 
 
 @dataclass
@@ -22,4 +23,5 @@ class BookData:
     description: str | None
     publication_year: int | None
     page_count: int | None
+    date_read: date | None = None
     authors: list[AuthorData] = field(default_factory=list)
