@@ -4,6 +4,7 @@ author: Aya
 type: review
 book_key: OL106083W
 slug: main-brighton-rock-post
+date: 2026-05-09
 ---
 
 ```ad-quote

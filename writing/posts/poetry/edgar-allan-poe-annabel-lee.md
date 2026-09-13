@@ -3,7 +3,7 @@ title: "Annabel Lee"
 author: "Edgar Allan Poe"
 type: "poem"
 slug: "edgar-allan-poe-annabel-lee"
-date: 2026-03-20
+date: 2026-01-09
 ---
 
 It was many and many a year ago, 

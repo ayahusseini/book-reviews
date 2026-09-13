@@ -3,7 +3,7 @@ title: "Death Poem"
 author: "Hanabusa Ikkei"
 type: "poem"
 slug: "death-poem-hanabusa-ikkei"
-date: 2026-03-25
+date: 2026-01-09
 ---
 I thought to live
 Two centuries, or three —

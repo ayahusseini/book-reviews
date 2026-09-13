@@ -4,6 +4,7 @@ author: Aya
 type: review
 book_key: OL166482W
 slug: the-affirmation
+date: 2026-01-30
 ---
 
 ```ad-quote

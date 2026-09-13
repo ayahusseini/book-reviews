@@ -3,7 +3,7 @@ title: "Yes Yes"
 author: "Charles Bukowski"
 type: "poem"
 slug: "yes-yes"
-date: 2026-04-10
+date: 2026-08-10
 ---
 when God created love he didn't help most
 when God created dogs He didn't help dogs

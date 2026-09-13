@@ -4,7 +4,7 @@ author: Aya
 type: review
 book_key: OL40882W
 slug: all-the-pretty-horses
-date: 2026-03-26
+date: 2026-03-02
 ---
 
 **Heavyyyyy spoilers!!!**
