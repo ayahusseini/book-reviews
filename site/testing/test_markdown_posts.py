@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from app.backend.markdown import (
+from builder.markdown import (
     MarkdownPost,
     _expand_wikilinks,
     parse_markdown_with_frontmatter,

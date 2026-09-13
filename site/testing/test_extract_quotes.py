@@ -1,6 +1,6 @@
 """Tests for site/content/extract_quotes.py."""
 
-from app.backend.extract_quotes import (
+from builder.extract_quotes import (
     ExtractedQuote,
     extract_ad_quotes,
     replace_ad_quotes_with_blockquotes,
