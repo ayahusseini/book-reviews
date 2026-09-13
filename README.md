@@ -1,6 +1,6 @@
 # HusseiniReads
 
-A Flask application for book reviews and poetry, backed by SQLite.
+A static site generator for book reviews and poetry, built from Markdown content in `writing/`.
 
 Live at: [https://husseinireads.com/books/](https://husseinireads.com/books/)
 
@@ -9,36 +9,28 @@ Live at: [https://husseinireads.com/books/](https://husseinireads.com/books/)
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/) if you do not have it, then:
 
 ```sh
-make setup
+make build
 ```
 
-This installs dependencies, applies migrations, seeds books, and imports reviews and poems.
+This renders the site into `site/dist/`.
 
-To start the development server:
+To build and serve it locally:
 
 ```sh
 make dev
 ```
 
+This builds the site, then serves `site/dist/` at [http://localhost:8000](http://localhost:8000).
+
 ---
 
 ## Make targets
 
-
-| Target                   | What it does                                                                                             |
-| ------------------------ | -------------------------------------------------------------------------------------------------------- |
-| `make dev`               | Start Flask development server with auto-reload                                                          |
-| `make setup`             | Install deps, apply migrations, seed books, reset posts                                                  |
-| `make reset`             | **Destructive.** Wipe the database and rebuild from scratch                                              |
-| `make seed`              | Seed/update books from `writing/book_seed.json`. Never deletes books — run `make reset` to remove a book |
-| `make sync`              | `seed` + `reset-posts` — full content refresh                                                            |
-| `make reset-posts`       | Clear reviews, poems, and quotes from the DB and re-import from `writing/posts/{reviews,poetry}/`        |
-| `make test`              | Run the test suite                                                                                       |
-| `make migrate MSG="..."` | Generate a new Alembic migration and apply it                                                            |
-| `make upgrade`           | Apply pending migrations without generating a new one                                                    |
-| `make stamp`             | Mark the DB as at the current migration head (no changes applied)                                        |
-| `make shell`             | Open a Flask shell with database access                                                                  |
-
+| Target       | What it does                                                        |
+| ------------ | --------------------------------------------------------------------|
+| `make build` | Render the site from `writing/` into `site/dist/`                   |
+| `make dev`   | Build the site, then serve `site/dist/` at `http://localhost:8000`  |
+| `make test`  | Run the test suite                                                  |
 
 ---
 
@@ -52,28 +44,20 @@ book_reviews/
 ├── writing/                       ← all user content
 │   ├── book_seed.json             ← book registry (source of truth for book metadata)
 │   ├── posts/
-│   │   ├── reviews/                ← imported into Book.review_markdown
-│   │   └── poetry/                 ← imported into the Poem table
+│   │   ├── reviews/                ← rendered as book review pages
+│   │   └── poetry/                 ← rendered as poem pages
 │   └── unpromoted_posts/          ← drafts; gitignored, never imported
 └── site/
-    ├── app/
-    │   ├── __init__.py            ← Flask app factory (create_app)
-    │   ├── config.py              ← DevelopmentConfig / TestingConfig / ProductionConfig
-    │   ├── extensions.py          ← db, cache, migrate instances
-    │   ├── cli.py                 ← seed-books, reset-posts CLI commands
-    │   ├── backend/               ← data layer (no Flask dependencies)
-    │   │   ├── models.py          ← SQLAlchemy models (Book, Poem, Quote, Tag, Author)
-    │   │   ├── upserts.py         ← DB write helpers (never commit internally)
-    │   │   ├── book_data.py       ← plain AuthorData/BookData containers
-    │   │   ├── markdown.py        ← frontmatter parser + HTML renderer
-    │   │   └── extract_quotes.py  ← ad-quote block extraction
-    │   ├── routes/                ← web layer (Flask route handlers)
-    │   │   ├── main.py            ← /, /about, /random-quote
-    │   │   ├── books.py           ← /books
-    │   │   └── poems.py           ← /poems
-    │   ├── templates/
-    │   └── static/
-    ├── migrations/                ← Alembic migration history
+    ├── build.py                   ← entry point: reads writing/, writes site/dist/
+    ├── builder/                   ← build logic (no Flask/DB dependencies)
+    │   ├── content.py             ← loads books/poems into plain data objects
+    │   ├── markdown.py            ← frontmatter parser + HTML renderer
+    │   ├── extract_quotes.py      ← ad-quote block extraction
+    │   ├── heatmap.py             ← posting-activity heatmap for the about page
+    │   └── render.py              ← renders pages with Jinja2, copies static assets
+    ├── templates/                 ← Jinja2 page templates
+    ├── static/                    ← CSS, JS, fonts, images (copied into dist as-is)
+    ├── dist/                      ← build output; gitignored, deployed by Cloudflare Pages
     └── testing/                   ← pytest test suite
 ```
 
@@ -113,7 +97,7 @@ Books are registered in `writing/book_seed.json`. Each entry requires a `key` (a
 | `tags`             | No       | List of tag names to attach    |
 
 
-Run `make seed` (or `make sync`) after editing the file. On every run, **existing books only get** `title`**,** `description`**,** `rating`**, and** `tags` **refreshed** from the seed entry — `authors`, `publication_year`, and `page_count` are set once at creation and never updated afterward (edit the database directly, or `make reset`, to change those on an existing book).
+Run `make build` (or `make dev`) after editing the file to see the change locally — every build reads `book_seed.json` fresh, so all fields always reflect what's currently in the file.
 
 ### Step 2: write the review (optional)
 
@@ -127,9 +111,9 @@ See **[docs/writing-posts.md](docs/writing-posts.md)** for a full guide, includi
 
 Short version:
 
-1. Create a `.md` file under `writing/posts/reviews/` (needs `book_key` in frontmatter, matching an already-seeded book) or `writing/posts/poetry/` (no book needed).
-2. Run `make reset-posts` (or `make sync`, which also reseeds books first) to check it locally.
-3. Commit and push, then run `./site/scripts/deploy.sh` to deploy.
+1. Create a `.md` file under `writing/posts/reviews/` (needs `book_key` in frontmatter, matching an already-registered book) or `writing/posts/poetry/` (no book needed).
+2. Run `make build` (or `make dev`) to check it locally.
+3. Commit and push — Cloudflare Pages rebuilds and deploys automatically.
 
 To show the "New" seedling badge, set `date:` in the frontmatter to today's date. Reviews/poems without a `date:` field are never badged as new.
 
@@ -137,50 +121,17 @@ To show the "New" seedling badge, set `date:` in the frontmatter to today's date
 
 ## Managing tags
 
-Tags are managed entirely through `writing/book_seed.json`. Edit the relevant entry and run `make sync` — tags are synced exactly, so removals take effect too. There is no ad-hoc tag command.
-
----
-
-## Database migrations
-
-When you change `site/app/backend/models.py`, generate and apply a migration:
-
-```sh
-make migrate MSG="Describe what changed"
-```
-
-This runs `flask db migrate` (auto-detects schema changes) then `flask db upgrade`. The generated file is committed to `site/migrations/versions/` so production can be upgraded with `make upgrade` after a `git pull`.
-
-If the schema is already correct but Alembic's version table is out of sync:
-
-```sh
-make stamp
-```
+Tags are managed entirely through `writing/book_seed.json`. Edit the relevant entry and run `make build` (or `make dev`) — tags are read exactly as listed, so removals take effect too. There is no ad-hoc tag command.
 
 ---
 
 ## Deploying
 
-See **[docs/deployment.md](docs/deployment.md)** for full server setup instructions.
-
-There is one deploy path: `site/scripts/deploy.sh`. It SSHes into the VPS (credentials from `.env` — `VPS_HOST`, `VPS_USER`, `VPS_PASSWORD`, via `sshpass`) and:
-
-1. `git fetch origin main && git reset --hard origin/main && git clean -fd` — syncs the server's checkout to whatever you've pushed.
-2. `make sync` — reseeds books and re-imports reviews/poems from the server's own `writing/` (which just got updated by the git reset).
-3. `sudo systemctl restart gunicorn`.
+Pushing to `main` triggers Cloudflare Pages, which runs `python site/build.py` and publishes `site/dist/`. There is no database to reset and no server to restart — a deploy is just a build.
 
 ```sh
-git push                      # push your commits first
-./site/scripts/deploy.sh      # pull + sync + restart, in one step
+git push   # Cloudflare Pages builds and deploys automatically
 ```
-
-For a schema change, apply the migration on the server before syncing content — pass `--reset-database` to have the script run `make reset` (wipes and rebuilds the DB) instead of `make sync`:
-
-```sh
-./site/scripts/deploy.sh --reset-database
-```
-
-It'll ask for confirmation since this wipes the production database.
 
 ---
 
