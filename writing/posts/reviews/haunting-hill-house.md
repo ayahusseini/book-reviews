@@ -2,7 +2,7 @@
 title: Hill House is fantastic
 author: Aya
 type: review
-book_key: OL3171069W
+book_key: the-haunting-of-hill-house
 slug: haunting-hill-house
 date: 2026-01-02
 ---

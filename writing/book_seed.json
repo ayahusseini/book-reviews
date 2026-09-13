@@ -15,7 +15,7 @@
     "date_read": "2026-01-01"
   },
   {
-    "key": "OL42549900W",
+    "key": "flesh",
     "title": "Flesh",
     "authors": [
       "David Szalay"
@@ -60,7 +60,7 @@
   },
   {
     "comment": "The Passenger",
-    "key": "OL27731031W",
+    "key": "the-passenger",
     "title": "The Passenger",
     "authors": [
       "Cormac McCarthy"
@@ -76,7 +76,7 @@
     "date_read": "2026-01-01"
   },
   {
-    "key": "OL21177W",
+    "key": "wuthering-heights",
     "title": "Wuthering Heights",
     "authors": [
       "Emily Brontë"
@@ -91,7 +91,7 @@
     "date_read": "2026-01-01"
   },
   {
-    "key": "OL34032834W",
+    "key": "a-day-in-the-life-of-abed-salama",
     "title": "A Day in the Life of Abed Salama",
     "authors": [
       "Nathan Thrall"
@@ -104,7 +104,7 @@
     "date_read": "2026-01-01"
   },
   {
-    "key": "OL66562W",
+    "key": "sense-and-sensibility",
     "title": "Sense and Sensibility",
     "authors": [
       "Jane Austen"
@@ -119,7 +119,7 @@
     "date_read": "2026-01-01"
   },
   {
-    "key": "OL166482W",
+    "key": "the-affirmation",
     "title": "The Affirmation",
     "authors": [
       "Christopher Priest"
@@ -136,7 +136,7 @@
   },
   {
     "comment": "Love in the Time of Cholera",
-    "key": "OL274518W",
+    "key": "love-in-the-time-of-cholera",
     "title": "Love in the Time of Cholera",
     "authors": [
       "Gabriel García Márquez"
@@ -151,7 +151,7 @@
   },
   {
     "comment": "Beautiful Star",
-    "key": "OL25329395W",
+    "key": "beautiful-star",
     "title": "Beautiful Star",
     "authors": [
       "Yukio Mishima"
@@ -165,7 +165,7 @@
     "date_read": null
   },
   {
-    "key": "OL35710736W",
+    "key": "going-infinite",
     "title": "Going Infinite",
     "authors": [
       "Michael Lewis"
@@ -182,7 +182,7 @@
     "date_read": null
   },
   {
-    "key": "OL3511458W",
+    "key": "augustus",
     "title": "Augustus",
     "authors": [
       "John Williams"
@@ -198,7 +198,7 @@
     "date_read": null
   },
   {
-    "key": "OL498463W",
+    "key": "the-trial",
     "title": "The Trial",
     "authors": [
       "Franz Kafka"
@@ -214,7 +214,7 @@
   },
   {
     "comment": "The Haunting of Hill House",
-    "key": "OL3171069W",
+    "key": "the-haunting-of-hill-house",
     "title": "The Haunting of Hill House",
     "authors": [
       "Shirley Jackson"
@@ -263,7 +263,7 @@
   },
   {
     "comment": "All Systems Red",
-    "key": "OL17914663W",
+    "key": "all-systems-red",
     "title": "All Systems Red",
     "authors": [
       "Martha Wells"
@@ -280,7 +280,7 @@
   },
   {
     "comment": "All the Pretty Horses",
-    "key": "OL40882W",
+    "key": "all-the-pretty-horses",
     "title": "All the Pretty Horses",
     "authors": [
       "Cormac McCarthy"
@@ -297,7 +297,7 @@
   },
   {
     "comment": "Brighton Rock",
-    "key": "OL106083W",
+    "key": "brighton-rock",
     "title": "Brighton Rock",
     "authors": [
       "Graham Greene",
@@ -315,7 +315,7 @@
   },
   {
     "comment": "Orbital",
-    "key": "OL35708581W",
+    "key": "orbital",
     "title": "Orbital",
     "authors": [
       "Samantha Harvey"
@@ -333,7 +333,7 @@
   },
   {
     "comment": "Perfume: The Story of a Murderer",
-    "key": "OL10834W",
+    "key": "perfume-the-story-of-a-murderer",
     "title": "Perfume: The Story of a Murderer",
     "authors": [
       "Patrick Süskind"
