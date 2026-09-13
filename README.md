@@ -127,7 +127,19 @@ Tags are managed entirely through `writing/book_seed.json`. Edit the relevant en
 
 ## Deploying
 
-Pushing to `main` triggers Cloudflare Pages, which runs `python site/build.py` and publishes `site/dist/`. There is no database to reset and no server to restart — a deploy is just a build.
+Pushing to `main` triggers Cloudflare Pages, which installs dependencies and builds the site, then publishes `site/dist/`. There is no database to reset and no server to restart — a deploy is just a build.
+
+The Cloudflare Pages project should be configured with this build command:
+
+```sh
+pip install -r requirements.txt && python site/build.py
+```
+
+and output directory `site/dist`.
+
+`requirements.txt` (not `pyproject.toml`/`uv.lock`) is what Cloudflare Pages' Python build image reads, so it must list the site's runtime dependencies directly.
+
+This repo's `.python-version` pins Python 3.13. If Cloudflare Pages' available Python versions don't include 3.13, select the closest available 3.x version in the Pages project settings (a one-time dashboard setting).
 
 ```sh
 git push   # Cloudflare Pages builds and deploys automatically
@@ -137,7 +149,5 @@ git push   # Cloudflare Pages builds and deploys automatically
 
 ## Further reading
 
-- [Architecture and data model](docs/design.md) — how the pieces fit together, where to edit what
 - [Writing and deploying posts](docs/writing-posts.md) — post types, frontmatter, quotes, deployment workflow
-- [Testing](docs/testing.md) — test structure, fixtures, and how to add tests
 

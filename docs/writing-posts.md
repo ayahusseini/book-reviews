@@ -9,7 +9,7 @@
 5. [Inline quotes](#inline-quotes)
 6. [Linking to headings](#linking-to-headings)
 7. [Images](#images)
-8. [Slugs and re-importing](#slugs-and-re-importing)
+8. [Slugs and rebuilding](#slugs-and-rebuilding)
 9. [Deploying](#deploying)
 
 ---
@@ -20,12 +20,12 @@ There are exactly two kinds of writing on the site, dispatched by which subdirec
 
 | Directory | URL | Needs a book? | Notes |
 |---|---|---|---|
-| `writing/posts/reviews/` | `/books/<id>` | Yes | One per book — content lives directly on the `Book` row, not a separate table. |
+| `writing/posts/reviews/` | `/books/<id>` | Yes | One per book — content is rendered directly onto that book's page. |
 | `writing/posts/poetry/` | `/poems/<slug>` | No | Displayed on the poems page. |
 
 Quotes are not written directly — see [Inline quotes](#inline-quotes).
 
-Drafts that shouldn't be imported yet live in `writing/unpromoted_posts/` (gitignored except for a `.gitkeep`), which `reset-posts` never scans.
+Drafts that shouldn't be published yet live in `writing/unpromoted_posts/` (gitignored except for a `.gitkeep`), which the build never scans.
 
 ---
 
@@ -48,11 +48,11 @@ Post body in Markdown...
 ### Field notes
 
 - **`title`** and **`author`** are always required.
-- **`slug`** defaults to the filename stem (`wuthering-heights.md` → `wuthering-heights`). For poems this is the stable unique identifier. For reviews there's no separate slug — the review is a field on the `Book` row identified by `book_key`.
-- **`date`** sets the created-at timestamp. If omitted, it defaults to the time it's first imported. Re-importing does not change this.
-- **`book_key`** (reviews only) — the `key` value from the book's entry in `book_seed.json`. The book must already be seeded before the review is imported.
+- **`slug`** defaults to the filename stem (`wuthering-heights.md` → `wuthering-heights`). For poems this is the stable unique identifier. For reviews there's no separate slug — the review is matched to its book via `book_key`.
+- **`date`** sets the created-at date shown on the site. If omitted, the post has no date and is never badged as new.
+- **`book_key`** (reviews only) — the `key` value from the book's entry in `book_seed.json`. The book must already be registered in `book_seed.json` before its review is built.
 
-All book metadata (title, authors, rating, tags, description) belongs in `book_seed.json`, not in post frontmatter. Using any of the old fields (`book_ol_key`, `enrich_book`, `rating`, `tags`, `book_title`, etc.) will raise an error on import.
+All book metadata (title, authors, rating, tags, description) belongs in `book_seed.json`, not in post frontmatter. Old fields from the previous Flask/SQLite version of this site (`book_ol_key`, `enrich_book`, `rating`, `tags`, `book_title`, etc.) are no longer read and have no effect.
 
 ---
 
@@ -60,7 +60,7 @@ All book metadata (title, authors, rating, tags, description) belongs in `book_s
 
 All book metadata (rating, tags, authors, description) is managed in `book_seed.json`. The review only needs to know which book it belongs to. See the README's [Adding books](../README.md#adding-books) section for the full book-registration flow.
 
-1. Register the book in `writing/book_seed.json` and run `make seed` (skip if it's already seeded).
+1. Register the book in `writing/book_seed.json` (skip if it's already registered).
 
 2. Create a markdown file under `writing/posts/reviews/`:
 
@@ -75,13 +75,9 @@ All book metadata (rating, tags, authors, description) is managed in `book_seed.
    Opening thoughts...
    ```
 
-3. Import:
+3. Run `make build` (or `make dev`) to render it locally.
 
-   ```sh
-   make reset-posts
-   ```
-
-`book_key` must match the `key` field in the seed exactly, and the book must already exist in the database — reviewing an unseeded book raises an error telling you to seed it first.
+`book_key` must match the `key` field in `book_seed.json` exactly, and the book must already be registered in `book_seed.json` — otherwise the review has nothing to attach to.
 
 ---
 
@@ -126,11 +122,11 @@ in the severe simplicity of his attitude.
 More text continues here.
 ````
 
-When `reset-posts` runs:
+When the site is built:
 
-- Each `ad-quote` block is extracted as a `Quote` row linked to the book.
+- Each `ad-quote` block is extracted as a quote linked to the book.
 - The block is replaced with standard Markdown blockquote syntax (`>`) in the rendered review body.
-- Quote slugs are generated deterministically from the first 100 characters of the quote text. **Editing quote text generates a new slug and therefore a new quote** — the old one is not automatically deleted.
+- Quote slugs are generated deterministically from the first 100 characters of the quote text. Editing quote text generates a new slug for that quote.
 
 The random quote widget in the sidebar pulls from all quotes and links back to the book.
 
@@ -156,7 +152,7 @@ The heading fragment is converted to an anchor using the same rules as Python-Ma
 
 ## Images
 
-Place image files in `site/app/static/img/` and embed them using Obsidian's image syntax:
+Place image files in `site/static/img/` and embed them using Obsidian's image syntax:
 
 ```markdown
 ![[my-photo.jpg]]
@@ -172,13 +168,13 @@ The `alt` text defaults to the filename. Obsidian will display these images loca
 
 ---
 
-## Slugs and re-importing
+## Slugs and rebuilding
 
-- For poems, the slug is the unique identifier. If two files produce the same slug, the second import updates the first poem in place.
-- **Renaming a poem file** changes its slug (if no explicit `slug` is set in frontmatter) and creates a new poem row. The old one is not deleted.
+- For poems, the slug is the unique identifier. If two files produce the same slug, the one processed later wins.
+- **Renaming a poem file** changes its slug (if no explicit `slug` is set in frontmatter), which changes its URL.
 - **Setting `slug` explicitly** in frontmatter decouples the identifier from the filename, which is useful if you want to rename the file without breaking URLs.
-- Reviews have no slug of their own — they're identified by `book_key`, so renaming a review's filename has no effect on identity.
-- Re-running `make reset-posts` is always safe. Existing reviews/poems are matched (by `book_key` or slug) and updated only if content has changed; the updated-at timestamp is only touched on real content changes.
+- Reviews have no slug of their own — they're matched to their book by `book_key`, so renaming a review's filename has no effect on which book it belongs to.
+- The site is rendered fresh from `writing/` on every build (`make build` / `make dev`), so there's no import state to get out of sync — editing a file and rebuilding always reflects exactly what's on disk.
 
 ---
 
@@ -187,46 +183,15 @@ The `alt` text defaults to the filename. Obsidian will display these images loca
 ### Step 1: write and check locally
 
 ```sh
-make seed            # upsert books from writing/book_seed.json
-make reset-posts      # re-import reviews and poems
+make build   # or `make dev` to also serve it locally
 ```
 
-Or all at once: `make sync`
-
-Tags are managed entirely through `writing/book_seed.json` — edit the relevant entry's `tags` list and run `make seed` again.
+Every build reads `writing/` and `book_seed.json` fresh, so all content always reflects what's currently on disk.
 
 ### Step 2: commit, push, deploy
 
 ```sh
 git push
-./site/scripts/deploy.sh
 ```
 
-`deploy.sh` SSHes into the VPS (credentials from `.env`), pulls the pushed commits (`git reset --hard origin/main`), runs `make sync` on the server (which imports whatever's now in the server's `writing/` folder — the same files you just pushed), and restarts Gunicorn. Content and code deploy together in one step; there's no separate "push just the database" path.
-
-### Rebuilding the database from scratch (local or server)
-
-```sh
-make reset
-```
-
-This deletes `site/instance/site.db`, re-runs all migrations, re-seeds books from `writing/book_seed.json`, and re-imports all reviews and poems. Use this locally when your local DB gets into a bad state.
-
-### When you have schema changes
-
-Generate and commit the migration locally as usual:
-
-```sh
-make migrate MSG="describe change"
-git add site/migrations/versions/
-git commit -m "add migration"
-git push
-```
-
-Then deploy with `--reset-database` so the server rebuilds its DB (applying the new migration) instead of just syncing content:
-
-```sh
-./site/scripts/deploy.sh --reset-database
-```
-
-It asks for confirmation before wiping the production database.
+Pushing to `main` triggers Cloudflare Pages, which installs the dependencies from `requirements.txt`, runs `python site/build.py`, and publishes `site/dist/`. There is no database to reset and no server to restart — a deploy is just a build. See the README's [Deploying](../README.md#deploying) section for the Cloudflare Pages build configuration.

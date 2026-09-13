@@ -9,7 +9,7 @@
 {% block main_content %}
 
   {% if books_2026 %}
-    <h3>2026</h3>
+    <h3>{{ current_year }}</h3>
     <ul class="book-list">
       {% for book in books_2026 %}
         {{ book_item(book, has_posts, new_book_ids) }}
