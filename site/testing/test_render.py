@@ -131,6 +131,7 @@ class TestRenderPages:
             book_title="Orbital",
             review_markdown="text",
             review_created_at=datetime(2026, 1, 1, tzinfo=timezone.utc),
+            book_date_read=date(2026, 6, 1),
         )
         env = create_environment(TEMPLATES_DIR, quotes=[])
 
@@ -138,6 +139,7 @@ class TestRenderPages:
 
         assert "Orbital" in html
         assert '/books/orbital/"' in html
+        assert "<h3>2026</h3>" in html
 
     def test_render_book_detail_page_renders_review_markdown(self):
         book = make_book(

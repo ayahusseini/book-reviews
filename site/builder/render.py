@@ -147,6 +147,7 @@ def render_book_list_page(
     return template.render(
         books_2026=books_this_year,
         books_previous=books_previous,
+        current_year=today.year,
         has_posts=find_books_with_reviews(books),
         new_book_ids=find_recently_reviewed_book_ids(books),
     )
