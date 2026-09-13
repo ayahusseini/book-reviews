@@ -2,7 +2,7 @@
 title: Solidly Okay
 author: Aya
 type: review
-book_key: OL106083W
+book_key: brighton-rock
 slug: main-brighton-rock-post
 date: 2026-05-09
 ---

@@ -2,7 +2,7 @@
 title: "All Systems Red is a fun little book"
 author: "Aya"
 type: "review"
-book_key: "OL17914663W"
+book_key: all-systems-red
 date: 2026-04-01
 ---
 

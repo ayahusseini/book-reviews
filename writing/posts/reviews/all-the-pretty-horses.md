@@ -2,7 +2,7 @@
 title: All The Pretty Horses calls me out
 author: Aya
 type: review
-book_key: OL40882W
+book_key: all-the-pretty-horses
 slug: all-the-pretty-horses
 date: 2026-03-02
 ---

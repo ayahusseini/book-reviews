@@ -2,7 +2,7 @@
 title: The Affirmation is great but it is slow
 author: Aya
 type: review
-book_key: OL166482W
+book_key: the-affirmation
 slug: the-affirmation
 date: 2026-01-30
 ---
