@@ -1,43 +1,64 @@
 /**
- * Quote refresh — handles both the sidebar widget (desktop) and the
- * mobile slot widget with a single fetch per click.
+ * Random quote widget — fetches all quotes once from /quotes.json and
+ * picks one at random, both on page load and on refresh-button click.
  *
- * The response from /random-quote returns:
- *   { quote_html: "<p>...</p>", source: "— From book: <a>...</a>" }
+ * Each entry in quotes.json is shaped:
+ *   { quote_html: "<p>...</p>", book_title: "...", book_url: "/books/.../" }
  */
 
+let cachedQuotes = null;
+
 function updateQuoteWidgets(quoteHtml, sourceHtml) {
-    // Desktop sidebar
-    const desktopBody   = document.getElementById('quote-content');
+    const desktopBody = document.getElementById('quote-content');
     const desktopSource = document.getElementById('quote-source');
-    if (desktopBody)   desktopBody.innerHTML   = quoteHtml;
+    if (desktopBody) desktopBody.innerHTML = quoteHtml;
     if (desktopSource) desktopSource.innerHTML = sourceHtml;
 
-    // Mobile slot
-    const mobileBody   = document.getElementById('quote-content-mobile');
+    const mobileBody = document.getElementById('quote-content-mobile');
     const mobileSource = document.getElementById('quote-source-mobile');
-    if (mobileBody)   mobileBody.innerHTML   = quoteHtml;
+    if (mobileBody) mobileBody.innerHTML = quoteHtml;
     if (mobileSource) mobileSource.innerHTML = sourceHtml;
 }
 
-function fetchAndRefresh() {
-    fetch('/random-quote')
-        .then(function(response) {
+function pickRandomQuote(quotes) {
+    if (!quotes.length) return null;
+    return quotes[Math.floor(Math.random() * quotes.length)];
+}
+
+function showRandomQuote(quotes) {
+    const quote = pickRandomQuote(quotes);
+    if (!quote) return;
+    const sourceHtml = `— <a href="${quote.book_url}">${quote.book_title}</a>`;
+    updateQuoteWidgets(quote.quote_html, sourceHtml);
+}
+
+function loadQuotes() {
+    if (cachedQuotes) return Promise.resolve(cachedQuotes);
+    return fetch('/quotes.json')
+        .then(function (response) {
             if (!response.ok) throw new Error('Network response was not ok');
             return response.json();
         })
-        .then(function(data) {
-            updateQuoteWidgets(data.quote_html || '', data.source || '');
-        })
-        .catch(function(err) {
+        .then(function (quotes) {
+            cachedQuotes = quotes;
+            return quotes;
+        });
+}
+
+function refreshQuote() {
+    loadQuotes()
+        .then(showRandomQuote)
+        .catch(function (err) {
             console.error('Failed to refresh quote:', err);
         });
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    var desktopBtn = document.getElementById('refresh-quote');
-    var mobileBtn  = document.getElementById('refresh-quote-mobile');
+    const desktopBtn = document.getElementById('refresh-quote');
+    const mobileBtn = document.getElementById('refresh-quote-mobile');
 
-    if (desktopBtn) desktopBtn.addEventListener('click', fetchAndRefresh);
-    if (mobileBtn)  mobileBtn.addEventListener('click', fetchAndRefresh);
+    if (desktopBtn) desktopBtn.addEventListener('click', refreshQuote);
+    if (mobileBtn) mobileBtn.addEventListener('click', refreshQuote);
+
+    refreshQuote();
 });
