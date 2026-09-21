@@ -66,12 +66,6 @@ def parse_date_read(value: object) -> date | None:
     return date.fromisoformat(value)
 
 
-def load_book_seed(seed_path: Path) -> list[dict]:
-    """Load and return the raw list of book entries from book_seed.json."""
-    with open(seed_path) as f:
-        return json.load(f)
-
-
 def load_reviews(reviews_dir: Path) -> dict[str, MarkdownPost]:
     """Return {book_key: MarkdownPost} for every review under reviews_dir."""
     if not reviews_dir.exists():
@@ -115,19 +109,22 @@ def build_book(entry: dict, review: MarkdownPost | None) -> Book:
 def load_books(seed_path: Path, reviews_dir: Path) -> list[Book]:
     """Load all books, joining book_seed.json entries with their reviews."""
     reviews = load_reviews(reviews_dir)
-    seed_keys = {entry.get("key") for entry in load_book_seed(seed_path)}
 
-    unmatched = set(reviews) - seed_keys
-    if unmatched:
-        raise ValueError(
-            f"Review(s) reference unknown book_key(s): {sorted(unmatched)}. "
-            "Add them to book_seed.json first."
-        )
+    with open(seed_path) as f:
+        seed = json.load(f)
+        seed_keys = {entry.get("key") for entry in seed}
 
-    return [
-        build_book(entry, reviews.get(entry.get("key")))
-        for entry in load_book_seed(seed_path)
-    ]
+        unmatched = set(reviews) - seed_keys
+        if unmatched:
+            raise ValueError(
+                f"""Review(s) reference unknown book_key(s): 
+                {sorted(unmatched)}.
+                Add them to book_seed.json first."""
+            )
+
+        return [
+            build_book(entry, reviews.get(entry.get("key"))) for entry in seed
+        ]
 
 
 def build_poem(post: MarkdownPost) -> Poem:
