@@ -1,5 +1,5 @@
 ---
-title: All The Pretty Horses calls me out
+title: All The Pretty Horses
 author: Aya
 type: review
 book_key: all-the-pretty-horses

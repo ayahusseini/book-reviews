@@ -1,4 +1,20 @@
 [
+    {
+    "key": "steve_jobs",
+    "title": "Steve Jobs",
+    "authors": [
+      "Walter Isaacson"
+    ],
+    "publication_year": 2011,
+    "page_count": 656,
+    "description": "Biography of Steve Jobs.",
+    "tags": [
+      "non-fiction",
+      "biography"
+    ],
+    "rating": 3.5,
+    "date_read": "2026-09-20"
+  },
   {
     "key": "confessions_of_a_mask",
     "title": "Confessions of a Mask",
@@ -12,7 +28,7 @@
       "fiction"
     ],
     "rating": 5,
-    "date_read": "2026-01-01"
+    "date_read": "2026-09-06"
   },
   {
     "key": "flesh",
@@ -27,7 +43,7 @@
       "fiction"
     ],
     "rating": 4.5,
-    "date_read": "2026-01-01"
+    "date_read": "2026-01-20"
   },
   {
     "key": "the-trading-game",
@@ -41,7 +57,7 @@
       "finance"
     ],
     "rating": 3.0,
-    "date_read": "2026-01-01"
+    "date_read": "2026-04-01"
   },
   {
     "key": "great-gatsby",
@@ -56,7 +72,7 @@
       "fiction"
     ],
     "rating": 4,
-    "date_read": "2026-01-01"
+    "date_read": "2026-05-01"
   },
   {
     "comment": "The Passenger",
@@ -73,7 +89,7 @@
       "mystery"
     ],
     "rating": 4.5,
-    "date_read": "2026-01-01"
+    "date_read": "2026-01-30"
   },
   {
     "key": "wuthering-heights",
@@ -88,7 +104,7 @@
       "fiction"
     ],
     "rating": 5,
-    "date_read": "2026-01-01"
+    "date_read": "2026-02-01"
   },
   {
     "key": "a-day-in-the-life-of-abed-salama",
@@ -101,7 +117,7 @@
       "non-fiction"
     ],
     "rating": 4,
-    "date_read": "2026-01-01"
+    "date_read": "2026-03-01"
   },
   {
     "key": "sense-and-sensibility",
@@ -116,7 +132,7 @@
       "fiction"
     ],
     "rating": 3,
-    "date_read": "2026-01-01"
+    "date_read": "2026-02-01"
   },
   {
     "key": "the-affirmation",
@@ -147,7 +163,7 @@
       "fiction"
     ],
     "rating": 5,
-    "date_read": "2026-01-01"
+    "date_read": "2026-06-01"
   },
   {
     "comment": "Beautiful Star",
@@ -243,7 +259,7 @@
       "biography"
     ],
     "rating": 3.5,
-    "date_read": "2026-01-01"
+    "date_read": "2026-07-01"
   },
   {
     "comment": "Hunchback",
@@ -259,7 +275,7 @@
       "fiction"
     ],
     "rating": 2.5,
-    "date_read": "2026-01-01"
+    "date_read": "2026-07-01"
   },
   {
     "comment": "All Systems Red",
