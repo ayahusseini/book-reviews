@@ -15,13 +15,12 @@ def write_fixture_content(tmp_path: Path) -> tuple[Path, Path]:
         json.dumps(
             [
                 {
-                    "key": "orbital",
                     "title": "Orbital",
                     "authors": ["Samantha Harvey"],
                     "rating": 2,
                     "date_read": "2026-04-01",
                 },
-                {"key": "unread-book", "title": "Unread Book"},
+                {"title": "Unread Book"},
             ]
         ),
         encoding="utf-8",
@@ -34,7 +33,7 @@ def write_fixture_content(tmp_path: Path) -> tuple[Path, Path]:
         "---\n"
         'title: "Orbital"\n'
         'author: "Aya"\n'
-        'book_key: "orbital"\n'
+        'book_key: "orbital_samantha_harvey"\n'
         "date: 2026-04-02\n"
         "---\n\n"
         "I really did not like this book.\n",
@@ -47,7 +46,6 @@ def write_fixture_content(tmp_path: Path) -> tuple[Path, Path]:
         "---\n"
         "title: Fire and Ice\n"
         "author: Robert Frost\n"
-        "slug: fire-and-ice\n"
         "date: 2026-04-10\n"
         "---\n"
         "Some say the world will end in fire.\n",
@@ -70,10 +68,14 @@ def test_build_site_writes_expected_pages(tmp_path):
     )
 
     assert (output_dir / "books" / "index.html").exists()
-    assert (output_dir / "books" / "orbital" / "index.html").exists()
-    assert (output_dir / "books" / "unread-book" / "index.html").exists()
+    assert (
+        output_dir / "books" / "orbital_samantha_harvey" / "index.html"
+    ).exists()
+    assert (output_dir / "books" / "unread_book" / "index.html").exists()
     assert (output_dir / "poems" / "index.html").exists()
-    assert (output_dir / "poems" / "fire-and-ice" / "index.html").exists()
+    assert (
+        output_dir / "poems" / "fire_and_ice_robert_frost" / "index.html"
+    ).exists()
     assert (output_dir / "about" / "index.html").exists()
     assert (output_dir / "static" / "style" / "style.css").exists()
     assert (output_dir / "_redirects").read_text() == "/ /books/ 301\n"
@@ -82,7 +84,7 @@ def test_build_site_writes_expected_pages(tmp_path):
     assert isinstance(quotes, list)
 
     book_detail_html = (
-        output_dir / "books" / "orbital" / "index.html"
+        output_dir / "books" / "orbital_samantha_harvey" / "index.html"
     ).read_text()
     assert "did not like this book" in book_detail_html
 

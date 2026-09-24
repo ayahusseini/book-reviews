@@ -69,11 +69,10 @@ Adding a book to the site is two independent steps: **register the book**, then 
 
 ### Step 1: register the book
 
-Books are registered in `writing/book_seed.json`. Each entry requires a `key` (any unique slug — it doesn't need to mean anything external) and a `title`:
+Books are registered in `writing/book_seed.json`. Each entry requires a `title`; its id is generated automatically from the title and `authors` (so no separate key to keep in sync):
 
 ```json
 {
-  "key": "my-custom-key",
   "title": "The Book Title",
   "authors": ["Author Name"],
   "publication_year": 1997,
@@ -87,9 +86,8 @@ Books are registered in `writing/book_seed.json`. Each entry requires a `key` (a
 
 | Field              | Required | Description                    |
 | ------------------ | -------- | ------------------------------ |
-| `key`              | Yes      | Unique identifier for the book |
 | `title`            | Yes      | Book title                     |
-| `authors`          | No       | List of author name strings    |
+| `authors`          | No       | List of author name strings — included in the generated id if present |
 | `description`      | No       | Book description               |
 | `publication_year` | No       | Publication year               |
 | `page_count`       | No       | Page count                     |
@@ -101,7 +99,7 @@ Run `make build` (or `make dev`) after editing the file to see the change locall
 
 ### Step 2: write the review (optional)
 
-See [Writing posts](#writing-posts) below — a review's frontmatter references the book via `book_key`, which must match the `key` from step 1.
+See [Writing posts](#writing-posts) below — a review's frontmatter references the book via `book_key`, which must match the book's generated id (title + authors, slugified — see `docs/writing-posts.md`).
 
 ---
 
