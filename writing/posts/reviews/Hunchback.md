@@ -23,7 +23,7 @@ Even when I was away from the ventilator, I couldn't be without a device to suct
 
 ## Some more context
 
-The narrator, Shaka has a lot of rage. Two pieces of history underpin this:
+The narrator, Shaka, has a lot of rage. Two pieces of history underpin this:
 
 Post-war Japan ran on the Eugenic Protection Law, which permitted abortion and the sterilisation of the disabled. Neither required anyone's consent but the physician's.
 
@@ -34,10 +34,10 @@ The two sides came together in a sort of Hegelian synthesis to take as their mut
 
 In 1974 the Mona Lisa went on tour and visited the Tokyo National Museum. To manage crowds, the museum barred less mobile visitors: the disabled, the elderly, mothers with infants. Yonezu took interest. On opening day she splattered the painting's protective glass with red paint.
 
-This event and its themes flitters in and out of Hunchback. 
+This event and its themes flit in and out of Hunchback. 
 
 ```ad-quote 
-I hated museums, and libraries, and any kind of historic building. I loathed old things, whose flawless, polished form had been impecably preserved. 
+I hated museums, and libraries, and any kind of historic building. I loathed old things, whose flawless, polished form had been impeccably preserved. 
 ```
 
 I first read the book without any of this in mind. It reads fine that way, as a portrait of one woman shitposting into the void. I think it reads better on the historical floor: the void has a shape, and her posts are aimed at it.
@@ -63,7 +63,7 @@ Beyond the panes of glass that turned clear in an instant stood a whole cluster 
 ```
 
 ```ad-quote
-We might not always be conscious of it, but whenever we see printed text, we know there's someone out there who's written it. Be it the product descriptions in mail order catalogues, captions for photographs, or the copy in rental property or job vacancy catalogues , all that stuff is written by someone.
+We might not always be conscious of it, but whenever we see printed text, we know there's someone out there who's written it. Be it the product descriptions in mail order catalogues, captions for photographs, or the copy in rental property or job vacancy catalogues, all that stuff is written by someone.
 ```
 
 Writing from this position is fundamentally strange. The mental world Shaka enters stands in complete contrast to the physical mechanics of entering it. It isn't true escapism, because the act of writing drags her back into her body. The placement of the book, the legs, the screen must be calculated precisely.
@@ -103,7 +103,7 @@ Shaka's carer, Tanaka, is short and poor. He bathes her and manages her ventilat
 
 The book is deeply uncomfortable and it is meant to be. The idea of a heavily disabled person paying her carer for sex will gross you out, and the book forces you to ask why. There is a power problem, but which way does it run? What if she's forty? What if she owns the care home? What if he's short and ugly? There are questions about consent and the ability to give it. The deeper question is why the situation is this uncomfortable at all. 
 
- It reminds me of that scene in Malcom in the Middle. [A bully has been terrorising the playground swings for Malcom's head, misses, and brushes against Stevie (who's in a wheelchair)](https://www.youtube.com/shorts/PudeIT2aa4s). The playground tolerated the violence until that moment. Now the bully is cast out. The rule he broke is the one Hunchback questions; that the disabled are not allowed to be struck, or hurt, or desired.
+ It reminds me of that scene in Malcolm in the Middle. [A bully has been terrorising the playground swings for Malcolm's head, misses, and brushes against Stevie (who's in a wheelchair)](https://www.youtube.com/shorts/PudeIT2aa4s). The playground tolerated the violence until that moment. Now the bully is cast out. The rule he broke is the one Hunchback questions; that the disabled are not allowed to be struck, or hurt, or desired.
 # The writing 
 
 Some of the writing is uncomfortably bad to read:

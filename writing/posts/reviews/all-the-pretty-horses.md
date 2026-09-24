@@ -15,7 +15,7 @@ What he loved in horses was what he loved in men, the blood and the heat of the 
 
 McCarthy is a show-off. *All The Pretty Horses* is the kind of book where you finish a sentence and sit with it for a moment before moving on, because something in it has landed and you're not quite ready to let it go.
 
-The novel follows sixteen-year-old John Grady Cole, a Texas boy born a generation too late - 1949. His grandfather has died and his mother is selling the family ranch. The world he was made for — horses, open land, a certain code of living is being left behind by most Americans. He rides into Mexico with his friend Rawlins, looking for something more real. He finds that he's still out of place, possibly searching for something that never existed. 
+The novel follows sixteen-year-old John Grady Cole, a Texas boy born a generation too late - 1949. His grandfather has died and his mother is selling the family ranch. The world he was made for — horses, open land, a certain code of living — is being left behind by most Americans. He rides into Mexico with his friend Rawlins, looking for something more real. He finds that he's still out of place, possibly searching for something that never existed. 
 
 ## The End of an Era
 
@@ -42,7 +42,7 @@ Like *Jane Eyre* or *The Remains of the Day*, McCarthy understands that understa
 
 I can relate to the feeling of being unmoored - of changing things for the sake of feeling like I have some authority over what happens next. John Grady's wandering makes a kind of sense to me that I find uncomfortable to admit.
 
-But McCarthy is clear-eyed about what that wandering actually is. John Grady isn't searching for himself in any neat redemptive sense. He's searching for a place or a country
+But McCarthy is clear-eyed about what that wandering actually is. John Grady isn't searching for himself in any neat redemptive sense. He's searching for a place or a country:
 
 ```ad-quote
 Where is your country? he said.

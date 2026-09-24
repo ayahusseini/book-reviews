@@ -28,7 +28,7 @@ Every angle is slightly wrong. Hugh Crain must have detested other people and th
 This is a haunted house story in the purest sense. Unlike the TV show, no discrete ghosts are wandering the halls. The true supernatural omnipresence is the house itself. It participates and drives Eleanor's delusions. As she moves through it, expecting solidity, everything remains just slightly off.
 
 ```ad-quote
-It was a house without kindness, never meant to be lived in, not a fit place for people or for love or for hope. Exorcism cannot alter the countenance of a house ; Hill House would stay as it was until it was destroyed.
+It was a house without kindness, never meant to be lived in, not a fit place for people or for love or for hope. Exorcism cannot alter the countenance of a house; Hill House would stay as it was until it was destroyed.
 ```
 
 What makes the novel disturbing is its psychological precision. The stream-of-consciousness narration feels uncomfortably real, capturing the kinds of thoughts that are usually too fleeting or too private to articulate. Whilst we can't ever directly relate to Eleanor, we have a sense that her inner monologue isn’t entirely foreign.

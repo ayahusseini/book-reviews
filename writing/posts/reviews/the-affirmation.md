@@ -17,7 +17,7 @@ date: 2026-01-30
 
 Peter Sinclair's life falls apart - he loses his job, his home, and his relationship. He retreats to a friend's country house to seek solace. He decides to make sense of his life by writing it all down. This autobiography quickly gets redrafted into a fictional narrative set in the Dream Archipelago. In this alternate reality, he wins a lottery, granting him immortality through a procedure called "athanasia", which also erases his memories. 
 
-The premise is straightforward, but it takes a while for the reader to figure out **just what this book's about.**  The narrative sidewinders through drafts and redrafts of Peter’s autobiography, each claiming to be a higher-level of truth while drifting further from reality. As the story progresses, he fixes onto the idea that there is a barrier between truth and objective reality. The lines blur between England Peter and Archipelago Peter.
+The premise is straightforward, but it takes a while for the reader to figure out **just what this book's about.**  The narrative sidewinders through drafts and redrafts of Peter’s autobiography, each claiming to be a higher level of truth while drifting further from reality. As the story progresses, he fixes onto the idea that there is a barrier between truth and objective reality. The lines blur between England Peter and Archipelago Peter.
 
 The book pushes us to reflect on identity and our memory:
 - How much fiction is our memory composed of?

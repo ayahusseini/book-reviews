@@ -165,7 +165,7 @@ def render_book_list_page(
     books_this_year, books_previous = split_books_by_year(books, today.year)
     template = env.get_template("books.html")
     return template.render(
-        books_2026=books_this_year,
+        books_current_year=books_this_year,
         books_previous=books_previous,
         current_year=today.year,
         has_posts=find_books_with_reviews(books),
