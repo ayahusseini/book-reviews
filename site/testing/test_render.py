@@ -3,8 +3,6 @@
 from datetime import date, datetime, timezone
 from pathlib import Path
 
-import pytest
-
 from builder.content import Author, Book, Poem, Tag
 from builder.render import (
     collect_quotes,
@@ -17,7 +15,7 @@ from builder.render import (
     render_book_list_page,
     render_poem_detail_page,
     render_poem_list_page,
-    resolve_url,
+    sort_books_by_recency,
     split_books_by_year,
     write_page,
 )
@@ -40,22 +38,6 @@ def make_book(**overrides) -> Book:
     return Book(**defaults)
 
 
-class TestResolveUrl:
-    def test_static_endpoint(self):
-        assert resolve_url("static", filename="style/style.css") == (
-            "/static/style/style.css"
-        )
-
-    def test_book_detail_endpoint(self):
-        assert resolve_url("books.book_detail", book_id="orbital") == (
-            "/books/orbital/"
-        )
-
-    def test_unknown_endpoint_raises(self):
-        with pytest.raises(ValueError):
-            resolve_url("nonsense.endpoint")
-
-
 class TestSplitBooksByYear:
     def test_splits_by_date_read_year(self):
         this_year = make_book(book_id="a", book_date_read=date(2026, 1, 1))
@@ -70,6 +52,26 @@ class TestSplitBooksByYear:
         assert {b.book_id for b in previous} == {"b", "c"}
 
 
+class TestSortBooksByRecency:
+    def test_orders_by_read_date_not_review_date(self):
+        read_long_ago_reviewed_recently = make_book(
+            book_id="a",
+            book_date_read=date(2026, 1, 1),
+            review_created_at=datetime(2026, 9, 20, tzinfo=timezone.utc),
+        )
+        read_recently_reviewed_promptly = make_book(
+            book_id="b",
+            book_date_read=date(2026, 9, 15),
+            review_created_at=datetime(2026, 9, 16, tzinfo=timezone.utc),
+        )
+
+        ordered = sort_books_by_recency(
+            [read_long_ago_reviewed_recently, read_recently_reviewed_promptly]
+        )
+
+        assert [b.book_id for b in ordered] == ["b", "a"]
+
+
 class TestFindBooksWithReviews:
     def test_only_includes_books_with_review_markdown(self):
         reviewed = make_book(book_id="a", review_markdown="text")
@@ -80,15 +82,42 @@ class TestFindBooksWithReviews:
 
 class TestFindRecentlyReviewedBookIds:
     def test_includes_recent_review(self):
+        today = date(2026, 6, 10)
         recent = make_book(
-            book_id="a", review_created_at=datetime.now(timezone.utc)
+            book_id="a",
+            review_created_at=datetime(2026, 6, 9, tzinfo=timezone.utc),
         )
         old = make_book(
             book_id="b",
             review_created_at=datetime(2000, 1, 1, tzinfo=timezone.utc),
         )
 
-        assert find_recently_reviewed_book_ids([recent, old]) == {"a"}
+        assert find_recently_reviewed_book_ids([recent, old], today) == {"a"}
+
+    def test_uses_earliest_of_read_date_and_review_date(self):
+        today = date(2026, 6, 10)
+        recently_read_and_reviewed = make_book(
+            book_id="a",
+            book_date_read=date(2026, 6, 9),
+            review_created_at=datetime(2026, 6, 9, tzinfo=timezone.utc),
+        )
+        read_long_ago_but_reviewed_recently = make_book(
+            book_id="b",
+            book_date_read=date(2020, 1, 1),
+            review_created_at=datetime(2026, 6, 9, tzinfo=timezone.utc),
+        )
+        read_recently_but_not_yet_reviewed = make_book(
+            book_id="c", book_date_read=date(2026, 6, 8)
+        )
+
+        assert find_recently_reviewed_book_ids(
+            [
+                recently_read_and_reviewed,
+                read_long_ago_but_reviewed_recently,
+                read_recently_but_not_yet_reviewed,
+            ],
+            today,
+        ) == {"a", "c"}
 
 
 class TestCollectQuotes:
@@ -160,7 +189,6 @@ class TestRenderPages:
     def test_render_poem_list_page_links_to_poem(self):
         poem = Poem(
             poem_id="fire-and-ice",
-            poem_slug="fire-and-ice",
             poem_title="Fire and Ice",
             poem_author="Robert Frost",
             poem_body_markdown="Some say the world will end in fire.",
@@ -174,7 +202,6 @@ class TestRenderPages:
     def test_render_poem_detail_page_splits_comments_section(self):
         poem = Poem(
             poem_id="p",
-            poem_slug="p",
             poem_title="P",
             poem_author="A",
             poem_body_markdown="The poem.\n\n---\n\nA note about it.",

@@ -3,7 +3,7 @@
 
 {% block main_content %}
     <div class="about-intro">
-        <img src="{{ url_for('static', filename='img/waving_woman.svg') }}" alt="Waving woman" class="pixel-art about-avatar">
+        <img src="/static/img/waving_woman.svg" alt="Waving woman" class="pixel-art about-avatar">
         {% if heatmap_cells %}
             {{ render_post_heatmap(heatmap_cells) }}
         {% endif %}

@@ -154,7 +154,7 @@ class TestLoadPoems:
         poems = load_poems(poems_dir)
 
         assert len(poems) == 1
-        assert poems[0].poem_slug == "fire-and-ice"
+        assert poems[0].poem_id == "fire-and-ice"
         assert poems[0].poem_title == "Fire and Ice"
 
     def test_returns_empty_list_when_poems_dir_missing(self, tmp_path):

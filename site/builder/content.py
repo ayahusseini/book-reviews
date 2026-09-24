@@ -48,7 +48,6 @@ class Poem:
     """A poem, parsed from a single markdown file."""
 
     poem_id: str
-    poem_slug: str
     poem_title: str
     poem_author: str
     poem_body_markdown: str
@@ -131,7 +130,6 @@ def build_poem(post: MarkdownPost) -> Poem:
     """Build a Poem from a parsed poem markdown file."""
     return Poem(
         poem_id=post.slug,
-        poem_slug=post.slug,
         poem_title=post.title,
         poem_author=post.author,
         poem_body_markdown=post.body_markdown,
@@ -148,8 +146,8 @@ def load_poems(poems_dir: Path) -> list[Poem]:
     """
     if not poems_dir.exists():
         return []
-    poems_by_slug: dict[str, Poem] = {}
+    poems_by_id: dict[str, Poem] = {}
     for path in sorted(poems_dir.rglob("*.md")):
         poem = build_poem(parse_markdown_with_frontmatter(path))
-        poems_by_slug[poem.poem_slug] = poem
-    return list(poems_by_slug.values())
+        poems_by_id[poem.poem_id] = poem
+    return list(poems_by_id.values())

@@ -80,7 +80,7 @@ def build_site(
     for poem in poems:
         write_page(
             output_dir,
-            f"/poems/{poem.poem_slug}/",
+            f"/poems/{poem.poem_id}/",
             render_poem_detail_page(env, poem),
         )
 

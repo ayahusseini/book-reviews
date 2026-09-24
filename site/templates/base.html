@@ -9,7 +9,7 @@
               href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <!--CSS stylesheet-->
         <link rel="stylesheet"
-              href="{{ url_for('static', filename='style/style.css') }}">
+              href="/static/style/style.css">
     </head>
     <body>
 
@@ -21,7 +21,7 @@
                 {% if random_quote %}
                     <div class="quote-widget sidebar-widget sidebar-widget--quote">
                         <button class="quote-refresh-btn" id="refresh-quote" aria-label="Refresh quote">
-                            <img src="{{ url_for('static', filename='img/randomise_pixel.svg') }}" alt="" class="randomise-icon pixel-art">
+                            <img src="/static/img/randomise_pixel.svg" alt="" class="randomise-icon pixel-art">
                             <span class="randomise-label">randomise</span>
                         </button>
                         <blockquote class="quote-text" id="quote-content">
@@ -37,7 +37,7 @@
 
                 <div class="sidebar-coffee">
                     <a href="https://ko-fi.com/ahuss" class="coffee-btn" target="_blank" rel="noopener noreferrer" title="Support this site">
-                        <img src="{{ url_for('static', filename='img/coffee_pixel.svg') }}" alt="" class="coffee-btn__icon">
+                        <img src="/static/img/coffee_pixel.svg" alt="" class="coffee-btn__icon">
                         <span class="coffee-btn__text">buy me a coffee</span>
                     </a>
                 </div>
@@ -48,13 +48,13 @@
 
                 <nav>
                     <div class="nav-container">
-                        <img src="{{ url_for('static', filename='img/logo_pixel.svg') }}" alt="HusseiniReads logo" class="nav-logo pixel-art">
+                        <img src="/static/img/logo_pixel.svg" alt="HusseiniReads logo" class="nav-logo pixel-art">
                         <div class="nav-text">
                             <h1>HusseiniReads</h1>
                             <div class="nav-links">
-                                <a href="{{ url_for('books.book_list') }}">Books</a> ·
-                                <a href="{{ url_for('homepage.about') }}">About</a> ·
-                                <a href="{{ url_for('poems.poem_list') }}">Poems</a>
+                                <a href="{{ BOOKS_URL }}">Books</a> ·
+                                <a href="{{ ABOUT_URL }}">About</a> ·
+                                <a href="{{ POEMS_URL }}">Poems</a>
                             </div>
                         </div>
                     </div>
@@ -65,7 +65,7 @@
                     <div class="quote-widget-mobile-slot">
                         <div class="quote-widget quote-widget--mobile sidebar-widget--quote">
                             <button class="quote-refresh-btn--mobile" id="refresh-quote-mobile" aria-label="Refresh quote">
-                                <img src="{{ url_for('static', filename='img/randomise_pixel.svg') }}" alt="" class="randomise-icon-mobile pixel-art">
+                                <img src="/static/img/randomise_pixel.svg" alt="" class="randomise-icon-mobile pixel-art">
                                 <span class="randomise-label">randomise</span>
                             </button>
                             <blockquote class="quote-text" id="quote-content-mobile">
@@ -97,10 +97,10 @@
                 src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js">
         </script>
         <script defer
-                src="{{ url_for('static', filename='js/katex-init.js') }}">
+                src="/static/js/katex-init.js">
         </script>
         <script defer
-                src="{{ url_for('static', filename='js/refresh_quote.js') }}">
+                src="/static/js/refresh_quote.js">
         </script>
         {% block scripts %}{% endblock %}
         <script data-goatcounter="https://ahuss.goatcounter.com/count"

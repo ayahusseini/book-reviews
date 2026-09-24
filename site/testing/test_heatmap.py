@@ -22,7 +22,6 @@ def make_book(review_created_at=None) -> Book:
 def make_poem(poem_created_at=None) -> Poem:
     return Poem(
         poem_id="p",
-        poem_slug="p",
         poem_title="Title",
         poem_author="Author",
         poem_body_markdown="body",
