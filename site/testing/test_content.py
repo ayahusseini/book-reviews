@@ -8,6 +8,7 @@ from builder.content import (
     Author,
     Book,
     Tag,
+    generate_id,
     load_books,
     load_poems,
     parse_date_read,
@@ -38,6 +39,41 @@ def write_poem(poems_dir, filename, frontmatter, body=""):
     )
 
 
+class TestGenerateId:
+    def test_combines_title_and_single_author(self):
+        assert generate_id("Orbital", ["Samantha Harvey"]) == (
+            "orbital_samantha_harvey"
+        )
+
+    def test_joins_all_authors_in_order(self):
+        assert generate_id("Some Book", ["A One", "B Two"]) == (
+            "some_book_a_one_b_two"
+        )
+
+    def test_lowercases_and_replaces_spaces(self):
+        assert generate_id("The Great Gatsby", ["F. Scott Fitzgerald"]) == (
+            "the_great_gatsby_f_scott_fitzgerald"
+        )
+
+    def test_strips_accents_and_punctuation(self):
+        assert (
+            generate_id(
+                "Perfume: The Story of a Murderer", ["Patrick Süskind"]
+            )
+            == "perfume_the_story_of_a_murderer_patrick_suskind"
+        )
+
+    def test_falls_back_to_title_only_when_no_authors(self):
+        assert generate_id("Unread Book", []) == "unread_book"
+
+    def test_collapses_repeated_separators(self):
+        assert generate_id("A   B", ["C"]) == "a_b_c"
+
+    def test_raises_when_title_and_authors_have_no_ascii_content(self):
+        with pytest.raises(ValueError, match="金閣寺"):
+            generate_id("金閣寺", ["三島由紀夫"])
+
+
 class TestParseDateRead:
     def test_parses_iso_date_string(self):
         assert parse_date_read("2026-03-10") == date(2026, 3, 10)
@@ -56,7 +92,6 @@ class TestLoadBooks:
             tmp_path,
             [
                 {
-                    "key": "wuthering-heights",
                     "title": "Wuthering Heights",
                     "authors": ["Emily Bronte"],
                     "tags": ["classic"],
@@ -70,7 +105,7 @@ class TestLoadBooks:
 
         assert books == [
             Book(
-                book_id="wuthering-heights",
+                book_id="wuthering_heights_emily_bronte",
                 book_title="Wuthering Heights",
                 book_description=None,
                 book_publication_year=None,
@@ -85,10 +120,17 @@ class TestLoadBooks:
             )
         ]
 
+    def test_builds_book_id_from_title_only_when_no_authors(self, tmp_path):
+        seed_path = write_seed(tmp_path, [{"title": "Unread Book"}])
+
+        books = load_books(seed_path, tmp_path / "reviews")
+
+        assert books[0].book_id == "unread_book"
+
     def test_joins_matching_review(self, tmp_path):
         seed_path = write_seed(
             tmp_path,
-            [{"key": "wuthering-heights", "title": "Wuthering Heights"}],
+            [{"title": "Wuthering Heights", "authors": ["Emily Bronte"]}],
         )
         reviews_dir = tmp_path / "reviews"
         write_review(
@@ -97,7 +139,7 @@ class TestLoadBooks:
             {
                 "title": "Wuthering Heights",
                 "author": "Aya",
-                "book_key": "wuthering-heights",
+                "book_key": "wuthering_heights_emily_bronte",
                 "date": "2026-03-10",
             },
             body="Opening thoughts...",
@@ -113,14 +155,14 @@ class TestLoadBooks:
         )
 
     def test_raises_for_seed_entry_missing_title(self, tmp_path):
-        seed_path = write_seed(tmp_path, [{"key": "no-title"}])
+        seed_path = write_seed(tmp_path, [{"authors": ["Nobody"]}])
         with pytest.raises(ValueError, match="title"):
             load_books(seed_path, tmp_path / "reviews")
 
     def test_raises_for_review_with_unknown_book_key(self, tmp_path):
         seed_path = write_seed(
             tmp_path,
-            [{"key": "wuthering-heights", "title": "Wuthering Heights"}],
+            [{"title": "Wuthering Heights", "authors": ["Emily Bronte"]}],
         )
         reviews_dir = tmp_path / "reviews"
         write_review(
@@ -135,9 +177,29 @@ class TestLoadBooks:
         with pytest.raises(ValueError, match="does-not-exist"):
             load_books(seed_path, reviews_dir)
 
+    def test_raises_for_duplicate_generated_book_id(self, tmp_path):
+        seed_path = write_seed(
+            tmp_path,
+            [
+                {"title": "Orbital", "authors": ["Samantha Harvey"]},
+                {"title": "Orbital", "authors": ["Samantha Harvey"]},
+            ],
+        )
+        with pytest.raises(ValueError, match="orbital_samantha_harvey"):
+            load_books(seed_path, tmp_path / "reviews")
+
+    def test_treats_null_authors_as_no_authors(self, tmp_path):
+        seed_path = write_seed(
+            tmp_path, [{"title": "Unread Book", "authors": None}]
+        )
+
+        books = load_books(seed_path, tmp_path / "reviews")
+
+        assert books[0].book_id == "unread_book"
+
 
 class TestLoadPoems:
-    def test_loads_poem_with_slug_from_frontmatter(self, tmp_path):
+    def test_generates_id_from_title_and_author(self, tmp_path):
         poems_dir = tmp_path / "poetry"
         write_poem(
             poems_dir,
@@ -145,7 +207,6 @@ class TestLoadPoems:
             {
                 "title": "Fire and Ice",
                 "author": "Robert Frost",
-                "slug": "fire-and-ice",
                 "date": "2026-04-10",
             },
             body="Some say the world will end in fire.",
@@ -154,8 +215,43 @@ class TestLoadPoems:
         poems = load_poems(poems_dir)
 
         assert len(poems) == 1
-        assert poems[0].poem_id == "fire-and-ice"
+        assert poems[0].poem_id == "fire_and_ice_robert_frost"
         assert poems[0].poem_title == "Fire and Ice"
+
+    def test_ignores_stray_slug_frontmatter(self, tmp_path):
+        poems_dir = tmp_path / "poetry"
+        write_poem(
+            poems_dir,
+            "fire-and-ice.md",
+            {
+                "title": "Fire and Ice",
+                "author": "Robert Frost",
+                "slug": "some-old-manual-slug",
+            },
+            body="Some say the world will end in fire.",
+        )
+
+        poems = load_poems(poems_dir)
+
+        assert poems[0].poem_id == "fire_and_ice_robert_frost"
 
     def test_returns_empty_list_when_poems_dir_missing(self, tmp_path):
         assert load_poems(tmp_path / "does-not-exist") == []
+
+    def test_raises_for_duplicate_generated_poem_id(self, tmp_path):
+        poems_dir = tmp_path / "poetry"
+        write_poem(
+            poems_dir,
+            "a.md",
+            {"title": "Fire and Ice", "author": "Robert Frost"},
+            body="Version one.",
+        )
+        write_poem(
+            poems_dir,
+            "b.md",
+            {"title": "Fire and Ice", "author": "Robert Frost"},
+            body="Version two.",
+        )
+
+        with pytest.raises(ValueError, match="fire_and_ice_robert_frost"):
+            load_poems(poems_dir)

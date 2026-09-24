@@ -2,7 +2,7 @@
 title: "Samantha Harvey thinks I am stupid and xenophobic"
 author: "Aya"
 type: "review"
-book_key: orbital
+book_key: orbital_samantha_harvey
 date: 2026-04-02
 ---
 

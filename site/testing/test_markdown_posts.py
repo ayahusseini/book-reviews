@@ -94,17 +94,6 @@ class TestMarkdownPostValidation:
 
 
 class TestMarkdownPostProperties:
-    def test_slug_from_frontmatter(self, tmp_path):
-        path = write_post(
-            tmp_path,
-            "---\ntitle: T\nauthor: A\nslug: my-custom-slug\n---\nbody",
-        )
-        assert parse_markdown_with_frontmatter(path).slug == "my-custom-slug"
-
-    def test_slug_falls_back_to_filename_stem(self, tmp_path):
-        path = write_post(tmp_path, MINIMAL_FRONTMATTER, filename="my-file.md")
-        assert parse_markdown_with_frontmatter(path).slug == "my-file"
-
     def test_date_parsed_from_string(self, tmp_path):
         path = write_post(
             tmp_path,

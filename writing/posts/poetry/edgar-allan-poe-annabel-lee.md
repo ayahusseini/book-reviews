@@ -2,7 +2,6 @@
 title: "Annabel Lee"
 author: "Edgar Allan Poe"
 type: "poem"
-slug: "edgar-allan-poe-annabel-lee"
 date: 2026-01-09
 ---
 

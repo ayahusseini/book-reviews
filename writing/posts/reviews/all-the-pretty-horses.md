@@ -2,7 +2,7 @@
 title: All The Pretty Horses
 author: Aya
 type: review
-book_key: all-the-pretty-horses
+book_key: all_the_pretty_horses_cormac_mccarthy
 slug: all-the-pretty-horses
 date: 2026-03-02
 ---

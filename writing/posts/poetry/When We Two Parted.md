@@ -2,7 +2,6 @@
 title: "When We Two Parted"
 author: "Lord Byron"
 type: "poem"
-slug: "when-we-two-parted"
 date: 2026-04-10
 ---
 When we two parted

@@ -1,6 +1,5 @@
 [
-    {
-    "key": "steve_jobs",
+  {
     "title": "Steve Jobs",
     "authors": [
       "Walter Isaacson"
@@ -16,7 +15,6 @@
     "date_read": "2026-09-20"
   },
   {
-    "key": "confessions_of_a_mask",
     "title": "Confessions of a Mask",
     "authors": [
       "Yukio Mishima"
@@ -31,7 +29,6 @@
     "date_read": "2026-09-06"
   },
   {
-    "key": "flesh",
     "title": "Flesh",
     "authors": [
       "David Szalay"
@@ -46,7 +43,6 @@
     "date_read": "2026-01-20"
   },
   {
-    "key": "the-trading-game",
     "title": "The Trading Game",
     "authors": [
       "Gary Stevenson"
@@ -60,7 +56,6 @@
     "date_read": "2026-04-01"
   },
   {
-    "key": "great-gatsby",
     "title": "The Great Gatsby",
     "authors": [
       "F. Scott Fitzgerald"
@@ -76,7 +71,6 @@
   },
   {
     "comment": "The Passenger",
-    "key": "the-passenger",
     "title": "The Passenger",
     "authors": [
       "Cormac McCarthy"
@@ -92,7 +86,6 @@
     "date_read": "2026-01-30"
   },
   {
-    "key": "wuthering-heights",
     "title": "Wuthering Heights",
     "authors": [
       "Emily Brontë"
@@ -107,7 +100,6 @@
     "date_read": "2026-02-01"
   },
   {
-    "key": "a-day-in-the-life-of-abed-salama",
     "title": "A Day in the Life of Abed Salama",
     "authors": [
       "Nathan Thrall"
@@ -120,7 +112,6 @@
     "date_read": "2026-03-01"
   },
   {
-    "key": "sense-and-sensibility",
     "title": "Sense and Sensibility",
     "authors": [
       "Jane Austen"
@@ -135,7 +126,6 @@
     "date_read": "2026-02-01"
   },
   {
-    "key": "the-affirmation",
     "title": "The Affirmation",
     "authors": [
       "Christopher Priest"
@@ -152,7 +142,6 @@
   },
   {
     "comment": "Love in the Time of Cholera",
-    "key": "love-in-the-time-of-cholera",
     "title": "Love in the Time of Cholera",
     "authors": [
       "Gabriel García Márquez"
@@ -167,7 +156,6 @@
   },
   {
     "comment": "Beautiful Star",
-    "key": "beautiful-star",
     "title": "Beautiful Star",
     "authors": [
       "Yukio Mishima"
@@ -181,7 +169,6 @@
     "date_read": null
   },
   {
-    "key": "going-infinite",
     "title": "Going Infinite",
     "authors": [
       "Michael Lewis"
@@ -198,7 +185,6 @@
     "date_read": null
   },
   {
-    "key": "augustus",
     "title": "Augustus",
     "authors": [
       "John Williams"
@@ -214,7 +200,6 @@
     "date_read": null
   },
   {
-    "key": "the-trial",
     "title": "The Trial",
     "authors": [
       "Franz Kafka"
@@ -230,7 +215,6 @@
   },
   {
     "comment": "The Haunting of Hill House",
-    "key": "the-haunting-of-hill-house",
     "title": "The Haunting of Hill House",
     "authors": [
       "Shirley Jackson"
@@ -247,7 +231,6 @@
   },
   {
     "comment": "You Are the Führer's Unrequited Love",
-    "key": "fuhrers-unrequited-love",
     "title": "You Are the Führer's Unrequited Love",
     "authors": [
       "Jean-Noël Orengo"
@@ -263,7 +246,6 @@
   },
   {
     "comment": "Hunchback",
-    "key": "hunchback",
     "title": "Hunchback",
     "authors": [
       "Saō Ichikawa"
@@ -279,7 +261,6 @@
   },
   {
     "comment": "All Systems Red",
-    "key": "all-systems-red",
     "title": "All Systems Red",
     "authors": [
       "Martha Wells"
@@ -296,7 +277,6 @@
   },
   {
     "comment": "All the Pretty Horses",
-    "key": "all-the-pretty-horses",
     "title": "All the Pretty Horses",
     "authors": [
       "Cormac McCarthy"
@@ -313,11 +293,9 @@
   },
   {
     "comment": "Brighton Rock",
-    "key": "brighton-rock",
     "title": "Brighton Rock",
     "authors": [
-      "Graham Greene",
-      "Richard Brown"
+      "Graham Greene"
     ],
     "publication_year": 1938,
     "page_count": 358,
@@ -331,7 +309,6 @@
   },
   {
     "comment": "Orbital",
-    "key": "orbital",
     "title": "Orbital",
     "authors": [
       "Samantha Harvey"
@@ -349,7 +326,6 @@
   },
   {
     "comment": "Perfume: The Story of a Murderer",
-    "key": "perfume-the-story-of-a-murderer",
     "title": "Perfume: The Story of a Murderer",
     "authors": [
       "Patrick Süskind"

@@ -69,15 +69,6 @@ class MarkdownPost:
         return self.metadata["author"].strip()
 
     @property
-    def slug(self) -> str:
-        """Return frontmatter slug if set, otherwise fall back to
-        the filename stem."""
-        slug = self.metadata.get("slug")
-        if isinstance(slug, str) and slug.strip():
-            return slug.strip()
-        return self.source_path.stem
-
-    @property
     def book_key(self) -> str | None:
         """Key referencing the book's entry in book_seed.json."""
         return self.metadata.get("book_key")

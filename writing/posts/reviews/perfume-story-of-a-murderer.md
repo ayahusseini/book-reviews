@@ -2,7 +2,7 @@
 title: My favourite book of 2025
 author: Aya
 type: review
-book_key: perfume-the-story-of-a-murderer
+book_key: perfume_the_story_of_a_murderer_patrick_suskind
 slug: perfume-story-of-a-murderer
 date: 2026-04-09
 ---

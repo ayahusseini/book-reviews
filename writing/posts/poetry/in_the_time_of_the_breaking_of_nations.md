@@ -2,7 +2,6 @@
 title: "In Time of ‘The Breaking of Nations’"
 author: "Thomas Hardy"
 type: "poem"
-slug: "in_the_time_of_the_breaking_of_nations"
 date: 2026-04-02
 ---
 Only a man harrowing clods

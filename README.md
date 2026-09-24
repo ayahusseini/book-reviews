@@ -40,7 +40,6 @@ This builds the site, then serves `site/dist/` at [http://localhost:8000](http:/
 book_reviews/
 ├── makefile
 ├── pyproject.toml
-├── docs/                          ← architecture and workflow docs
 ├── writing/                       ← all user content
 │   ├── book_seed.json             ← book registry (source of truth for book metadata)
 │   ├── posts/
@@ -69,11 +68,10 @@ Adding a book to the site is two independent steps: **register the book**, then 
 
 ### Step 1: register the book
 
-Books are registered in `writing/book_seed.json`. Each entry requires a `key` (any unique slug — it doesn't need to mean anything external) and a `title`:
+Books are registered in `writing/book_seed.json`. Each entry requires a `title`; its id is generated automatically from the title and `authors` (so no separate key to keep in sync):
 
 ```json
 {
-  "key": "my-custom-key",
   "title": "The Book Title",
   "authors": ["Author Name"],
   "publication_year": 1997,
@@ -87,9 +85,8 @@ Books are registered in `writing/book_seed.json`. Each entry requires a `key` (a
 
 | Field              | Required | Description                    |
 | ------------------ | -------- | ------------------------------ |
-| `key`              | Yes      | Unique identifier for the book |
 | `title`            | Yes      | Book title                     |
-| `authors`          | No       | List of author name strings    |
+| `authors`          | No       | List of author name strings — included in the generated id if present |
 | `description`      | No       | Book description               |
 | `publication_year` | No       | Publication year               |
 | `page_count`       | No       | Page count                     |
@@ -101,21 +98,20 @@ Run `make build` (or `make dev`) after editing the file to see the change locall
 
 ### Step 2: write the review (optional)
 
-See [Writing posts](#writing-posts) below — a review's frontmatter references the book via `book_key`, which must match the `key` from step 1.
+See [Writing posts](#writing-posts) below — a review's frontmatter references the book via `book_key`, which must match the book's generated id (title + authors, slugified).
 
 ---
 
 ## Writing posts
 
-See **[docs/writing-posts.md](docs/writing-posts.md)** for a full guide, including frontmatter reference, inline quotes, and the deployment workflow.
-
-Short version:
-
-1. Create a `.md` file under `writing/posts/reviews/` (needs `book_key` in frontmatter, matching an already-registered book) or `writing/posts/poetry/` (no book needed).
-2. Run `make build` (or `make dev`) to check it locally.
-3. Commit and push — Cloudflare Pages rebuilds and deploys automatically.
+1. Create a `.md` file under `writing/posts/reviews/` (needs `book_key` in frontmatter, matching an already-registered book's generated id) or `writing/posts/poetry/` (no book needed — the poem's id is generated automatically from its `title` and `author`).
+2. Every post needs `title` and `author` in frontmatter; reviews also need `book_key`.
+3. Run `make build` (or `make dev`) to check it locally.
+4. Commit and push — Cloudflare Pages rebuilds and deploys automatically.
 
 To show the "New" seedling badge, set `date:` in the frontmatter to today's date. Reviews/poems without a `date:` field are never badged as new.
+
+Inline quotes in a review are wrapped in ` ```ad-quote ` fences and are extracted and linked to the book at build time; quotes aren't supported in poems.
 
 ---
 
@@ -144,10 +140,4 @@ This repo's `.python-version` pins Python 3.13. If Cloudflare Pages' available P
 ```sh
 git push   # Cloudflare Pages builds and deploys automatically
 ```
-
----
-
-## Further reading
-
-- [Writing and deploying posts](docs/writing-posts.md) — post types, frontmatter, quotes, deployment workflow
 
