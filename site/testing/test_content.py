@@ -186,7 +186,7 @@ class TestLoadBooks:
 
 
 class TestLoadPoems:
-    def test_loads_poem_with_slug_from_frontmatter(self, tmp_path):
+    def test_generates_id_from_title_and_author(self, tmp_path):
         poems_dir = tmp_path / "poetry"
         write_poem(
             poems_dir,
@@ -194,7 +194,6 @@ class TestLoadPoems:
             {
                 "title": "Fire and Ice",
                 "author": "Robert Frost",
-                "slug": "fire-and-ice",
                 "date": "2026-04-10",
             },
             body="Some say the world will end in fire.",
@@ -203,8 +202,44 @@ class TestLoadPoems:
         poems = load_poems(poems_dir)
 
         assert len(poems) == 1
-        assert poems[0].poem_slug == "fire-and-ice"
+        assert poems[0].poem_id == "fire_and_ice_robert_frost"
+        assert poems[0].poem_slug == "fire_and_ice_robert_frost"
         assert poems[0].poem_title == "Fire and Ice"
+
+    def test_ignores_stray_slug_frontmatter(self, tmp_path):
+        poems_dir = tmp_path / "poetry"
+        write_poem(
+            poems_dir,
+            "fire-and-ice.md",
+            {
+                "title": "Fire and Ice",
+                "author": "Robert Frost",
+                "slug": "some-old-manual-slug",
+            },
+            body="Some say the world will end in fire.",
+        )
+
+        poems = load_poems(poems_dir)
+
+        assert poems[0].poem_id == "fire_and_ice_robert_frost"
 
     def test_returns_empty_list_when_poems_dir_missing(self, tmp_path):
         assert load_poems(tmp_path / "does-not-exist") == []
+
+    def test_raises_for_duplicate_generated_poem_id(self, tmp_path):
+        poems_dir = tmp_path / "poetry"
+        write_poem(
+            poems_dir,
+            "a.md",
+            {"title": "Fire and Ice", "author": "Robert Frost"},
+            body="Version one.",
+        )
+        write_poem(
+            poems_dir,
+            "b.md",
+            {"title": "Fire and Ice", "author": "Robert Frost"},
+            body="Version two.",
+        )
+
+        with pytest.raises(ValueError, match="fire_and_ice_robert_frost"):
+            load_poems(poems_dir)

@@ -150,9 +150,10 @@ def load_books(seed_path: Path, reviews_dir: Path) -> list[Book]:
 
 def build_poem(post: MarkdownPost) -> Poem:
     """Build a Poem from a parsed poem markdown file."""
+    poem_id = generate_id(post.title, [post.author])
     return Poem(
-        poem_id=post.slug,
-        poem_slug=post.slug,
+        poem_id=poem_id,
+        poem_slug=poem_id,
         poem_title=post.title,
         poem_author=post.author,
         poem_body_markdown=post.body_markdown,
@@ -163,14 +164,21 @@ def build_poem(post: MarkdownPost) -> Poem:
 def load_poems(poems_dir: Path) -> list[Poem]:
     """Load all poems from poems_dir, one per markdown file.
 
-    If two files produce the same slug, the one that sorts last by
-    filename wins — matching the "last import wins" behavior documented
-    in docs/writing-posts.md.
+    Each poem's id is generated from its title and author, so two poem
+    files that resolve to the same title/author raise an error instead
+    of one silently overwriting the other.
     """
     if not poems_dir.exists():
         return []
-    poems_by_slug: dict[str, Poem] = {}
+    poems: list[Poem] = []
+    seen_ids: set[str] = set()
     for path in sorted(poems_dir.rglob("*.md")):
         poem = build_poem(parse_markdown_with_frontmatter(path))
-        poems_by_slug[poem.poem_slug] = poem
-    return list(poems_by_slug.values())
+        if poem.poem_id in seen_ids:
+            raise ValueError(
+                f"Duplicate poem id {poem.poem_id!r} generated from "
+                f"{path} — poem title/author combinations must be unique."
+            )
+        seen_ids.add(poem.poem_id)
+        poems.append(poem)
+    return poems
