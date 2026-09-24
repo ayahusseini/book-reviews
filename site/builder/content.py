@@ -98,24 +98,20 @@ def load_reviews(reviews_dir: Path) -> dict[str, MarkdownPost]:
 
 def build_book(entry: dict, review: MarkdownPost | None) -> Book:
     """Build a Book from one book_seed.json entry and its matching review."""
-    key = entry.get("key")
-    if not key:
-        raise ValueError(f"Seed entry missing 'key': {entry}")
     title = entry.get("title")
     if not title:
-        raise ValueError(f"Seed entry {key!r} missing required 'title'")
+        raise ValueError(f"Seed entry missing required 'title': {entry}")
+    authors = entry.get("authors", [])
 
     return Book(
-        book_id=key,
+        book_id=generate_id(title, authors),
         book_title=title,
         book_description=entry.get("description"),
         book_publication_year=entry.get("publication_year"),
         book_page_count=entry.get("page_count"),
         book_rating=entry.get("rating"),
         book_date_read=parse_date_read(entry.get("date_read")),
-        authors=[
-            Author(author_name=name) for name in entry.get("authors", [])
-        ],
+        authors=[Author(author_name=name) for name in authors],
         tags=[Tag(tag_name=name) for name in entry.get("tags", [])],
         review_markdown=review.body_markdown if review else None,
         review_created_at=review.date if review else None,
@@ -129,19 +125,27 @@ def load_books(seed_path: Path, reviews_dir: Path) -> list[Book]:
 
     with open(seed_path) as f:
         seed = json.load(f)
-        seed_keys = {entry.get("key") for entry in seed}
 
-        unmatched = set(reviews) - seed_keys
-        if unmatched:
-            raise ValueError(
-                f"""Review(s) reference unknown book_key(s): 
-                {sorted(unmatched)}.
-                Add them to book_seed.json first."""
-            )
+    book_ids = [build_book(entry, None).book_id for entry in seed]
+    dupes = sorted({i for i in book_ids if book_ids.count(i) > 1})
+    if dupes:
+        raise ValueError(
+            f"Duplicate book id(s) generated from title+authors: {dupes}. "
+            "Book titles/authors must be unique across book_seed.json."
+        )
 
-        return [
-            build_book(entry, reviews.get(entry.get("key"))) for entry in seed
-        ]
+    unmatched = set(reviews) - set(book_ids)
+    if unmatched:
+        raise ValueError(
+            f"""Review(s) reference unknown book_key(s):
+            {sorted(unmatched)}.
+            Add them to book_seed.json first."""
+        )
+
+    return [
+        build_book(entry, reviews.get(book_id))
+        for entry, book_id in zip(seed, book_ids)
+    ]
 
 
 def build_poem(post: MarkdownPost) -> Poem:

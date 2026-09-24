@@ -88,7 +88,6 @@ class TestLoadBooks:
             tmp_path,
             [
                 {
-                    "key": "wuthering-heights",
                     "title": "Wuthering Heights",
                     "authors": ["Emily Bronte"],
                     "tags": ["classic"],
@@ -102,7 +101,7 @@ class TestLoadBooks:
 
         assert books == [
             Book(
-                book_id="wuthering-heights",
+                book_id="wuthering_heights_emily_bronte",
                 book_title="Wuthering Heights",
                 book_description=None,
                 book_publication_year=None,
@@ -117,10 +116,17 @@ class TestLoadBooks:
             )
         ]
 
+    def test_builds_book_id_from_title_only_when_no_authors(self, tmp_path):
+        seed_path = write_seed(tmp_path, [{"title": "Unread Book"}])
+
+        books = load_books(seed_path, tmp_path / "reviews")
+
+        assert books[0].book_id == "unread_book"
+
     def test_joins_matching_review(self, tmp_path):
         seed_path = write_seed(
             tmp_path,
-            [{"key": "wuthering-heights", "title": "Wuthering Heights"}],
+            [{"title": "Wuthering Heights", "authors": ["Emily Bronte"]}],
         )
         reviews_dir = tmp_path / "reviews"
         write_review(
@@ -129,7 +135,7 @@ class TestLoadBooks:
             {
                 "title": "Wuthering Heights",
                 "author": "Aya",
-                "book_key": "wuthering-heights",
+                "book_key": "wuthering_heights_emily_bronte",
                 "date": "2026-03-10",
             },
             body="Opening thoughts...",
@@ -145,14 +151,14 @@ class TestLoadBooks:
         )
 
     def test_raises_for_seed_entry_missing_title(self, tmp_path):
-        seed_path = write_seed(tmp_path, [{"key": "no-title"}])
+        seed_path = write_seed(tmp_path, [{"authors": ["Nobody"]}])
         with pytest.raises(ValueError, match="title"):
             load_books(seed_path, tmp_path / "reviews")
 
     def test_raises_for_review_with_unknown_book_key(self, tmp_path):
         seed_path = write_seed(
             tmp_path,
-            [{"key": "wuthering-heights", "title": "Wuthering Heights"}],
+            [{"title": "Wuthering Heights", "authors": ["Emily Bronte"]}],
         )
         reviews_dir = tmp_path / "reviews"
         write_review(
@@ -166,6 +172,17 @@ class TestLoadBooks:
         )
         with pytest.raises(ValueError, match="does-not-exist"):
             load_books(seed_path, reviews_dir)
+
+    def test_raises_for_duplicate_generated_book_id(self, tmp_path):
+        seed_path = write_seed(
+            tmp_path,
+            [
+                {"title": "Orbital", "authors": ["Samantha Harvey"]},
+                {"title": "Orbital", "authors": ["Samantha Harvey"]},
+            ],
+        )
+        with pytest.raises(ValueError, match="orbital_samantha_harvey"):
+            load_books(seed_path, tmp_path / "reviews")
 
 
 class TestLoadPoems:
