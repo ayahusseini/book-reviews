@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+import re
+import unicodedata
 from dataclasses import dataclass, field
 from datetime import date, datetime
 from pathlib import Path
@@ -53,6 +55,21 @@ class Poem:
     poem_author: str
     poem_body_markdown: str
     poem_created_at: datetime | None = None
+
+
+def slugify(text: str) -> str:
+    """Lowercase, strip accents, and collapse everything else to '_'."""
+    text = unicodedata.normalize("NFKD", text)
+    text = text.encode("ascii", "ignore").decode("ascii")
+    text = text.lower()
+    text = re.sub(r"[^a-z0-9]+", "_", text)
+    return text.strip("_")
+
+
+def generate_id(title: str, authors: list[str]) -> str:
+    """Generate a stable id from a title and its author name(s)."""
+    parts = [slugify(title)] + [slugify(author) for author in authors]
+    return "_".join(part for part in parts if part)
 
 
 def parse_date_read(value: object) -> date | None:

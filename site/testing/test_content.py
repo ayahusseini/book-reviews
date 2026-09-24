@@ -8,6 +8,7 @@ from builder.content import (
     Author,
     Book,
     Tag,
+    generate_id,
     load_books,
     load_poems,
     parse_date_read,
@@ -36,6 +37,37 @@ def write_poem(poems_dir, filename, frontmatter, body=""):
     (poems_dir / filename).write_text(
         f"---\n{lines}\n---\n{body}", encoding="utf-8"
     )
+
+
+class TestGenerateId:
+    def test_combines_title_and_single_author(self):
+        assert generate_id("Orbital", ["Samantha Harvey"]) == (
+            "orbital_samantha_harvey"
+        )
+
+    def test_joins_all_authors_in_order(self):
+        assert generate_id("Some Book", ["A One", "B Two"]) == (
+            "some_book_a_one_b_two"
+        )
+
+    def test_lowercases_and_replaces_spaces(self):
+        assert generate_id("The Great Gatsby", ["F. Scott Fitzgerald"]) == (
+            "the_great_gatsby_f_scott_fitzgerald"
+        )
+
+    def test_strips_accents_and_punctuation(self):
+        assert (
+            generate_id(
+                "Perfume: The Story of a Murderer", ["Patrick Süskind"]
+            )
+            == "perfume_the_story_of_a_murderer_patrick_suskind"
+        )
+
+    def test_falls_back_to_title_only_when_no_authors(self):
+        assert generate_id("Unread Book", []) == "unread_book"
+
+    def test_collapses_repeated_separators(self):
+        assert generate_id("A   B", ["C"]) == "a_b_c"
 
 
 class TestParseDateRead:
