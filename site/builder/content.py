@@ -69,7 +69,13 @@ def slugify(text: str) -> str:
 def generate_id(title: str, authors: list[str]) -> str:
     """Generate a stable id from a title and its author name(s)."""
     parts = [slugify(title)] + [slugify(author) for author in authors]
-    return "_".join(part for part in parts if part)
+    id_ = "_".join(part for part in parts if part)
+    if not id_:
+        raise ValueError(
+            f"Could not generate an id from title {title!r} and authors "
+            f"{authors!r} — they contain no ASCII letters or digits."
+        )
+    return id_
 
 
 def parse_date_read(value: object) -> date | None:
@@ -101,7 +107,7 @@ def build_book(entry: dict, review: MarkdownPost | None) -> Book:
     title = entry.get("title")
     if not title:
         raise ValueError(f"Seed entry missing required 'title': {entry}")
-    authors = entry.get("authors", [])
+    authors = entry.get("authors") or []
 
     return Book(
         book_id=generate_id(title, authors),

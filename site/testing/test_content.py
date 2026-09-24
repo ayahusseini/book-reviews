@@ -69,6 +69,10 @@ class TestGenerateId:
     def test_collapses_repeated_separators(self):
         assert generate_id("A   B", ["C"]) == "a_b_c"
 
+    def test_raises_when_title_and_authors_have_no_ascii_content(self):
+        with pytest.raises(ValueError, match="金閣寺"):
+            generate_id("金閣寺", ["三島由紀夫"])
+
 
 class TestParseDateRead:
     def test_parses_iso_date_string(self):
@@ -183,6 +187,15 @@ class TestLoadBooks:
         )
         with pytest.raises(ValueError, match="orbital_samantha_harvey"):
             load_books(seed_path, tmp_path / "reviews")
+
+    def test_treats_null_authors_as_no_authors(self, tmp_path):
+        seed_path = write_seed(
+            tmp_path, [{"title": "Unread Book", "authors": None}]
+        )
+
+        books = load_books(seed_path, tmp_path / "reviews")
+
+        assert books[0].book_id == "unread_book"
 
 
 class TestLoadPoems:
