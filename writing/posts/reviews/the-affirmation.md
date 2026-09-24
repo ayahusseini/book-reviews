@@ -2,7 +2,7 @@
 title: The Affirmation is great but it is slow
 author: Aya
 type: review
-book_key: the-affirmation
+book_key: the_affirmation_christopher_priest
 slug: the-affirmation
 date: 2026-01-30
 ---

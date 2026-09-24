@@ -2,7 +2,7 @@
 title: Confessions of a Mask
 author: Aya
 type: review
-book_key: confessions_of_a_mask
+book_key: confessions_of_a_mask_yukio_mishima
 slug: confessions-of-a-mask
 date: 2026-09-06
 ---

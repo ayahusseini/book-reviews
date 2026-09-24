@@ -2,7 +2,6 @@
 title: Let It Enfold You
 author: Charles Bukowski
 type: poem
-slug: let-it-enfold-you
 date: 2026-07-27
 ---
 Either peace or happiness, 

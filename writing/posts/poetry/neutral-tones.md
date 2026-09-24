@@ -2,7 +2,6 @@
 title: "Neutral Tones"
 author: "Thomas Hardy"
 type: "poem"
-slug: "neutral-tones"
 date: 2026-07-09
 ---
 We stood by a pond that winter day,

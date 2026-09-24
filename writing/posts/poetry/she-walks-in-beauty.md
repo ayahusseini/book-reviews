@@ -2,7 +2,6 @@
 title: "She Walks in Beauty"
 author: "Lord Byron"
 type: "poem"
-slug: "she-walks-in-beauty"
 date: 2026-04-09
 ---
 She walks in beauty, like the night

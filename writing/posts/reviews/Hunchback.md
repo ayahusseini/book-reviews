@@ -2,7 +2,7 @@
 title: Hunchback is uhh
 author: Aya
 type: review
-book_key: hunchback
+book_key: hunchback_sao_ichikawa
 slug: hunchback
 date: 2026-07-26
 ---

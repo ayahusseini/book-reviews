@@ -2,7 +2,7 @@
 title: "All Systems Red is a fun little book"
 author: "Aya"
 type: "review"
-book_key: all-systems-red
+book_key: all_systems_red_martha_wells
 date: 2026-04-01
 ---
 
