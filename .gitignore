@@ -21,3 +21,5 @@ instance/
 docs/
 writing/unpromoted_posts/**
 !writing/unpromoted_posts/.gitkeep
+# Cloudflare Wrangler local state
+.wrangler/
