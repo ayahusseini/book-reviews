@@ -2,7 +2,7 @@
 title: The Trading Game is Okay
 author: Aya
 type: review
-book_key: the-trading-game-gary-stevenson
+book_key: the_trading_game_gary_stevenson
 slug: the-trading-game
 date: 2026-11-23
 ---
