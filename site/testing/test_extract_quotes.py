@@ -21,6 +21,12 @@ class TestExtractAdQuotes:
         assert quotes[0].quote_text == "First."
         assert quotes[1].quote_text == "Second."
 
+    def test_trailing_whitespace_after_marker(self):
+        body = "```ad-quote \nA passage.\n```"
+        quotes = extract_ad_quotes(body)
+        assert len(quotes) == 1
+        assert quotes[0].quote_text == "A passage."
+
     def test_no_quotes_returns_empty(self):
         assert extract_ad_quotes("Just plain text.") == []
 

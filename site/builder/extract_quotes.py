@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 # non-greedy match of ```ad-quote ... ``` blocks
 AD_QUOTE_RE = re.compile(
-    r"```ad-quote\n(.*?)```",
+    r"```ad-quote[ \t]*\n(.*?)```",
     re.DOTALL,
 )
 
