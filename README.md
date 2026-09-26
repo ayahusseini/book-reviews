@@ -56,7 +56,7 @@ book_reviews/
     │   └── render.py              ← renders pages with Jinja2, copies static assets
     ├── templates/                 ← Jinja2 page templates
     ├── static/                    ← CSS, JS, fonts, images (copied into dist as-is)
-    ├── dist/                      ← build output; gitignored, deployed by Cloudflare Pages
+    ├── dist/                      ← build output; gitignored, deployed by Cloudflare Workers
     └── testing/                   ← pytest test suite
 ```
 
@@ -107,7 +107,7 @@ See [Writing posts](#writing-posts) below — a review's frontmatter references 
 1. Create a `.md` file under `writing/posts/reviews/` (needs `book_key` in frontmatter, matching an already-registered book's generated id) or `writing/posts/poetry/` (no book needed — the poem's id is generated automatically from its `title` and `author`).
 2. Every post needs `title` and `author` in frontmatter; reviews also need `book_key`.
 3. Run `make build` (or `make dev`) to check it locally.
-4. Commit and push — Cloudflare Pages rebuilds and deploys automatically.
+4. Commit and push. Workers Builds rebuilds and deploys automatically.
 
 To show the "New" seedling badge, set `date:` in the frontmatter to today's date. Reviews/poems without a `date:` field are never badged as new.
 
@@ -123,21 +123,26 @@ Tags are managed entirely through `writing/book_seed.json`. Edit the relevant en
 
 ## Deploying
 
-Pushing to `main` triggers Cloudflare Pages, which installs dependencies and builds the site, then publishes `site/dist/`. There is no database to reset and no server to restart — a deploy is just a build.
+The site is served by a static-assets-only Cloudflare Worker (no Worker script), configured in `wrangler.jsonc`. It serves `site/dist/` and attaches the `husseinireads.com` custom domain. The `_redirects` file written by the build is honoured by Workers static assets.
 
-The Cloudflare Pages project should be configured with this build command:
+Pushing to `main` triggers Workers Builds, which installs dependencies, builds the site, then runs `wrangler deploy`. There is no database to reset and no server to restart. A deploy is just a build.
+
+The Worker's build settings (Settings → Builds in the Cloudflare dashboard) should be:
+
+- Build command: `pip install -r requirements.txt && python site/build.py`
+- Deploy command: `npx wrangler deploy`
+
+`requirements.txt` (not `pyproject.toml`/`uv.lock`) is what the build image's `pip` reads, so it must list the site's runtime dependencies directly.
+
+To deploy by hand from a local checkout:
 
 ```sh
-pip install -r requirements.txt && python site/build.py
+make build && npx wrangler deploy
 ```
 
-and output directory `site/dist`.
-
-`requirements.txt` (not `pyproject.toml`/`uv.lock`) is what Cloudflare Pages' Python build image reads, so it must list the site's runtime dependencies directly.
-
-This repo's `.python-version` pins Python 3.13. If Cloudflare Pages' available Python versions don't include 3.13, select the closest available 3.x version in the Pages project settings (a one-time dashboard setting).
+Otherwise:
 
 ```sh
-git push   # Cloudflare Pages builds and deploys automatically
+git push   # Workers Builds builds and deploys automatically
 ```
 

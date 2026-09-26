@@ -1,0 +1,11 @@
+{
+  "name": "husseinireads",
+  "compatibility_date": "2026-09-26",
+  "assets": {
+    "directory": "./site/dist",
+    "html_handling": "auto-trailing-slash"
+  },
+  "routes": [
+    { "pattern": "husseinireads.com", "custom_domain": true }
+  ]
+}
