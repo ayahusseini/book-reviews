@@ -4,7 +4,7 @@ author: Aya
 type: review
 book_key: the_trading_game_gary_stevenson
 slug: the-trading-game
-date: 2026-11-23
+date: 2026-09-23
 ---
 
 # Overview

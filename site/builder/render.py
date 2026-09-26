@@ -11,7 +11,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 from builder.content import Book, Poem
 from builder.markdown import render_markdown_to_safe_html
 
-NEW_POST_DAYS = 5
+NEW_POST_DAYS = 30
 
 
 BOOKS_URL = "/books/"
