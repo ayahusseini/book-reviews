@@ -8,7 +8,7 @@ date: 2026-01-30
 ---
 
 ```ad-quote
-“I had imagined myself into existence. I wrote because of an inner need,and that need was to create a clearer vision of myself, and in writing I became what I wrote.”
+I had imagined myself into existence. I wrote because of an inner need,and that need was to create a clearer vision of myself, and in writing I became what I wrote.
 ```
 
 **Light Spoilers ahead!**
@@ -25,8 +25,8 @@ The book pushes us to reflect on identity and our memory:
 - To what extent is a self ever stable or well-defined?
 
 ```ad-quote
-“There was a duplication of myself involved, perhaps even a triplication.
-There was I who was writing. There was I whom I could remember. And there was I of whom I wrote, the protagonist of the story.”
+There was a duplication of myself involved, perhaps even a triplication.
+There was I who was writing. There was I whom I could remember. And there was I of whom I wrote, the protagonist of the story.
 ```
 
 ### A lying narrator 
@@ -56,7 +56,7 @@ Priest’s restrained style is both a strength and a limitation. It smooths over
 What he does do exceptionally well is articulate complex emotional states. He articulates feelings rarely delineated, but those we can still lend empathy to:
 
 ```ad-quote
-"The fear of dying is not just the terror of pain, the humiliation of the loss of faculties, the fall into the abyss . . . but the primeval fear that afterwards one might remember it."
+The fear of dying is not just the terror of pain, the humiliation of the loss of faculties, the fall into the abyss . . . but the primeval fear that afterwards one might remember it.
 ```
 
 At its best, the novel creates a quiet, unsettling confusion—where you’re no longer sure how you got from point A to point B. At its weakest, it risks feeling emotionally flat.

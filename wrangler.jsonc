@@ -7,5 +7,12 @@
   },
   "routes": [
     { "pattern": "husseinireads.com", "custom_domain": true }
-  ]
+  ],
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true,
+      "persist": true
+    }
+  }
 }
