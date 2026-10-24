@@ -1,5 +1,19 @@
 [
   {
+    "title": "The Plague",
+    "authors": [
+      "Albert Camus"
+    ],
+    "publication_year": 1947,
+    "page_count": 308,
+    "description": "A plague causes a French-Algerian town to go into lockdown.",
+    "tags": [
+      "fiction"
+    ],
+    "rating": 3,
+    "date_read": "2026-10-24"
+  },
+  {
     "title": "Steve Jobs",
     "authors": [
       "Walter Isaacson"
