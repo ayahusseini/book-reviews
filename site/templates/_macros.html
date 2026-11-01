@@ -39,14 +39,13 @@
         <img src="/static/img/seedling_pixel.svg" alt="New" title="Recently reviewed" class="seedling-icon pixel-art">
       {% endif %}
 
-      {% if book.book_rating is not none %}
-        {{ star_rating(book.book_rating, uid=book.book_id) }}
-      {% endif %}
-
       {% if book.tags and 'halloween' in book.tag_names %}
         <img src="/static/img/pumpkin_pixel.svg" alt="Halloween" title="Halloween read" class="seedling-icon pixel-art">
       {% endif %}
 
+      {% if book.book_rating is not none %}
+        {{ star_rating(book.book_rating, uid=book.book_id) }}
+      {% endif %}
 
     </span>
 
