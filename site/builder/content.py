@@ -44,6 +44,10 @@ class Book:
     review_created_at: datetime | None = None
     quotes: list[ExtractedQuote] = field(default_factory=list)
 
+    @property
+    def tag_names(self):
+        return {tag.tag_name for tag in (self.tags or [])}
+
 
 @dataclass
 class Poem:

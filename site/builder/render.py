@@ -73,33 +73,21 @@ def find_books_with_reviews(books: list[Book]) -> set[str]:
 
 
 # --- Date policy -----------------------------------------------------
-#
-# The two questions the site asks about a book's dates are different,
-# and this is the one place both are answered:
-#   - display order: book_sort_date() -> when it was actually read
-#   - "new" badge:    book_new_date()  -> earliest of read date / review
-#                                          date, whichever happened first
-# Tweak the policy here; everything else just calls these.
 
 
 def _as_date(value: datetime | None) -> date | None:
     """Normalize a tz-aware datetime down to a plain date, or None."""
-    return value.date() if value is not None else None
-
-
-def book_sort_date(book: Book) -> date | None:
-    """Date a book is ordered by: the day it was actually read."""
-    return book.book_date_read
+    return
 
 
 def book_new_date(book: Book) -> date | None:
-    """Date a book counts as new by: earliest of read date or review date."""
+    """Get the latest of the book_date_read and the review_created_at."""
     candidates = [
         d
         for d in (book.book_date_read, _as_date(book.review_created_at))
         if d is not None
     ]
-    return min(candidates) if candidates else None
+    return max(candidates) if candidates else None
 
 
 def _is_within(as_of: date | None, today: date, days: int) -> bool:
@@ -132,14 +120,14 @@ def _book_recency_sort_key(book: Book) -> tuple[int, int, str]:
 
     Books with no read date sort last, then alphabetically by title.
     """
-    read_date = book_sort_date(book)
+    read_date = book.book_date_read
     if read_date is None:
         return (1, 0, book.book_title.lower())
     return (0, -read_date.toordinal(), book.book_title.lower())
 
 
 def sort_books_by_recency(books: list[Book]) -> list[Book]:
-    """Sort books by book_sort_date, most-recently-read first."""
+    """Sort books by the read_date, most-recently-read first."""
     return sorted(books, key=_book_recency_sort_key)
 
 
