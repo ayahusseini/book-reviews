@@ -43,7 +43,11 @@
         {{ star_rating(book.book_rating, uid=book.book_id) }}
       {% endif %}
 
-      
+      {% if book.tags and 'halloween' in book.tag_names %}
+        <img src="/static/img/pumpkin_pixel.svg" alt="Halloween" title="Halloween read" class="seedling-icon pixel-art">
+      {% endif %}
+
+
     </span>
 
     {# Author #}
