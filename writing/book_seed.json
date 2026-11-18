@@ -1,5 +1,36 @@
 [
-    {
+  {
+    "title": "Hamnet",
+    "authors": [
+      "Maggie O'Farrell"
+    ],
+    "publication_year": 2020,
+    "page_count": 384,
+    "description": "This novel follows the death of William Shakespeare's son, Hamnet.",
+    "tags": [
+      "fiction",
+      "historical"
+    ],
+    "rating": 4.5,
+    "date_read": "2026-11-17"
+  },
+  {
+    "title": "Carmilla",
+    "authors": [
+      "Stephen King"
+    ],
+    "publication_year": 1977,
+    "page_count": 108,
+    "description": "A young woman is pursued by Carmilla.",
+    "tags": [
+      "fiction",
+      "gothic",
+      "halloween"
+    ],
+    "rating": 1,
+    "date_read": "2026-11-02"
+  },
+  {
     "title": "The Shining",
     "authors": [
       "Stephen King"
@@ -11,10 +42,10 @@
       "fiction",
       "halloween"
     ],
-    "rating": 2.5,
+    "rating": 2,
     "date_read": "2026-11-01"
   },
-    {
+  {
     "title": "El Túnel",
     "authors": [
       "Ernesto Sabato"
@@ -55,7 +86,7 @@
       "non-fiction",
       "biography"
     ],
-    "rating": 3.5,
+    "rating": 3,
     "date_read": "2026-09-20"
   },
   {
@@ -69,7 +100,7 @@
     "tags": [
       "fiction"
     ],
-    "rating": 5,
+    "rating": 4,
     "date_read": "2026-09-06"
   },
   {
@@ -96,7 +127,7 @@
       "autobiography",
       "finance"
     ],
-    "rating": 2.5,
+    "rating": 1.5,
     "date_read": "2026-04-01"
   },
   {
@@ -110,7 +141,7 @@
     "tags": [
       "fiction"
     ],
-    "rating": 4,
+    "rating": 3.5,
     "date_read": "2026-05-01"
   },
   {
@@ -126,7 +157,7 @@
       "fiction",
       "mystery"
     ],
-    "rating": 4.5,
+    "rating": 4,
     "date_read": "2026-01-30"
   },
   {
@@ -152,7 +183,7 @@
     "tags": [
       "non-fiction"
     ],
-    "rating": 4,
+    "rating": 3.5,
     "date_read": "2026-03-01"
   },
   {
@@ -166,7 +197,7 @@
     "tags": [
       "fiction"
     ],
-    "rating": 3,
+    "rating": 2,
     "date_read": "2026-02-01"
   },
   {
@@ -209,7 +240,7 @@
     "tags": [
       "fiction"
     ],
-    "rating": 2.5,
+    "rating": 1,
     "date_read": null
   },
   {
@@ -225,7 +256,7 @@
       "finance",
       "biography"
     ],
-    "rating": 3.5,
+    "rating": 2,
     "date_read": null
   },
   {
@@ -240,7 +271,7 @@
       "fiction",
       "historical"
     ],
-    "rating": 4,
+    "rating": 3.5,
     "date_read": null
   },
   {
@@ -254,7 +285,7 @@
     "tags": [
       "fiction"
     ],
-    "rating": 4,
+    "rating": 3.5,
     "date_read": null
   },
   {
@@ -300,7 +331,7 @@
       "short-story",
       "fiction"
     ],
-    "rating": 2.5,
+    "rating": 2,
     "date_read": "2026-07-01"
   },
   {
@@ -316,7 +347,7 @@
       "science-fiction",
       "fiction"
     ],
-    "rating": 2.5,
+    "rating": 2,
     "date_read": null
   },
   {
