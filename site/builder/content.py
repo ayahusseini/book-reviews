@@ -110,6 +110,7 @@ def build_book(entry: dict, review: MarkdownPost | None) -> Book:
     title = entry.get("title")
     if not title:
         raise ValueError(f"Seed entry missing required 'title': {entry}")
+
     authors = entry.get("authors") or []
 
     return Book(
